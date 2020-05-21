@@ -2,7 +2,7 @@
 
 s9e\\SweetDOM is a library that extends [PHP's DOM extension](https://www.php.net/manual/en/book.dom.php) with a set of methods designed to simplify and facilitate the manipulation of XSLT 1.0 templates.
 
-[![Build Status](https://api.travis-ci.org/s9e/SweetDOM.svg?branch=master)](https://travis-ci.org/s9e/SweetDOM)
+[![Build Status](https://travis-ci.org/s9e/SweetDOM.svg?branch=master)](https://travis-ci.org/s9e/SweetDOM)
 [![Code Coverage](https://scrutinizer-ci.com/g/s9e/SweetDOM/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/s9e/SweetDOM/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/s9e/SweetDOM/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/s9e/SweetDOM/?branch=master)
 
