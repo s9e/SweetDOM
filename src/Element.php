@@ -7,21 +7,25 @@
 */
 namespace s9e\SweetDOM;
 
-use DOMElement;
 use BadMethodCallException;
+use DOMElement;
+use DOMNode;
+use DOMNodeList;
+use InvalidArgumentException;
 
 class Element extends DOMElement
 {
 	public function __call(string $name, array $arguments)
 	{
-		if (preg_match('(^append(Xsl\\w++)$)', $name, $m))
+		if (preg_match('(^(append|prepend)(Xsl\\w++)$)', $name, $m))
 		{
-			$callback = [$this->ownerDocument, 'create' . $m[1]];
+			$callback = [$this->ownerDocument, 'create' . $m[2]];
 			if (is_callable($callback))
 			{
-				$element = call_user_func_array($callback, $arguments);
+				$element  = call_user_func_array($callback, $arguments);
+				$where = ($m[1] === 'append') ? 'beforeend' : 'afterbegin';
 
-				return $this->appendChild($element);
+				return $this->insertAdjacentElement($where, $element);
 			}
 		}
 
@@ -29,45 +33,161 @@ class Element extends DOMElement
 	}
 
 	/**
-	* Evaluate and return the result of a given XPath expression using this element as context
+	* Evaluate and return the result of a given XPath expression using this element as context node
 	*
-	* @param  string $query XPath expression
+	* @param  string  $expr XPath expression
 	* @return mixed
 	*/
-	public function evaluate(string $query)
+	public function evaluate(string $expr)
 	{
-		return $this->ownerDocument->evaluate($query, $this);
+		return $this->ownerDocument->evaluate($expr, $this);
 	}
 
 	/**
-	* Evaluate and return the first element of a given XPath query using this element as context
+	* Evaluate and return the first element of a given XPath query using this element as context node
 	*
-	* @param  string $query XPath expression
-	* @return mixed
+	* @param  string       $expr XPath expression
+	* @return DOMNode|null
 	*/
-	public function firstOf(string $query)
+	public function firstOf(string $expr): ?DOMNode
 	{
-		return $this->ownerDocument->firstOf($query, $this);
+		return $this->ownerDocument->firstOf($expr, $this);
 	}
 
 	/**
-	* Evaluate and return the result of a given XPath query using this element as context
+	* Evaluate and return the result of a given XPath query using this element as context node
 	*
-	* @param  string $query XPath expression
-	* @return mixed
+	* @param  string      $expr XPath expression
+	* @return DOMNodeList
 	*/
-	public function query(string $query)
+	public function query(string $expr): DOMNodeList
 	{
-		return $this->ownerDocument->query($query, $this);
+		return $this->ownerDocument->query($expr, $this);
 	}
 
+	/**
+	* Insert given element relative to this element's position
+	*
+	* @param  string $where   One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  self   $element
+	* @return self
+	*/
+	public function insertAdjacentElement(string $where, self $element): self
+	{
+		$this->insertAdjacentNode($where, $element);
+
+		return $element;
+	}
+
+	/**
+	* Insert given text relative to this element's position
+	*
+	* @param  string $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string $text
+	* @return void
+	*/
+	public function insertAdjacentText(string $where, string $text): void
+	{
+		$this->insertAdjacentXML($where, htmlspecialchars($text, ENT_XML1));
+	}
+
+	/**
+	* Insert given XML relative to this element's position
+	*
+	* @param  string $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string $xml
+	* @return void
+	*/
+	public function insertAdjacentXML(string $where, string $xml): void
+	{
+		$fragment = $this->ownerDocument->createDocumentFragment();
+		$fragment->appendXML($this->addMissingNamespaceDeclarations($xml));
+
+		$this->insertAdjacentNode($where, $fragment);
+	}
+
+	/**
+	* Remove this element from the document
+	*
+	* @return self This element
+	*/
 	public function remove(): self
 	{
 		return $this->parentNode->removeChild($this);
 	}
 
-	public function replace(DOMElement $element): self
+	/**
+	* Replace this element with given element
+	*
+	* @param  self $element Replacement element
+	* @return self          This element
+	*/
+	public function replace(self $element): self
 	{
 		return $this->parentNode->replaceChild($element, $this);
+	}
+
+	/**
+	* Add namespace declarations that may be missing in given XML
+	*
+	* @param  string $xml Original XML
+	* @return string      Modified XML
+	*/
+	protected function addMissingNamespaceDeclarations(string $xml): string
+	{
+		preg_match_all('(xmlns:\\K[-\\w]++(?==))', $xml, $m);
+		$prefixes = array_flip($m[0]);
+
+		return preg_replace_callback(
+			'(<([-\\w]++):[^>]++>)',
+			function ($m) use ($prefixes)
+			{
+				$xml    = $m[0];
+				$prefix = $m[1];
+				if (isset($prefixes[$prefix]))
+				{
+					return $xml;
+				}
+
+				$nsURI         = $this->lookupNamespaceURI($prefix);
+				$nsDeclaration = ' xmlns:' . $prefix . '="' . htmlspecialchars($nsURI, ENT_XML1) . '"';
+
+				$pos = ($xml[-2] === '/') ? -2 : -1;
+
+				return substr($xml, 0, $pos) . $nsDeclaration . substr($xml, $pos);
+			},
+			$xml
+		);
+	}
+
+	/**
+	* Insert given node relative to this element's position
+	*
+	* @param  string  $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  DOMNode $node
+	* @return void
+	*/
+	protected function insertAdjacentNode(string $where, DOMNode $node): void
+	{
+		if ($where === 'beforebegin')
+		{
+			$this->parentNode->insertBefore($node, $this);
+		}
+		elseif ($where === 'beforeend')
+		{
+			$this->appendChild($node);
+		}
+		elseif ($where === 'afterend')
+		{
+			$this->parentNode->insertBefore($node, $this->nextSibling);
+		}
+		elseif ($where === 'afterbegin')
+		{
+			$this->insertBefore($node, $this->firstChild);
+		}
+		else
+		{
+			throw new InvalidArgumentException;
+		}
 	}
 }

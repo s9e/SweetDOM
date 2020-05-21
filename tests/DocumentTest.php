@@ -5,6 +5,9 @@ namespace s9e\SweetDOM\Tests;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
 
+/**
+* @covers s9e\SweetDOM\Document
+*/
 class DocumentTest extends TestCase
 {
 	public function testEvaluate()
@@ -56,6 +59,40 @@ class DocumentTest extends TestCase
 		);
 	}
 
+	public function testFirstOf()
+	{
+		$dom = new Document;
+		$dom->loadXML('<root><x id="123"/><x id="456"/><z/></root>');
+
+		$node = $dom->firstOf('.//x');
+
+		$this->assertXmlStringEqualsXmlString(
+			'<x id="123"/>',
+			$dom->saveXML($node)
+		);
+	}
+
+	public function testFirstOfContext()
+	{
+		$dom = new Document;
+		$dom->loadXML('<root><x id="123"/><x id="456"/><z><x id="789"/></z></root>');
+
+		$node = $dom->firstOf('.//x', $dom->documentElement->lastChild);
+
+		$this->assertXmlStringEqualsXmlString(
+			'<x id="789"/>',
+			$dom->saveXML($node)
+		);
+	}
+
+	public function testFirstOfNone()
+	{
+		$dom = new Document;
+		$dom->loadXML('<root><x id="123"/></root>');
+
+		$this->assertNull($dom->firstOf('.//z'));
+	}
+
 	/**
 	* @dataProvider getCreateTestCases
 	*/
@@ -83,8 +120,27 @@ class DocumentTest extends TestCase
 				['foo | bar']
 			],
 			[
+				'<xsl:attribute name="foo"/>',
+				'createXslAttribute',
+				['foo']
+			],
+			[
+				'<xsl:attribute name="foo" namespace="urn:foo"/>',
+				'createXslAttribute',
+				['foo', 'urn:foo']
+			],
+			[
 				'<xsl:choose/>',
 				'createXslChoose'
+			],
+			[
+				'<xsl:comment/>',
+				'createXslComment'
+			],
+			[
+				'<xsl:comment>&lt;AT&amp;T&gt;</xsl:comment>',
+				'createXslComment',
+				['<AT&T>']
 			],
 			[
 				'<xsl:copy-of select="@foo"/>',
@@ -101,23 +157,13 @@ class DocumentTest extends TestCase
 				'createXslOtherwise'
 			],
 			[
-				'<xsl:param name="foo"/>',
-				'createXslParam',
-				['foo']
-			],
-			[
-				'<xsl:param name="foo" select="@bar"/>',
-				'createXslParam',
-				['foo', '@bar']
-			],
-			[
 				'<xsl:text/>',
 				'createXslText'
 			],
 			[
-				'<xsl:text>foo</xsl:text>',
+				'<xsl:text>&lt;AT&amp;T&gt;</xsl:text>',
 				'createXslText',
-				['foo']
+				['<AT&T>']
 			],
 			[
 				'<xsl:value-of select="@foo"/>',

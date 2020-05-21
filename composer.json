@@ -6,8 +6,8 @@
 	"keywords": ["dom","xsl","xslt"],
 	"license": "MIT",
 	"require": {
-		"php":        ">=7.1",
-		"ext-dom":    "*"
+		"php":     ">=7.1",
+		"ext-dom": "*"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "*"
@@ -23,6 +23,6 @@
 		}
 	},
 	"extra": {
-		"version": "0.0.1-dev"
+		"version": "0.1.0"
 	}
 }

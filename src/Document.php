@@ -17,9 +17,8 @@ class Document extends DOMDocument
 	/**
 	* @link https://www.php.net/manual/domdocument.construct.php
 	*
-	* @param  string $version  Version number of the document
-	* @param  string $encoding Encoding of the document
-	* @return void
+	* @param string $version  Version number of the document
+	* @param string $encoding Encoding of the document
 	*/
 	public function __construct(string $version = '1.0', string $encoding = 'utf-8')
 	{
@@ -46,6 +45,25 @@ class Document extends DOMDocument
 	}
 
 	/**
+	* Create and return an xsl:attribute element
+	*
+	* @param  string  $name      Attribute's name
+	* @param  string  $namespace Attribute's namespace URI
+	* @return Element
+	*/
+	public function createXslAttribute(string $name, string $namespace = null): Element
+	{
+		$element = $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:attribute');
+		$element->setAttribute('name', $name);
+		if (isset($namespace))
+		{
+			$element->setAttribute('namespace', $namespace);
+		}
+
+		return $element;
+	}
+
+	/**
 	* Create and return an xsl:choose element
 	*
 	* @return Element
@@ -53,6 +71,17 @@ class Document extends DOMDocument
 	public function createXslChoose(): Element
 	{
 		return $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:choose');
+	}
+
+	/**
+	* Create and return an xsl:comment element
+	*
+	* @param  string  $text Text content for the comment
+	* @return Element
+	*/
+	public function createXslComment(string $text = ''): Element
+	{
+		return $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:comment', htmlspecialchars($text, ENT_XML1));
 	}
 
 	/**
@@ -94,25 +123,6 @@ class Document extends DOMDocument
 	}
 
 	/**
-	* Create and return an xsl:param element
-	*
-	* @param  string  $name   Name of the parameter
-	* @param  string  $select XPath expression
-	* @return Element
-	*/
-	public function createXslParam(string $name, string $select = null): Element
-	{
-		$element = $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:param');
-		$element->setAttribute('name', $name);
-		if (isset($select))
-		{
-			$element->setAttribute('select', $select);
-		}
-
-		return $element;
-	}
-
-	/**
 	* Create and return an xsl:text element
 	*
 	* @param  string  $text Text content for the element
@@ -120,7 +130,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslText(string $text = ''): Element
 	{
-		return $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:text', $text);
+		return $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:text', htmlspecialchars($text, ENT_XML1));
 	}
 
 	/**
