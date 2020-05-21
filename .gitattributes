@@ -1,5 +1,4 @@
-/.gitattributes export-ignore
-/.travis.yml    export-ignore
+/.*             export-ignore
 /README.md      export-ignore
 /composer.lock  export-ignore
 /phpunit.xml    export-ignore
