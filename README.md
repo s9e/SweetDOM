@@ -18,17 +18,17 @@ composer require s9e/sweetdom
 
 The `s9e\SweetDOM\Document` class extends `DOMDocument` to provide a set of methods to create XSL elements:
 ```php
-createXslApplyTemplates(string $select = null)
-createXslAttribute(string $name, string $namespace = null)
-createXslChoose()
-createXslComment(string $text = '')
-createXslCopyOf(string $select)
-createXslIf(string $test)
-createXslOtherwise()
-createXslText(string $text = '')
-createXslValueOf(string $select)
-createXslVariable(string $name, string $select = null)
-createXslWhen(string $test)
+Element createXslApplyTemplates(string $select = null)
+Element createXslAttribute(string $name, string $namespace = null)
+Element createXslChoose()
+Element createXslComment(string $text = '')
+Element createXslCopyOf(string $select)
+Element createXslIf(string $test)
+Element createXslOtherwise()
+Element createXslText(string $text = '')
+Element createXslValueOf(string $select)
+Element createXslVariable(string $name, string $select = null)
+Element createXslWhen(string $test)
 ```
 
 It also provides quick access to DOMXPath's `evaluate` and `query` method. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.
