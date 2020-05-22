@@ -163,22 +163,18 @@ class Element extends DOMElement
 		$prefixes = array_flip($m[0]);
 
 		return preg_replace_callback(
-			'(<([-\\w]++):[^>]++>)',
+			'(<([-\\w]++):[^>]*?\\K\\s*/?>)',
 			function ($m) use ($prefixes)
 			{
-				$xml    = $m[0];
+				$return = $m[0];
 				$prefix = $m[1];
-				if (isset($prefixes[$prefix]))
+				if (!isset($prefixes[$prefix]))
 				{
-					return $xml;
+					$nsURI  = $this->lookupNamespaceURI($prefix);
+					$return = ' xmlns:' . $prefix . '="' . htmlspecialchars($nsURI, ENT_XML1) . '"' . $return;
 				}
 
-				$nsURI         = $this->lookupNamespaceURI($prefix);
-				$nsDeclaration = ' xmlns:' . $prefix . '="' . htmlspecialchars($nsURI, ENT_XML1) . '"';
-
-				$pos = ($xml[-2] === '/') ? -2 : -1;
-
-				return substr($xml, 0, $pos) . $nsDeclaration . substr($xml, $pos);
+				return $return;
 			},
 			$xml
 		);
