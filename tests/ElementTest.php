@@ -34,7 +34,7 @@ class ElementTest extends TestCase
 	public function testMagicMethods(string $expected, string $methodName, array $args = [])
 	{
 		$dom = new Document;
-		$dom->loadXML('<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></div>');
+		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
 
 		call_user_func_array([$dom->firstOf('//span'), $methodName], $args);
 
@@ -45,42 +45,42 @@ class ElementTest extends TestCase
 	{
 		return [
 			[
-				'<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<xsl:text>prependXslTextSibling</xsl:text>
 					<span>
 						<br/>
 					</span>
-				</div>',
+				</p>',
 				'prependXslTextSibling',
 				['prependXslTextSibling']
 			],
 			[
-				'<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span>
 						<xsl:text>prependXslText</xsl:text>
 						<br/>
 					</span>
-				</div>',
+				</p>',
 				'prependXslText',
 				['prependXslText']
 			],
 			[
-				'<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span>
 						<br/>
 						<xsl:text>appendXslText</xsl:text>
 					</span>
-				</div>',
+				</p>',
 				'appendXslText',
 				['appendXslText']
 			],
 			[
-				'<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span>
 						<br/>
 					</span>
 					<xsl:text>appendXslTextSibling</xsl:text>
-				</div>',
+				</p>',
 				'appendXslTextSibling',
 				['appendXslTextSibling']
 			],
