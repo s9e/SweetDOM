@@ -38,25 +38,39 @@ mixed       evaluate(string $expr, DOMNode $node = null, bool $registerNodeNS = 
 DOMNodeList query(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
 ```
 
-The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a matching set of methods to easily append or prepend an XSL element. For example:
+The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a matching set of methods to simultaneously create an XSL element and insert it relative to the element. For each method from the `s9e\SweetDOM\Document` class that creates an XSL element, exist 4 corresponding methods.
+
+For instance, the `createXslText` method from `s9e\SweetDOM\Document` is declined into the `appendXslText`, `appendXslTextSibling`, `prependXslText`, `prependXslTextSibling` methods in `s9e\SweetDOM\Element`. The following example illustrates where each `xsl:text` element is inserted relative to the `span` element from which they are created.
 
 ```php
 $xsl = '<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-    <p>Hello <b></b>!</p>
+    <p><span><br/></span></p>
 </xsl:template>';
 
 $dom = new s9e\SweetDOM\Document;
+$dom->formatOutput = true;
+$dom->preserveWhiteSpace = false;
 $dom->loadXML($xsl);
 
-$dom->firstOf('//b')->appendXslValueOf('@name');
-$dom->firstOf('//p')->prependXslComment(' here ');
-
-echo $dom->saveXML();
+$span    = $dom->firstOf('//span');
+$methods = ['appendXslText', 'appendXslTextSibling', 'prependXslText', 'prependXslTextSibling'];
+foreach ($methods as $methodName)
+{
+	$span->$methodName($methodName);
+}
+echo $dom->saveXML($dom->documentElement);
 ```
 ```xsl
-<?xml version="1.0"?>
 <xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-    <p><xsl:comment> here </xsl:comment>Hello <b><xsl:value-of select="@name"/></b>!</p>
+  <p>
+    <xsl:text>prependXslTextSibling</xsl:text>
+    <span>
+      <xsl:text>prependXslText</xsl:text>
+      <br/>
+      <xsl:text>appendXslText</xsl:text>
+    </span>
+    <xsl:text>appendXslTextSibling</xsl:text>
+  </p>
 </xsl:template>
 ```
 

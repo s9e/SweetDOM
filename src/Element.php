@@ -15,41 +15,68 @@ use InvalidArgumentException;
 
 /**
 * @method self appendXslApplyTemplates(string $select = null)
+* @method self appendXslApplyTemplatesSibling(string $select = null)
 * @method self appendXslAttribute(string $name, string $namespace = null)
+* @method self appendXslAttributeSibling(string $name, string $namespace = null)
 * @method self appendXslChoose()
+* @method self appendXslChooseSibling()
 * @method self appendXslComment(string $text = '')
+* @method self appendXslCommentSibling(string $text = '')
 * @method self appendXslCopyOf(string $select)
+* @method self appendXslCopyOfSibling(string $select)
 * @method self appendXslIf(string $test)
+* @method self appendXslIfSibling(string $test)
 * @method self appendXslOtherwise()
+* @method self appendXslOtherwiseSibling()
 * @method self appendXslText(string $text = '')
+* @method self appendXslTextSibling(string $text = '')
 * @method self appendXslValueOf(string $select)
+* @method self appendXslValueOfSibling(string $select)
 * @method self appendXslVariable(string $name, string $select = null)
+* @method self appendXslVariableSibling(string $name, string $select = null)
 * @method self appendXslWhen(string $test)
+* @method self appendXslWhenSibling(string $test)
 * @method self prependXslApplyTemplates(string $select = null)
+* @method self prependXslApplyTemplatesSibling(string $select = null)
 * @method self prependXslAttribute(string $name, string $namespace = null)
+* @method self prependXslAttributeSibling(string $name, string $namespace = null)
 * @method self prependXslChoose()
+* @method self prependXslChooseSibling()
 * @method self prependXslComment(string $text = '')
+* @method self prependXslCommentSibling(string $text = '')
 * @method self prependXslCopyOf(string $select)
+* @method self prependXslCopyOfSibling(string $select)
 * @method self prependXslIf(string $test)
+* @method self prependXslIfSibling(string $test)
 * @method self prependXslOtherwise()
+* @method self prependXslOtherwiseSibling()
 * @method self prependXslText(string $text = '')
+* @method self prependXslTextSibling(string $text = '')
 * @method self prependXslValueOf(string $select)
+* @method self prependXslValueOfSibling(string $select)
 * @method self prependXslVariable(string $name, string $select = null)
+* @method self prependXslVariableSibling(string $name, string $select = null)
 * @method self prependXslWhen(string $test)
+* @method self prependXslWhenSibling(string $test)
 */
 class Element extends DOMElement
 {
 	public function __call(string $name, array $arguments)
 	{
-		if (preg_match('(^(append|prepend)(Xsl\\w++)$)', $name, $m))
+		if (preg_match('(^(append|prepend)(Xsl\\w+?)(Sibling|)$)', $name, $m))
 		{
 			$callback = [$this->ownerDocument, 'create' . $m[2]];
 			if (is_callable($callback))
 			{
 				$element = call_user_func_array($callback, $arguments);
-				$where   = ['append' => 'beforeend', 'prepend' => 'afterbegin'];
+				$where   = [
+					'append'         => 'beforeend',
+					'appendSibling'  => 'afterend',
+					'prepend'        => 'afterbegin',
+					'prependSibling' => 'beforebegin'
+				];
 
-				return $this->insertAdjacentElement($where[$m[1]], $element);
+				return $this->insertAdjacentElement($where[$m[1] . $m[3]], $element);
 			}
 		}
 

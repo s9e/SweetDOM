@@ -28,36 +28,63 @@ class ElementTest extends TestCase
 		$dom->documentElement->appendXslUnknown();
 	}
 
-	public function testAppendXslElement()
+	/**
+	* @dataProvider getMagicMethodsTests
+	*/
+	public function testMagicMethods(string $expected, string $methodName, array $args = [])
 	{
 		$dom = new Document;
-		$dom->loadXML('<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><z/></x>');
+		$dom->loadXML('<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></div>');
 
-		$dom->documentElement->appendXslText('foo');
+		call_user_func_array([$dom->firstOf('//span'), $methodName], $args);
 
-		$this->assertXmlStringEqualsXmlString(
-			'<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-				<z/>
-				<xsl:text>foo</xsl:text>
-			</x>',
-			$dom->saveXML()
-		);
+		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
 	}
 
-	public function testPrependXslElement()
+	public function getMagicMethodsTests()
 	{
-		$dom = new Document;
-		$dom->loadXML('<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><z/></x>');
-
-		$dom->documentElement->prependXslComment('foo');
-
-		$this->assertXmlStringEqualsXmlString(
-			'<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-				<xsl:comment>foo</xsl:comment>
-				<z/>
-			</x>',
-			$dom->saveXML()
-		);
+		return [
+			[
+				'<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<xsl:text>prependXslTextSibling</xsl:text>
+					<span>
+						<br/>
+					</span>
+				</div>',
+				'prependXslTextSibling',
+				['prependXslTextSibling']
+			],
+			[
+				'<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<xsl:text>prependXslText</xsl:text>
+						<br/>
+					</span>
+				</div>',
+				'prependXslText',
+				['prependXslText']
+			],
+			[
+				'<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+						<xsl:text>appendXslText</xsl:text>
+					</span>
+				</div>',
+				'appendXslText',
+				['appendXslText']
+			],
+			[
+				'<div xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<xsl:text>appendXslTextSibling</xsl:text>
+				</div>',
+				'appendXslTextSibling',
+				['appendXslTextSibling']
+			],
+		];
 	}
 
 	public function testRemove()
