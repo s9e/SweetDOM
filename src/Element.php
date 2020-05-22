@@ -13,6 +13,30 @@ use DOMNode;
 use DOMNodeList;
 use InvalidArgumentException;
 
+/**
+* @method self appendXslApplyTemplates(string $select = null)
+* @method self appendXslAttribute(string $name, string $namespace = null)
+* @method self appendXslChoose()
+* @method self appendXslComment(string $text = '')
+* @method self appendXslCopyOf(string $select)
+* @method self appendXslIf(string $test)
+* @method self appendXslOtherwise()
+* @method self appendXslText(string $text = '')
+* @method self appendXslValueOf(string $select)
+* @method self appendXslVariable(string $name, string $select = null)
+* @method self appendXslWhen(string $test)
+* @method self prependXslApplyTemplates(string $select = null)
+* @method self prependXslAttribute(string $name, string $namespace = null)
+* @method self prependXslChoose()
+* @method self prependXslComment(string $text = '')
+* @method self prependXslCopyOf(string $select)
+* @method self prependXslIf(string $test)
+* @method self prependXslOtherwise()
+* @method self prependXslText(string $text = '')
+* @method self prependXslValueOf(string $select)
+* @method self prependXslVariable(string $name, string $select = null)
+* @method self prependXslWhen(string $test)
+*/
 class Element extends DOMElement
 {
 	public function __call(string $name, array $arguments)
@@ -22,10 +46,10 @@ class Element extends DOMElement
 			$callback = [$this->ownerDocument, 'create' . $m[2]];
 			if (is_callable($callback))
 			{
-				$element  = call_user_func_array($callback, $arguments);
-				$where = ($m[1] === 'append') ? 'beforeend' : 'afterbegin';
+				$element = call_user_func_array($callback, $arguments);
+				$where   = ['append' => 'beforeend', 'prepend' => 'afterbegin'];
 
-				return $this->insertAdjacentElement($where, $element);
+				return $this->insertAdjacentElement($where[$m[1]], $element);
 			}
 		}
 

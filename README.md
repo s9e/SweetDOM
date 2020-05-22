@@ -38,7 +38,7 @@ mixed       evaluate(string $expr, DOMNode $node = null, bool $registerNodeNS = 
 DOMNodeList query(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
 ```
 
-The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a matching set of methods to simply append or prepend an XSL element. For example:
+The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a matching set of methods to easily append or prepend an XSL element. For example:
 
 ```php
 $xsl = '<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
