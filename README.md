@@ -31,7 +31,7 @@ Element createXslVariable(string $name, string $select = null)
 Element createXslWhen(string $test)
 ```
 
-It also provides quick access to DOMXPath's `evaluate` and `query` method. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.
+It also provides quick access to DOMXPath's `evaluate` and `query` methods. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.
 ```php
 mixed       evaluate(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
 ?DOMNode    firstOf(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
