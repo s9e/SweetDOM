@@ -125,9 +125,9 @@ class DocumentTest extends TestCase
 				['foo']
 			],
 			[
-				'<xsl:attribute name="foo" namespace="urn:foo"/>',
+				'<xsl:attribute name="foo">&lt;bar&gt; &amp;amp;</xsl:attribute>',
 				'createXslAttribute',
-				['foo', 'urn:foo']
+				['foo', '<bar> &amp;']
 			],
 			[
 				'<xsl:choose/>',

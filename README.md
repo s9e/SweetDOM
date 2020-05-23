@@ -19,7 +19,7 @@ composer require s9e/sweetdom
 The `s9e\SweetDOM\Document` class extends `DOMDocument` to provide a set of methods to create XSL elements:
 ```php
 Element createXslApplyTemplates(string $select = null)
-Element createXslAttribute(string $name, string $namespace = null)
+Element createXslAttribute(string $name, string $text = '')
 Element createXslChoose()
 Element createXslComment(string $text = '')
 Element createXslCopyOf(string $select)

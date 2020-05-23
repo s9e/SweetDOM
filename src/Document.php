@@ -47,18 +47,18 @@ class Document extends DOMDocument
 	/**
 	* Create and return an xsl:attribute element
 	*
-	* @param  string  $name      Attribute's name
-	* @param  string  $namespace Attribute's namespace URI
+	* @param  string  $name Attribute's name
+	* @param  string  $text Text content for the element
 	* @return Element
 	*/
-	public function createXslAttribute(string $name, string $namespace = null): Element
+	public function createXslAttribute(string $name, string $text = ''): Element
 	{
-		$element = $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:attribute');
+		$element = $this->createElementNS(
+			'http://www.w3.org/1999/XSL/Transform',
+			'xsl:attribute',
+			htmlspecialchars($text, ENT_XML1)
+		);
 		$element->setAttribute('name', $name);
-		if (isset($namespace))
-		{
-			$element->setAttribute('namespace', $namespace);
-		}
 
 		return $element;
 	}
@@ -81,7 +81,11 @@ class Document extends DOMDocument
 	*/
 	public function createXslComment(string $text = ''): Element
 	{
-		return $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:comment', htmlspecialchars($text, ENT_XML1));
+		return $this->createElementNS(
+			'http://www.w3.org/1999/XSL/Transform',
+			'xsl:comment',
+			htmlspecialchars($text, ENT_XML1)
+		);
 	}
 
 	/**
@@ -130,7 +134,11 @@ class Document extends DOMDocument
 	*/
 	public function createXslText(string $text = ''): Element
 	{
-		return $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:text', htmlspecialchars($text, ENT_XML1));
+		return $this->createElementNS(
+			'http://www.w3.org/1999/XSL/Transform',
+			'xsl:text',
+			htmlspecialchars($text, ENT_XML1)
+		);
 	}
 
 	/**
@@ -190,7 +198,7 @@ class Document extends DOMDocument
 	*/
 	public function evaluate(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
 	{
-		return call_user_func_array([$this->xpath(), 'evaluate'], func_get_args());
+		return $this->xpath('evaluate', func_get_args());
 	}
 
 	/**
@@ -203,7 +211,7 @@ class Document extends DOMDocument
 	*/
 	public function firstOf(string $expr, DOMNode $node = null, bool $registerNodeNS = true): ?DOMNode
 	{
-		return call_user_func_array([$this, 'query'], func_get_args())->item(0);
+		return $this->xpath('query', func_get_args())->item(0);
 	}
 
 	/**
@@ -216,14 +224,21 @@ class Document extends DOMDocument
 	*/
 	public function query(string $expr, DOMNode $node = null, bool $registerNodeNS = true): DOMNodeList
 	{
-		return call_user_func_array([$this->xpath(), 'query'], func_get_args());
+		return $this->xpath('query', func_get_args());
 	}
 
-	protected function xpath(): DOMXPath
+	/**
+	* Execute a DOMXPath method and return the result
+	*
+	* @param  string $methodName
+	* @param  array  $args
+	* @return mixed
+	*/
+	protected function xpath(string $methodName, array $args)
 	{
 		$xpath = new DOMXPath($this);
 		$xpath->registerNamespace('xsl', 'http://www.w3.org/1999/XSL/Transform');
 
-		return $xpath;
+		return call_user_func_array([$xpath, $methodName], $args);
 	}
 }
