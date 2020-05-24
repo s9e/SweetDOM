@@ -56,6 +56,16 @@ class ElementTest extends TestCase
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<xsl:text>prependxsltextsibling</xsl:text>
+					<span>
+						<br/>
+					</span>
+				</p>',
+				'prependxsltextsibling',
+				['prependxsltextsibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span>
 						<xsl:text>prependXslText</xsl:text>
 						<br/>
@@ -83,6 +93,16 @@ class ElementTest extends TestCase
 				</p>',
 				'appendXslTextSibling',
 				['appendXslTextSibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<xsl:text>appendxsltextsibling</xsl:text>
+				</p>',
+				'appendxsltextsibling',
+				['appendxsltextsibling']
 			],
 		];
 	}
@@ -134,7 +154,7 @@ class ElementTest extends TestCase
 	{
 		$dom = new Document;
 		$dom->loadXML('<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform"/>');
-		$dom->documentElement->insertAdjacentElement('afterbegin', $dom->createXslText('...'));
+		$dom->documentElement->insertAdjacentElement('aFteRbeGin', $dom->createXslText('...'));
 
 		$this->assertXmlStringEqualsXmlString(
 			'<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform">

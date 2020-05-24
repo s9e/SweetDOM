@@ -63,7 +63,7 @@ class Element extends DOMElement
 {
 	public function __call(string $name, array $arguments)
 	{
-		if (preg_match('(^(append|prepend)(Xsl\\w+?)(Sibling|)$)', $name, $m))
+		if (preg_match('(^(append|prepend)(xsl\\w+?)(sibling|)$)', strtolower($name), $m))
 		{
 			$callback = [$this->ownerDocument, 'create' . $m[2]];
 			if (is_callable($callback))
@@ -71,9 +71,9 @@ class Element extends DOMElement
 				$element = call_user_func_array($callback, $arguments);
 				$where   = [
 					'append'         => 'beforeend',
-					'appendSibling'  => 'afterend',
+					'appendsibling'  => 'afterend',
 					'prepend'        => 'afterbegin',
-					'prependSibling' => 'beforebegin'
+					'prependsibling' => 'beforebegin'
 				];
 
 				return $this->insertAdjacentElement($where[$m[1] . $m[3]], $element);
@@ -216,6 +216,7 @@ class Element extends DOMElement
 	*/
 	protected function insertAdjacentNode(string $where, DOMNode $node): void
 	{
+		$where = strtolower($where);
 		if ($where === 'beforebegin')
 		{
 			$this->parentNode->insertBefore($node, $this);
