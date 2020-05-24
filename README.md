@@ -16,7 +16,10 @@ composer require s9e/sweetdom
 
 ## API
 
-The `s9e\SweetDOM\Document` class extends `DOMDocument` to provide a set of methods to create XSL elements:
+#### s9e\SweetDOM\Document
+
+The `s9e\SweetDOM\Document` class extends `DOMDocument` to provide a set of methods to create XSL elements commonly used in templates:
+
 ```php
 Element createXslApplyTemplates(string $select = null)
 Element createXslAttribute(string $name, string $text = '')
@@ -38,9 +41,12 @@ mixed       evaluate(string $expr, DOMNode $node = null, bool $registerNodeNS = 
 DOMNodeList query(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
 ```
 
+
+#### s9e\SweetDOM\Element
+
 The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a matching set of methods to simultaneously create an XSL element and insert it relative to the element. For each method from the `s9e\SweetDOM\Document` class that creates an XSL element, exist 4 corresponding methods.
 
-For instance, the `createXslText` method from `s9e\SweetDOM\Document` is declined into the `appendXslText`, `appendXslTextSibling`, `prependXslText`, `prependXslTextSibling` methods in `s9e\SweetDOM\Element`. The following example illustrates where each `xsl:text` element is inserted relative to the `span` element from which they are created.
+For instance, the `createXslText` method from `s9e\SweetDOM\Document` is declined into the `appendXslText`, `appendXslTextSibling`, `prependXslText`, and `prependXslTextSibling` methods in `s9e\SweetDOM\Element`. The following example illustrates where each `xsl:text` element is inserted relative to the `span` element from which they are created.
 
 ```php
 $xsl = '<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -74,7 +80,8 @@ echo $dom->saveXML($dom->documentElement);
 </xsl:template>
 ```
 
-The XPath methods are also accessible at the element level and use the element as context node:
+XPath methods are also accessible at the element level and use the element itself as context node:
+
 ```php
 $dom = new s9e\SweetDOM\Document;
 $dom->loadXML('<x id="1"><x id="2"/></x>');
@@ -87,10 +94,10 @@ string(1) "1"
 string(1) "2"
 ```
 
-In addition, it provides a set of methods modeled after the modern DOM's [insertAdjacentElement](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentElement) API.
+In addition, the `s9e\SweetDOM\Element` class provides a set of methods modeled after DOM's [insertAdjacentElement](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentElement) API.
 
 ```php
-self insertAdjacentElement(string $where, self $element)
-void insertAdjacentText(string $where, string $text)
-void insertAdjacentXML(string $where, string $xml)
+Element insertAdjacentElement(string $where, self $element)
+void    insertAdjacentText(string $where, string $text)
+void    insertAdjacentXML(string $where, string $xml)
 ```
