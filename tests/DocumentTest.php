@@ -153,8 +153,18 @@ class DocumentTest extends TestCase
 				['@foo']
 			],
 			[
+				'<xsl:if test="@foo">&lt;X&gt;</xsl:if>',
+				'createXslIf',
+				['@foo', '<X>']
+			],
+			[
 				'<xsl:otherwise/>',
 				'createXslOtherwise'
+			],
+			[
+				'<xsl:otherwise>&lt;X&gt;</xsl:otherwise>',
+				'createXslOtherwise',
+				['<X>']
 			],
 			[
 				'<xsl:text/>',
@@ -184,6 +194,11 @@ class DocumentTest extends TestCase
 				'<xsl:when test="@foo"/>',
 				'createXslWhen',
 				['@foo']
+			],
+			[
+				'<xsl:when test="@foo">bar</xsl:when>',
+				'createXslWhen',
+				['@foo', 'bar']
 			],
 		];
 	}

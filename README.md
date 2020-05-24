@@ -23,12 +23,12 @@ Element createXslAttribute(string $name, string $text = '')
 Element createXslChoose()
 Element createXslComment(string $text = '')
 Element createXslCopyOf(string $select)
-Element createXslIf(string $test)
-Element createXslOtherwise()
+Element createXslIf(string $test, string $text = '')
+Element createXslOtherwise(string $text = '')
 Element createXslText(string $text = '')
 Element createXslValueOf(string $select)
 Element createXslVariable(string $name, string $select = null)
-Element createXslWhen(string $test)
+Element createXslWhen(string $test, string $text = '')
 ```
 
 It also provides quick access to DOMXPath's `evaluate` and `query` methods. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.

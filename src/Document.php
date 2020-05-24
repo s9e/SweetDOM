@@ -98,11 +98,12 @@ class Document extends DOMDocument
 	* Create and return an xsl:if element
 	*
 	* @param  string  $test XPath expression for the "test" attribute
+	* @param  string  $text Text content for the element
 	* @return Element
 	*/
-	public function createXslIf(string $test): Element
+	public function createXslIf(string $test, string $text = ''): Element
 	{
-		$element = $this->createElementXSL('if');
+		$element = $this->createElementXSL('if', $text);
 		$element->setAttribute('test', $test);
 
 		return $element;
@@ -111,11 +112,12 @@ class Document extends DOMDocument
 	/**
 	* Create and return an xsl:otherwise element
 	*
+	* @param  string  $text Text content for the element
 	* @return Element
 	*/
-	public function createXslOtherwise(): Element
+	public function createXslOtherwise(string $text = ''): Element
 	{
-		return $this->createElementXSL('otherwise');
+		return $this->createElementXSL('otherwise', $text);
 	}
 
 	/**
@@ -166,11 +168,12 @@ class Document extends DOMDocument
 	* Create and return an xsl:when element
 	*
 	* @param  string  $test XPath expression for the "test" attribute
+	* @param  string  $text Text content for the element
 	* @return Element
 	*/
-	public function createXslWhen(string $test): Element
+	public function createXslWhen(string $test, string $text = ''): Element
 	{
-		$element = $this->createElementXSL('when');
+		$element = $this->createElementXSL('when', $text);
 		$element->setAttribute('test', $test);
 
 		return $element;
