@@ -106,17 +106,6 @@ class Element extends DOMElement
 	}
 
 	/**
-	* Evaluate and return the result of a given XPath query using this element as context node
-	*
-	* @param  string      $expr XPath expression
-	* @return DOMNodeList
-	*/
-	public function query(string $expr): DOMNodeList
-	{
-		return $this->ownerDocument->query($expr, $this);
-	}
-
-	/**
 	* Insert given element relative to this element's position
 	*
 	* @param  string $where   One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
@@ -155,6 +144,17 @@ class Element extends DOMElement
 		$fragment->appendXML($this->addMissingNamespaceDeclarations($xml));
 
 		$this->insertAdjacentNode($where, $fragment);
+	}
+
+	/**
+	* Evaluate and return the result of a given XPath query using this element as context node
+	*
+	* @param  string      $expr XPath expression
+	* @return DOMNodeList
+	*/
+	public function query(string $expr): DOMNodeList
+	{
+		return $this->ownerDocument->query($expr, $this);
 	}
 
 	/**

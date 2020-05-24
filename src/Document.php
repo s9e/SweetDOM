@@ -35,7 +35,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslApplyTemplates(string $select = null): Element
 	{
-		$element = $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:apply-templates');
+		$element = $this->createElementXSL('apply-templates');
 		if (isset($select))
 		{
 			$element->setAttribute('select', $select);
@@ -53,11 +53,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslAttribute(string $name, string $text = ''): Element
 	{
-		$element = $this->createElementNS(
-			'http://www.w3.org/1999/XSL/Transform',
-			'xsl:attribute',
-			htmlspecialchars($text, ENT_XML1)
-		);
+		$element = $this->createElementXSL('attribute', $text);
 		$element->setAttribute('name', $name);
 
 		return $element;
@@ -70,7 +66,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslChoose(): Element
 	{
-		return $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:choose');
+		return $this->createElementXSL('choose');
 	}
 
 	/**
@@ -81,11 +77,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslComment(string $text = ''): Element
 	{
-		return $this->createElementNS(
-			'http://www.w3.org/1999/XSL/Transform',
-			'xsl:comment',
-			htmlspecialchars($text, ENT_XML1)
-		);
+		return $this->createElementXSL('comment', $text);
 	}
 
 	/**
@@ -96,7 +88,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslCopyOf(string $select): Element
 	{
-		$element = $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:copy-of');
+		$element = $this->createElementXSL('copy-of');
 		$element->setAttribute('select', $select);
 
 		return $element;
@@ -110,7 +102,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslIf(string $test): Element
 	{
-		$element = $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:if');
+		$element = $this->createElementXSL('if');
 		$element->setAttribute('test', $test);
 
 		return $element;
@@ -123,7 +115,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslOtherwise(): Element
 	{
-		return $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:otherwise');
+		return $this->createElementXSL('otherwise');
 	}
 
 	/**
@@ -134,11 +126,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslText(string $text = ''): Element
 	{
-		return $this->createElementNS(
-			'http://www.w3.org/1999/XSL/Transform',
-			'xsl:text',
-			htmlspecialchars($text, ENT_XML1)
-		);
+		return $this->createElementXSL('text', $text);
 	}
 
 	/**
@@ -149,7 +137,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslValueOf(string $select): Element
 	{
-		$element = $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:value-of');
+		$element = $this->createElementXSL('value-of');
 		$element->setAttribute('select', $select);
 
 		return $element;
@@ -164,7 +152,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslVariable(string $name, string $select = null): Element
 	{
-		$element = $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:variable');
+		$element = $this->createElementXSL('variable');
 		$element->setAttribute('name', $name);
 		if (isset($select))
 		{
@@ -182,7 +170,7 @@ class Document extends DOMDocument
 	*/
 	public function createXslWhen(string $test): Element
 	{
-		$element = $this->createElementNS('http://www.w3.org/1999/XSL/Transform', 'xsl:when');
+		$element = $this->createElementXSL('when');
 		$element->setAttribute('test', $test);
 
 		return $element;
@@ -225,6 +213,22 @@ class Document extends DOMDocument
 	public function query(string $expr, DOMNode $node = null, bool $registerNodeNS = true): DOMNodeList
 	{
 		return $this->xpath('query', func_get_args());
+	}
+
+	/**
+	* Create and return an XSL element
+	*
+	* @param  string  $name Element's local name
+	* @param  string  $text Text content for the element
+	* @return Element
+	*/
+	protected function createElementXSL(string $localName, string $text = ''): Element
+	{
+		return $this->createElementNS(
+			'http://www.w3.org/1999/XSL/Transform',
+			'xsl:' . $localName,
+			htmlspecialchars($text, ENT_XML1)
+		);
 	}
 
 	/**
