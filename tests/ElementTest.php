@@ -120,19 +120,15 @@ class ElementTest extends TestCase
 		);
 	}
 
-	public function testReplace()
+	public function testReplaceWith()
 	{
 		$dom = new Document;
 		$dom->loadXML('<x><y><z/></y></x>');
 
-		$node = $dom->firstOf('//y')->replace($dom->createElement('X'));
+		$dom->firstOf('//y')->replaceWith($dom->createElement('X'), '?');
 
 		$this->assertXmlStringEqualsXmlString(
-			'<y><z/></y>',
-			$dom->saveXML($node)
-		);
-		$this->assertXmlStringEqualsXmlString(
-			'<x><X/></x>',
+			'<x><X/>?</x>',
 			$dom->saveXML()
 		);
 	}

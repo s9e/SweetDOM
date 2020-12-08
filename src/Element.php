@@ -170,12 +170,20 @@ class Element extends DOMElement
 	/**
 	* Replace this element with given element
 	*
-	* @param  self $element Replacement element
-	* @return self          This element
+	* @param  DOMNode|string $nodes
+	* @return void
 	*/
-	public function replace(self $element): self
+	public function replaceWith(...$nodes): void
 	{
-		return $this->parentNode->replaceChild($element, $this);
+		foreach ($nodes as $node)
+		{
+			if (!($node instanceof DOMNode))
+			{
+				$node = $this->ownerDocument->createTextNode((string) $node);
+			}
+			$this->parentNode->insertBefore($node, $this);
+		}
+		$this->parentNode->removeChild($this);
 	}
 
 	/**
