@@ -168,7 +168,7 @@ class Element extends DOMElement
 	}
 
 	/**
-	* Replace this element with given element
+	* Replace this element with given nodes/text
 	*
 	* @param  DOMNode|string $nodes
 	* @return void
