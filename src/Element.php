@@ -160,11 +160,11 @@ class Element extends DOMElement
 	/**
 	* Remove this element from the document
 	*
-	* @return self This element
+	* @return void
 	*/
-	public function remove(): self
+	public function remove(): void
 	{
-		return $this->parentNode->removeChild($this);
+		$this->parentNode->removeChild($this);
 	}
 
 	/**

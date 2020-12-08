@@ -112,12 +112,8 @@ class ElementTest extends TestCase
 		$dom = new Document;
 		$dom->loadXML('<x><y><z/></y></x>');
 
-		$node = $dom->firstOf('//y')->remove();
+		$dom->firstOf('//y')->remove();
 
-		$this->assertXmlStringEqualsXmlString(
-			'<y><z/></y>',
-			$dom->saveXML($node)
-		);
 		$this->assertXmlStringEqualsXmlString(
 			'<x/>',
 			$dom->saveXML()
