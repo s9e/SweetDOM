@@ -101,3 +101,10 @@ Element insertAdjacentElement(string $where, self $element)
 void    insertAdjacentText(string $where, string $text)
 void    insertAdjacentXML(string $where, string $xml)
 ```
+
+Starting with version 2.0, `s9e\SweetDOM\Element` provides a polyfill for the following methods introduced in PHP 8.0.
+
+```php
+void remove()
+void replaceWith(...$nodes)
+```
