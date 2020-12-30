@@ -104,9 +104,6 @@ class ElementTest extends TestCase
 				'appendxsltextsibling',
 				['appendxsltextsibling']
 			],
-
-
-
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<before>beforetext</before>
@@ -147,8 +144,6 @@ class ElementTest extends TestCase
 				'appendSibling',
 				['text', 'appendSibling']
 			],
-
-
 		];
 	}
 

@@ -14,6 +14,8 @@ use DOMNodeList;
 use InvalidArgumentException;
 
 /**
+* @method self appendElement(string $nodeName, $text = '')
+* @method self appendSibling(string $nodeName, $text = '')
 * @method self appendXslApplyTemplates(string $select = null)
 * @method self appendXslApplyTemplatesSibling(string $select = null)
 * @method self appendXslAttribute(string $name, string $text = '')
@@ -36,6 +38,8 @@ use InvalidArgumentException;
 * @method self appendXslVariableSibling(string $name, string $select = null)
 * @method self appendXslWhen(string $test, string $text = '')
 * @method self appendXslWhenSibling(string $test, string $text = '')
+* @method self prependElement(string $nodeName, $text = '')
+* @method self prependSibling(string $nodeName, $text = '')
 * @method self prependXslApplyTemplates(string $select = null)
 * @method self prependXslApplyTemplatesSibling(string $select = null)
 * @method self prependXslAttribute(string $name, string $text = '')
