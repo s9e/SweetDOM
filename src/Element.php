@@ -16,6 +16,8 @@ use InvalidArgumentException;
 /**
 * @method self appendElement(string $nodeName, $text = '')
 * @method self appendElementSibling(string $nodeName, $text = '')
+* @method void appendText(string $text)
+* @method void appendTextSibling(string $text)
 * @method self appendXslApplyTemplates(string $select = null)
 * @method self appendXslApplyTemplatesSibling(string $select = null)
 * @method self appendXslAttribute(string $name, string $text = '')
@@ -40,6 +42,8 @@ use InvalidArgumentException;
 * @method self appendXslWhenSibling(string $test, string $text = '')
 * @method self prependElement(string $nodeName, $text = '')
 * @method self prependElementSibling(string $nodeName, $text = '')
+* @method void prependText(string $text)
+* @method void prependTextSibling(string $text)
 * @method self prependXslApplyTemplates(string $select = null)
 * @method self prependXslApplyTemplatesSibling(string $select = null)
 * @method self prependXslAttribute(string $name, string $text = '')
