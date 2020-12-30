@@ -111,7 +111,7 @@ class ElementTest extends TestCase
 						<br/>
 					</span>
 				</p>',
-				'prependsibling',
+				'prependelementsibling',
 				['before', 'beforetext']
 			],
 			[
@@ -139,10 +139,10 @@ class ElementTest extends TestCase
 					<span>
 						<br/>
 					</span>
-					<text>appendSibling</text>
+					<text>appendElementSibling</text>
 				</p>',
-				'appendSibling',
-				['text', 'appendSibling']
+				'appendElementSibling',
+				['text', 'appendElementSibling']
 			],
 		];
 	}

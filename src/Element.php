@@ -15,7 +15,7 @@ use InvalidArgumentException;
 
 /**
 * @method self appendElement(string $nodeName, $text = '')
-* @method self appendSibling(string $nodeName, $text = '')
+* @method self appendElementSibling(string $nodeName, $text = '')
 * @method self appendXslApplyTemplates(string $select = null)
 * @method self appendXslApplyTemplatesSibling(string $select = null)
 * @method self appendXslAttribute(string $name, string $text = '')
@@ -39,7 +39,7 @@ use InvalidArgumentException;
 * @method self appendXslWhen(string $test, string $text = '')
 * @method self appendXslWhenSibling(string $test, string $text = '')
 * @method self prependElement(string $nodeName, $text = '')
-* @method self prependSibling(string $nodeName, $text = '')
+* @method self prependElementSibling(string $nodeName, $text = '')
 * @method self prependXslApplyTemplates(string $select = null)
 * @method self prependXslApplyTemplatesSibling(string $select = null)
 * @method self prependXslAttribute(string $name, string $text = '')
@@ -67,21 +67,35 @@ class Element extends DOMElement
 {
 	public function __call(string $name, array $arguments)
 	{
-		$name = strtolower($name);
+		$name      = strtolower($name);
+		$positions = [
+			'append'         => 'beforeend',
+			'appendsibling'  => 'afterend',
+			'prepend'        => 'afterbegin',
+			'prependsibling' => 'beforebegin'
+		];
+
 		if (preg_match('(^(append|prepend)(xsl\\w+?)(sibling|)$)', $name, $m))
 		{
 			$localName = $m[2];
-			$mode      = $m[1] . $m[3];
+			$where     = $positions[$m[1] . $m[3]];
 
-			return $this->insertXslElement($localName, $mode, $arguments);
+			return $this->insertXslElement($localName, $where, $arguments);
 		}
-		if (preg_match('(^(?:append|prepend)(?:element|sibling)$)', $name))
+		if (preg_match('(^(append|prepend)element(sibling|)$)', $name, $m))
 		{
 			$nodeName = $arguments[0];
 			$text     = $arguments[1] ?? '';
-			$mode     = $name;
+			$where    = $positions[$m[1] . $m[2]];
 
-			return $this->insertElement($nodeName, $mode, $text);
+			return $this->insertElement($nodeName, $where, $text);
+		}
+		if (preg_match('(^(append|prepend)text(sibling|)$)', $name, $m))
+		{
+			$text  = $arguments[0];
+			$where = $positions[$m[1] . $m[2]];
+
+			return $this->insertAdjacentText($where, $text);
 		}
 
 		throw new BadMethodCallException;
@@ -92,17 +106,11 @@ class Element extends DOMElement
 	*
 	* @return self
 	*/
-	protected function insertElement(string $nodeName, string $mode, string $text): self
+	protected function insertElement(string $nodeName, string $where, string $text): self
 	{
-		$element  = $this->ownerDocument->createElement($nodeName, $text);
-		$where    = [
-			'appendelement'  => 'beforeend',
-			'appendsibling'  => 'afterend',
-			'prependelement' => 'afterbegin',
-			'prependsibling' => 'beforebegin'
-		];
+		$element = $this->ownerDocument->createElement($nodeName, $text);
 
-		return $this->insertAdjacentElement($where[$mode], $element);
+		return $this->insertAdjacentElement($where, $element);
 	}
 
 	/**
@@ -110,7 +118,7 @@ class Element extends DOMElement
 	*
 	* @return self
 	*/
-	protected function insertXslElement(string $localName, string $mode, array $arguments): self
+	protected function insertXslElement(string $localName, string $where, array $arguments): self
 	{
 		$callback = [$this->ownerDocument, 'create' . $localName];
 		if (!is_callable($callback))
@@ -119,14 +127,8 @@ class Element extends DOMElement
 		}
 
 		$element = call_user_func_array($callback, $arguments);
-		$where   = [
-			'append'         => 'beforeend',
-			'appendsibling'  => 'afterend',
-			'prepend'        => 'afterbegin',
-			'prependsibling' => 'beforebegin'
-		];
 
-		return $this->insertAdjacentElement($where[$mode], $element);
+		return $this->insertAdjacentElement($where, $element);
 	}
 
 	/**
