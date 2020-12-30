@@ -99,7 +99,9 @@ class Element extends DOMElement
 			$text  = $arguments[0];
 			$where = $positions[$m[1] . $m[2]];
 
-			return $this->insertAdjacentText($where, $text);
+			$this->insertAdjacentText($where, $text);
+
+			return;
 		}
 
 		throw new BadMethodCallException;
@@ -112,7 +114,8 @@ class Element extends DOMElement
 	*/
 	protected function insertElement(string $nodeName, string $where, string $text): self
 	{
-		$pos = strpos($nodeName, ':');
+		$text = htmlspecialchars($text, ENT_NOQUOTES);
+		$pos  = strpos($nodeName, ':');
 		if ($pos === false)
 		{
 			$element = $this->ownerDocument->createElement($nodeName, $text);

@@ -155,6 +155,16 @@ class ElementTest extends TestCase
 				['text', 'appendElementSibling']
 			],
 			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+						<text>AT&amp;amp;T</text>
+					</span>
+				</p>',
+				'appendElement',
+				['text', 'AT&amp;T']
+			],
+			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">before<span><br/></span></p>',
 				'prependtextsibling',
 				['before']
