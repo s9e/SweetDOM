@@ -112,7 +112,17 @@ class Element extends DOMElement
 	*/
 	protected function insertElement(string $nodeName, string $where, string $text): self
 	{
-		$element = $this->ownerDocument->createElement($nodeName, $text);
+		$pos = strpos($nodeName, ':');
+		if ($pos === false)
+		{
+			$element = $this->ownerDocument->createElement($nodeName, $text);
+		}
+		else
+		{
+			$prefix       = substr($nodeName, 0, $pos);
+			$namespaceURI = $this->ownerDocument->lookupNamespaceURI($prefix);
+			$element      = $this->ownerDocument->createElementNS($namespaceURI, $nodeName, $text);
+		}
 
 		return $this->insertAdjacentElement($where, $element);
 	}

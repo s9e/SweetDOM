@@ -106,6 +106,16 @@ class ElementTest extends TestCase
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<xsl:text>appendxsltextsibling</xsl:text>
+				</p>',
+				'appendElementSibling',
+				['xsl:text', 'appendxsltextsibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<before>beforetext</before>
 					<span>
 						<br/>
@@ -315,6 +325,16 @@ class ElementTest extends TestCase
 				'<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><x/><xsl:if test="@bar">...</xsl:if></root>'
 			],
 		];
+	}
+
+	public function testAppendElementNS()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform"/>');
+
+		$element = $dom->documentElement->appendElement('xsl:x');
+
+		$this->assertEquals('http://www.w3.org/1999/XSL/Transform', $element->namespaceURI);
 	}
 
 	public function testEvaluate()
