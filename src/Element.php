@@ -128,7 +128,7 @@ class Element extends DOMElement
 	*/
 	public function insertAdjacentText(string $where, string $text): void
 	{
-		$this->insertAdjacentXML($where, htmlspecialchars($text, ENT_XML1));
+		$this->insertAdjacentNode($where, $this->ownerDocument->createTextNode($text));
 	}
 
 	/**
