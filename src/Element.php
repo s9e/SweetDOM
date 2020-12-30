@@ -108,8 +108,11 @@ class Element extends DOMElement
 	}
 
 	/**
-	* 
+	* Create and insert an element at given position
 	*
+	* @param  string $nodeName Element's nodeName
+	* @param  string $where    One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string $text     Text content
 	* @return self
 	*/
 	protected function insertElement(string $nodeName, string $where, string $text): self
