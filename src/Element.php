@@ -65,22 +65,37 @@ class Element extends DOMElement
 	{
 		if (preg_match('(^(append|prepend)(xsl\\w+?)(sibling|)$)', strtolower($name), $m))
 		{
-			$callback = [$this->ownerDocument, 'create' . $m[2]];
-			if (is_callable($callback))
-			{
-				$element = call_user_func_array($callback, $arguments);
-				$where   = [
-					'append'         => 'beforeend',
-					'appendsibling'  => 'afterend',
-					'prepend'        => 'afterbegin',
-					'prependsibling' => 'beforebegin'
-				];
+			$localName = $m[2];
+			$mode      = $m[1] . $m[3];
 
-				return $this->insertAdjacentElement($where[$m[1] . $m[3]], $element);
-			}
+			return $this->insertXslElement($localName, $mode, $arguments);
 		}
 
 		throw new BadMethodCallException;
+	}
+
+	/**
+	* 
+	*
+	* @return self
+	*/
+	protected function insertXslElement(string $localName, string $mode, array $arguments): self
+	{
+		$callback = [$this->ownerDocument, 'create' . $localName];
+		if (!is_callable($callback))
+		{
+			throw new BadMethodCallException;
+		}
+
+		$element = call_user_func_array($callback, $arguments);
+		$where   = [
+			'append'         => 'beforeend',
+			'appendsibling'  => 'afterend',
+			'prepend'        => 'afterbegin',
+			'prependsibling' => 'beforebegin'
+		];
+
+		return $this->insertAdjacentElement($where[$mode], $element);
 	}
 
 	/**
