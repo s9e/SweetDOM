@@ -181,6 +181,11 @@ class DocumentTest extends TestCase
 				['@foo']
 			],
 			[
+				'<xsl:value-of select="\'&amp;amp;\'"/>',
+				'createXslValueOf',
+				["'&amp;'"]
+			],
+			[
 				'<xsl:variable name="foo"/>',
 				'createXslVariable',
 				['foo']
