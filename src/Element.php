@@ -63,15 +63,42 @@ class Element extends DOMElement
 {
 	public function __call(string $name, array $arguments)
 	{
-		if (preg_match('(^(append|prepend)(xsl\\w+?)(sibling|)$)', strtolower($name), $m))
+		$name = strtolower($name);
+		if (preg_match('(^(append|prepend)(xsl\\w+?)(sibling|)$)', $name, $m))
 		{
 			$localName = $m[2];
 			$mode      = $m[1] . $m[3];
 
 			return $this->insertXslElement($localName, $mode, $arguments);
 		}
+		if (preg_match('(^(?:append|prepend)(?:element|sibling)$)', $name))
+		{
+			$nodeName = $arguments[0];
+			$text     = $arguments[1] ?? '';
+			$mode     = $name;
+
+			return $this->insertElement($nodeName, $mode, $text);
+		}
 
 		throw new BadMethodCallException;
+	}
+
+	/**
+	* 
+	*
+	* @return self
+	*/
+	protected function insertElement(string $nodeName, string $mode, string $text): self
+	{
+		$element  = $this->ownerDocument->createElement($nodeName, $text);
+		$where    = [
+			'appendelement'  => 'beforeend',
+			'appendsibling'  => 'afterend',
+			'prependelement' => 'afterbegin',
+			'prependsibling' => 'beforebegin'
+		];
+
+		return $this->insertAdjacentElement($where[$mode], $element);
 	}
 
 	/**
