@@ -134,8 +134,11 @@ class Element extends DOMElement
 	}
 
 	/**
-	* 
+	* Create and insert an XSL element at given position
 	*
+	* @param  string $localName Element's localName
+	* @param  string $where     One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  array  $arguments Arguments passed to the Document::create* function
 	* @return self
 	*/
 	protected function insertXslElement(string $localName, string $where, array $arguments): self
