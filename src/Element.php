@@ -11,6 +11,7 @@ use BadMethodCallException;
 use DOMElement;
 use DOMNode;
 use DOMNodeList;
+use DOMText;
 use InvalidArgumentException;
 
 /**
@@ -99,59 +100,10 @@ class Element extends DOMElement
 			$text  = $arguments[0];
 			$where = $positions[$m[1] . $m[2]];
 
-			$this->insertAdjacentText($where, $text);
-
-			return;
+			return $this->insertText($where, $text);
 		}
 
 		throw new BadMethodCallException;
-	}
-
-	/**
-	* Create and insert an element at given position
-	*
-	* @param  string $nodeName Element's nodeName
-	* @param  string $where    One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-	* @param  string $text     Text content
-	* @return self
-	*/
-	protected function insertElement(string $nodeName, string $where, string $text): self
-	{
-		$text = htmlspecialchars($text, ENT_NOQUOTES);
-		$pos  = strpos($nodeName, ':');
-		if ($pos === false)
-		{
-			$element = $this->ownerDocument->createElement($nodeName, $text);
-		}
-		else
-		{
-			$prefix       = substr($nodeName, 0, $pos);
-			$namespaceURI = $this->ownerDocument->lookupNamespaceURI($prefix);
-			$element      = $this->ownerDocument->createElementNS($namespaceURI, $nodeName, $text);
-		}
-
-		return $this->insertAdjacentElement($where, $element);
-	}
-
-	/**
-	* Create and insert an XSL element at given position
-	*
-	* @param  string $localName Element's localName
-	* @param  string $where     One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-	* @param  array  $arguments Arguments passed to the Document::create* function
-	* @return self
-	*/
-	protected function insertXslElement(string $localName, string $where, array $arguments): self
-	{
-		$callback = [$this->ownerDocument, 'create' . $localName];
-		if (!is_callable($callback))
-		{
-			throw new BadMethodCallException;
-		}
-
-		$element = call_user_func_array($callback, $arguments);
-
-		return $this->insertAdjacentElement($where, $element);
 	}
 
 	/**
@@ -199,7 +151,7 @@ class Element extends DOMElement
 	*/
 	public function insertAdjacentText(string $where, string $text): void
 	{
-		$this->insertAdjacentNode($where, $this->ownerDocument->createTextNode($text));
+		$this->insertText($where, $text);
 	}
 
 	/**
@@ -316,5 +268,67 @@ class Element extends DOMElement
 		{
 			throw new InvalidArgumentException;
 		}
+	}
+
+	/**
+	* Create and insert an element at given position
+	*
+	* @param  string $nodeName Element's nodeName
+	* @param  string $where    One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string $text     Text content
+	* @return self
+	*/
+	protected function insertElement(string $nodeName, string $where, string $text): self
+	{
+		$text = htmlspecialchars($text, ENT_NOQUOTES);
+		$pos  = strpos($nodeName, ':');
+		if ($pos === false)
+		{
+			$element = $this->ownerDocument->createElement($nodeName, $text);
+		}
+		else
+		{
+			$prefix       = substr($nodeName, 0, $pos);
+			$namespaceURI = $this->ownerDocument->lookupNamespaceURI($prefix);
+			$element      = $this->ownerDocument->createElementNS($namespaceURI, $nodeName, $text);
+		}
+
+		return $this->insertAdjacentElement($where, $element);
+	}
+
+	/**
+	* Insert given text relative to this element's position
+	*
+	* @param  string  $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string  $text
+	* @return DOMText
+	*/
+	protected function insertText(string $where, string $text): DOMText
+	{
+		$node = $this->ownerDocument->createTextNode($text);
+		$this->insertAdjacentNode($where, $node);
+
+		return $node;
+	}
+
+	/**
+	* Create and insert an XSL element at given position
+	*
+	* @param  string $localName Element's localName
+	* @param  string $where     One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  array  $arguments Arguments passed to the Document::create* function
+	* @return self
+	*/
+	protected function insertXslElement(string $localName, string $where, array $arguments): self
+	{
+		$callback = [$this->ownerDocument, 'create' . $localName];
+		if (!is_callable($callback))
+		{
+			throw new BadMethodCallException;
+		}
+
+		$element = call_user_func_array($callback, $arguments);
+
+		return $this->insertAdjacentElement($where, $element);
 	}
 }

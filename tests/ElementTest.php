@@ -347,6 +347,16 @@ class ElementTest extends TestCase
 		$this->assertEquals('http://www.w3.org/1999/XSL/Transform', $element->namespaceURI);
 	}
 
+	public function testAppendText()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+
+		$dom->documentElement->appendText('xx')->appendData('!');
+
+		$this->assertEquals('xx!', $dom->documentElement->textContent);
+	}
+
 	public function testEvaluate()
 	{
 		$dom = new Document;
