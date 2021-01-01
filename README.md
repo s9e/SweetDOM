@@ -53,8 +53,8 @@ $xsl = '<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <p><span><br/></span></p>
 </xsl:template>';
 
-$dom = new s9e\SweetDOM\Document;
-$dom->formatOutput = true;
+$dom                     = new s9e\SweetDOM\Document;
+$dom->formatOutput       = true;
 $dom->preserveWhiteSpace = false;
 $dom->loadXML($xsl);
 
