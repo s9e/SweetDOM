@@ -110,7 +110,7 @@ void replaceWith(...$nodes)
 ```
 
 Elements can be easily created and added relative to the context node via the following API:
-```
+```php
 self appendElement(string $nodeName, $text = '')
 self appendElementSibling(string $nodeName, $text = '')
 self prependElement(string $nodeName, $text = '')
@@ -143,7 +143,7 @@ echo $dom->saveXML($dom->documentElement);
 ```
 
 Text nodes can be created via a similar API:
-```
+```php
 DOMText appendText(string $text)
 DOMText appendTextSibling(string $text)
 DOMText prependText(string $text)
