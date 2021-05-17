@@ -85,7 +85,7 @@ class Element extends DOMElement
 			$localName = $m[2];
 			$where     = $positions[$m[1] . $m[3]];
 
-			return $this->insertXslElement($localName, $where, $arguments);
+			return $this->insertXslElement($where, $localName, $arguments);
 		}
 		if (preg_match('(^(append|prepend)element(sibling|)$)', $name, $m))
 		{
@@ -93,7 +93,7 @@ class Element extends DOMElement
 			$text     = $arguments[1] ?? '';
 			$where    = $positions[$m[1] . $m[2]];
 
-			return $this->insertElement($nodeName, $where, $text);
+			return $this->insertElement($where, $nodeName, $text);
 		}
 		if (preg_match('(^(append|prepend)text(sibling|)$)', $name, $m))
 		{
@@ -273,12 +273,12 @@ class Element extends DOMElement
 	/**
 	* Create and insert an element at given position
 	*
-	* @param  string $nodeName Element's nodeName
 	* @param  string $where    One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string $nodeName Element's nodeName
 	* @param  string $text     Text content
 	* @return self
 	*/
-	protected function insertElement(string $nodeName, string $where, string $text): self
+	protected function insertElement(string $where, string $nodeName, string $text): self
 	{
 		$text = htmlspecialchars($text, ENT_NOQUOTES);
 		$pos  = strpos($nodeName, ':');
@@ -314,12 +314,12 @@ class Element extends DOMElement
 	/**
 	* Create and insert an XSL element at given position
 	*
-	* @param  string $localName Element's localName
 	* @param  string $where     One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string $localName Element's localName
 	* @param  array  $arguments Arguments passed to the Document::create* function
 	* @return self
 	*/
-	protected function insertXslElement(string $localName, string $where, array $arguments): self
+	protected function insertXslElement(string $where, string $localName, array $arguments): self
 	{
 		$callback = [$this->ownerDocument, 'createXsl' . ucfirst($localName)];
 		if (!is_callable($callback))
