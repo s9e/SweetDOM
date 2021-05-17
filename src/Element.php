@@ -80,7 +80,7 @@ class Element extends DOMElement
 			'prependsibling' => 'beforebegin'
 		];
 
-		if (preg_match('(^(append|prepend)(xsl\\w+?)(sibling|)$)', $name, $m))
+		if (preg_match('(^(append|prepend)xsl(\\w+?)(sibling|)$)', $name, $m))
 		{
 			$localName = $m[2];
 			$where     = $positions[$m[1] . $m[3]];
@@ -321,7 +321,7 @@ class Element extends DOMElement
 	*/
 	protected function insertXslElement(string $localName, string $where, array $arguments): self
 	{
-		$callback = [$this->ownerDocument, 'create' . $localName];
+		$callback = [$this->ownerDocument, 'createXsl' . ucfirst($localName)];
 		if (!is_callable($callback))
 		{
 			throw new BadMethodCallException;
