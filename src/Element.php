@@ -9,6 +9,7 @@ namespace s9e\SweetDOM;
 
 use BadMethodCallException;
 use DOMElement;
+use DOMException;
 use DOMNode;
 use DOMNodeList;
 use DOMText;
@@ -187,6 +188,10 @@ class Element extends DOMElement
 	*/
 	public function remove(): void
 	{
+		if (!isset($this->parentNode))
+		{
+			throw new DOMException('Not Found Error', DOM_NOT_FOUND_ERR);
+		}
 		$this->parentNode->removeChild($this);
 	}
 
@@ -198,6 +203,10 @@ class Element extends DOMElement
 	*/
 	public function replaceWith(...$nodes): void
 	{
+		if (!isset($this->parentNode))
+		{
+			throw new DOMException('Not Found Error', DOM_NOT_FOUND_ERR, new DOMException('No Modification Allowed Error', DOM_NO_MODIFICATION_ALLOWED_ERR));
+		}
 		foreach ($nodes as $node)
 		{
 			if (!($node instanceof DOMNode))

@@ -2,6 +2,8 @@
 
 namespace s9e\SweetDOM\Tests;
 
+use DOMDocument;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
 
@@ -10,6 +12,19 @@ use s9e\SweetDOM\Document;
 */
 class ElementTest extends TestCase
 {
+	protected function assertExceptionsMatch(Exception $expected, Exception $actual)
+	{
+		$this->assertInstanceOf(get_class($expected), $actual);
+		$this->assertEquals($expected->getMessage(), $actual->getMessage());
+		$this->assertEquals($expected->getCode(), $actual->getCode());
+
+		if ($expected->getPrevious())
+		{
+			$this->assertNotNull($actual->getPrevious());
+			$this->assertExceptionsMatch($expected->getPrevious(), $actual->getPrevious());
+		}
+	}
+
 	public function testUnknownMethod()
 	{
 		$this->expectException('BadMethodCallException');
@@ -204,6 +219,34 @@ class ElementTest extends TestCase
 		);
 	}
 
+	/**
+	* @requires PHP >= 8.0
+	*/
+	public function testRemoveException()
+	{
+		$exceptions = [];
+		foreach ([new DOMDocument, new Document] as $dom)
+		{
+			$dom->loadXML('<x><y/></x>');
+
+			$y = $dom->documentElement->firstChild;
+			$y->remove();
+			try
+			{
+				$y->remove();
+			}
+			catch (Exception $e)
+			{
+				$exceptions[] = $e;
+			}
+		}
+
+		$expected = $exceptions[0];
+		$actual   = $exceptions[1];
+
+		$this->assertExceptionsMatch($expected, $actual);
+	}
+
 	public function testReplaceWith()
 	{
 		$dom = new Document;
@@ -215,6 +258,34 @@ class ElementTest extends TestCase
 			'<x><X/>?</x>',
 			$dom->saveXML()
 		);
+	}
+
+	/**
+	* @requires PHP >= 8.0
+	*/
+	public function testReplaceWithException()
+	{
+		$exceptions = [];
+		foreach ([new DOMDocument, new Document] as $dom)
+		{
+			$dom->loadXML('<x><y/></x>');
+
+			$y = $dom->documentElement->firstChild;
+			$y->remove();
+			try
+			{
+				$y->replaceWith('k');
+			}
+			catch (Exception $e)
+			{
+				$exceptions[] = $e;
+			}
+		}
+
+		$expected = $exceptions[0];
+		$actual   = $exceptions[1];
+
+		$this->assertExceptionsMatch($expected, $actual);
 	}
 
 	public function testInsertAdjacentElementError()
