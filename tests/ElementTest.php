@@ -104,6 +104,90 @@ class ElementTest extends TestCase
 				'appendxsltextsibling',
 				['appendxsltextsibling']
 			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<xsl:text>appendxsltextsibling</xsl:text>
+				</p>',
+				'appendElementSibling',
+				['xsl:text', 'appendxsltextsibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<before>beforetext</before>
+					<span>
+						<br/>
+					</span>
+				</p>',
+				'prependelementsibling',
+				['before', 'beforetext']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<text>prependElement</text>
+						<br/>
+					</span>
+				</p>',
+				'prependElement',
+				['text', 'prependElement']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+						<text>appendElement</text>
+					</span>
+				</p>',
+				'appendElement',
+				['text', 'appendElement']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<text>appendElementSibling</text>
+				</p>',
+				'appendElementSibling',
+				['text', 'appendElementSibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+						<text>AT&amp;amp;T</text>
+					</span>
+				</p>',
+				'appendElement',
+				['text', 'AT&amp;T']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">before<span><br/></span></p>',
+				'prependtextsibling',
+				['before']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>prependText<br/></span>
+				</p>',
+				'prependText',
+				['prependText']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span><br/>appendText</span>
+				</p>',
+				'appendText',
+				['appendText']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span>after</p>',
+				'appendTextSibling',
+				['after']
+			],
 		];
 	}
 
@@ -251,6 +335,26 @@ class ElementTest extends TestCase
 				'<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><x/><xsl:if test="@bar">...</xsl:if></root>'
 			],
 		];
+	}
+
+	public function testAppendElementNS()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform"/>');
+
+		$element = $dom->documentElement->appendElement('xsl:x');
+
+		$this->assertEquals('http://www.w3.org/1999/XSL/Transform', $element->namespaceURI);
+	}
+
+	public function testAppendText()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+
+		$dom->documentElement->appendText('xx')->appendData('!');
+
+		$this->assertEquals('xx!', $dom->documentElement->textContent);
 	}
 
 	public function testEvaluate()

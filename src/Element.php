@@ -2,7 +2,7 @@
 
 /**
 * @package   s9e\SweetDOM
-* @copyright Copyright (c) 2019-2020 The s9e authors
+* @copyright Copyright (c) 2019-2021 The s9e authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\SweetDOM;
@@ -11,9 +11,14 @@ use BadMethodCallException;
 use DOMElement;
 use DOMNode;
 use DOMNodeList;
+use DOMText;
 use InvalidArgumentException;
 
 /**
+* @method self appendElement(string $nodeName, $text = '')
+* @method self appendElementSibling(string $nodeName, $text = '')
+* @method DOMText appendText(string $text)
+* @method DOMText appendTextSibling(string $text)
 * @method self appendXslApplyTemplates(string $select = null)
 * @method self appendXslApplyTemplatesSibling(string $select = null)
 * @method self appendXslAttribute(string $name, string $text = '')
@@ -36,6 +41,10 @@ use InvalidArgumentException;
 * @method self appendXslVariableSibling(string $name, string $select = null)
 * @method self appendXslWhen(string $test, string $text = '')
 * @method self appendXslWhenSibling(string $test, string $text = '')
+* @method self prependElement(string $nodeName, $text = '')
+* @method self prependElementSibling(string $nodeName, $text = '')
+* @method DOMText prependText(string $text)
+* @method DOMText prependTextSibling(string $text)
 * @method self prependXslApplyTemplates(string $select = null)
 * @method self prependXslApplyTemplatesSibling(string $select = null)
 * @method self prependXslAttribute(string $name, string $text = '')
@@ -63,21 +72,35 @@ class Element extends DOMElement
 {
 	public function __call(string $name, array $arguments)
 	{
-		if (preg_match('(^(append|prepend)(xsl\\w+?)(sibling|)$)', strtolower($name), $m))
-		{
-			$callback = [$this->ownerDocument, 'create' . $m[2]];
-			if (is_callable($callback))
-			{
-				$element = call_user_func_array($callback, $arguments);
-				$where   = [
-					'append'         => 'beforeend',
-					'appendsibling'  => 'afterend',
-					'prepend'        => 'afterbegin',
-					'prependsibling' => 'beforebegin'
-				];
+		$name      = strtolower($name);
+		$positions = [
+			'append'         => 'beforeend',
+			'appendsibling'  => 'afterend',
+			'prepend'        => 'afterbegin',
+			'prependsibling' => 'beforebegin'
+		];
 
-				return $this->insertAdjacentElement($where[$m[1] . $m[3]], $element);
-			}
+		if (preg_match('(^(append|prepend)xsl(\\w+?)(sibling|)$)', $name, $m))
+		{
+			$localName = $m[2];
+			$where     = $positions[$m[1] . $m[3]];
+
+			return $this->insertXslElement($where, $localName, $arguments);
+		}
+		if (preg_match('(^(append|prepend)element(sibling|)$)', $name, $m))
+		{
+			$nodeName = $arguments[0];
+			$text     = $arguments[1] ?? '';
+			$where    = $positions[$m[1] . $m[2]];
+
+			return $this->insertElement($where, $nodeName, $text);
+		}
+		if (preg_match('(^(append|prepend)text(sibling|)$)', $name, $m))
+		{
+			$text  = $arguments[0];
+			$where = $positions[$m[1] . $m[2]];
+
+			return $this->insertText($where, $text);
 		}
 
 		throw new BadMethodCallException;
@@ -128,7 +151,7 @@ class Element extends DOMElement
 	*/
 	public function insertAdjacentText(string $where, string $text): void
 	{
-		$this->insertAdjacentNode($where, $this->ownerDocument->createTextNode($text));
+		$this->insertText($where, $text);
 	}
 
 	/**
@@ -245,5 +268,67 @@ class Element extends DOMElement
 		{
 			throw new InvalidArgumentException;
 		}
+	}
+
+	/**
+	* Create and insert an element at given position
+	*
+	* @param  string $where    One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string $nodeName Element's nodeName
+	* @param  string $text     Text content
+	* @return self
+	*/
+	protected function insertElement(string $where, string $nodeName, string $text): self
+	{
+		$text = htmlspecialchars($text, ENT_NOQUOTES);
+		$pos  = strpos($nodeName, ':');
+		if ($pos === false)
+		{
+			$element = $this->ownerDocument->createElement($nodeName, $text);
+		}
+		else
+		{
+			$prefix       = substr($nodeName, 0, $pos);
+			$namespaceURI = $this->ownerDocument->lookupNamespaceURI($prefix);
+			$element      = $this->ownerDocument->createElementNS($namespaceURI, $nodeName, $text);
+		}
+
+		return $this->insertAdjacentElement($where, $element);
+	}
+
+	/**
+	* Insert given text relative to this element's position
+	*
+	* @param  string  $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string  $text
+	* @return DOMText
+	*/
+	protected function insertText(string $where, string $text): DOMText
+	{
+		$node = $this->ownerDocument->createTextNode($text);
+		$this->insertAdjacentNode($where, $node);
+
+		return $node;
+	}
+
+	/**
+	* Create and insert an XSL element at given position
+	*
+	* @param  string $where     One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  string $localName Element's localName
+	* @param  array  $arguments Arguments passed to the Document::create* function
+	* @return self
+	*/
+	protected function insertXslElement(string $where, string $localName, array $arguments): self
+	{
+		$callback = [$this->ownerDocument, 'createXsl' . ucfirst($localName)];
+		if (!is_callable($callback))
+		{
+			throw new BadMethodCallException;
+		}
+
+		$element = call_user_func_array($callback, $arguments);
+
+		return $this->insertAdjacentElement($where, $element);
 	}
 }

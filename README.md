@@ -53,8 +53,8 @@ $xsl = '<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <p><span><br/></span></p>
 </xsl:template>';
 
-$dom = new s9e\SweetDOM\Document;
-$dom->formatOutput = true;
+$dom                     = new s9e\SweetDOM\Document;
+$dom->formatOutput       = true;
 $dom->preserveWhiteSpace = false;
 $dom->loadXML($xsl);
 
@@ -107,4 +107,60 @@ Starting with version 2.0, `s9e\SweetDOM\Element` provides a polyfill for the fo
 ```php
 void remove()
 void replaceWith(...$nodes)
+```
+
+Elements can be easily created and added relative to the context node via the following API:
+```php
+self appendElement(string $nodeName, $text = '')
+self appendElementSibling(string $nodeName, $text = '')
+self prependElement(string $nodeName, $text = '')
+self prependElementSibling(string $nodeName, $text = '')
+```
+```php
+$dom                     = new s9e\SweetDOM\Document;
+$dom->formatOutput       = true;
+$dom->preserveWhiteSpace = false;
+$dom->loadXML('<p><span><br/></span></p>');
+
+$span    = $dom->firstOf('//span');
+$methods = ['appendElement', 'appendElementSibling', 'prependElement', 'prependElementSibling'];
+foreach ($methods as $methodName)
+{
+	$span->$methodName('i', $methodName);
+}
+echo $dom->saveXML($dom->documentElement);
+```
+```xml
+<p>
+  <i>prependElementSibling</i>
+  <span>
+    <i>prependElement</i>
+    <br/>
+    <i>appendElement</i>
+  </span>
+  <i>appendElementSibling</i>
+</p>
+```
+
+Text nodes can be created via a similar API:
+```php
+DOMText appendText(string $text)
+DOMText appendTextSibling(string $text)
+DOMText prependText(string $text)
+DOMText prependTextSibling(string $text)
+```
+```php
+$dom = new s9e\SweetDOM\Document;
+$dom->loadXML('<p><span><br/></span></p>');
+
+$span    = $dom->firstOf('//span');
+$methods = ['appendText', 'appendTextSibling', 'prependText', 'prependTextSibling'];
+foreach ($methods as $methodName)
+{
+	$span->$methodName($methodName);
+}
+echo $dom->saveXML($dom->documentElement);
+```
+```html
+<p>prependTextSibling<span>prependText<br/>appendText</span>appendTextSibling</p>
 ```
