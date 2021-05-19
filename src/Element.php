@@ -253,7 +253,7 @@ class Element extends DOMElement
 		$where = strtolower($where);
 		if ($where === 'beforebegin')
 		{
-			$this->parentNode->insertBefore($node, $this);
+			$this->parentOrThrow()->insertBefore($node, $this);
 		}
 		elseif ($where === 'beforeend')
 		{
@@ -261,7 +261,7 @@ class Element extends DOMElement
 		}
 		elseif ($where === 'afterend')
 		{
-			$this->parentNode->insertBefore($node, $this->nextSibling);
+			$this->parentOrThrow()->insertBefore($node, $this->nextSibling);
 		}
 		elseif ($where === 'afterbegin')
 		{

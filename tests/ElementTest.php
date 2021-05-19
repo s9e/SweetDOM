@@ -297,6 +297,30 @@ class ElementTest extends TestCase
 		$dom->documentElement->insertAdjacentElement('idk', $dom->createXslIf('@foo'));
 	}
 
+	public function testInsertAdjacentElementAfterEndException()
+	{
+		$this->expectException('DOMException');
+
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$y = $dom->firstOf('//y');
+		$y->remove();
+
+		$y->insertAdjacentElement('afterend', $dom->createXslIf('@foo'));
+	}
+
+	public function testInsertAdjacentElementBeforeBeginException()
+	{
+		$this->expectException('DOMException');
+
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$y = $dom->firstOf('//y');
+		$y->remove();
+
+		$y->insertAdjacentElement('beforebegin', $dom->createXslIf('@foo'));
+	}
+
 	public function testInsertAdjacentElement()
 	{
 		$dom = new Document;
