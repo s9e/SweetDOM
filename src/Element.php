@@ -68,6 +68,7 @@ use InvalidArgumentException;
 * @method self prependXslVariableSibling(string $name, string $select = null)
 * @method self prependXslWhen(string $test, string $text = '')
 * @method self prependXslWhenSibling(string $test, string $text = '')
+* @property Document $ownerDocument
 */
 class Element extends DOMElement
 {
