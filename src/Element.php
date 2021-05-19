@@ -188,11 +188,7 @@ class Element extends DOMElement
 	*/
 	public function remove(): void
 	{
-		if (!isset($this->parentNode))
-		{
-			throw new DOMException('Not Found Error', DOM_NOT_FOUND_ERR);
-		}
-		$this->parentNode->removeChild($this);
+		$this->parentOrThrow()->removeChild($this);
 	}
 
 	/**
@@ -203,19 +199,17 @@ class Element extends DOMElement
 	*/
 	public function replaceWith(...$nodes): void
 	{
-		if (!isset($this->parentNode))
-		{
-			throw new DOMException('Not Found Error', DOM_NOT_FOUND_ERR, new DOMException('No Modification Allowed Error', DOM_NO_MODIFICATION_ALLOWED_ERR));
-		}
+		$parentNode = $this->parentOrThrow(new DOMException('No Modification Allowed Error', DOM_NO_MODIFICATION_ALLOWED_ERR));
+
 		foreach ($nodes as $node)
 		{
 			if (!($node instanceof DOMNode))
 			{
 				$node = $this->ownerDocument->createTextNode((string) $node);
 			}
-			$this->parentNode->insertBefore($node, $this);
+			$parentNode->insertBefore($node, $this);
 		}
-		$this->parentNode->removeChild($this);
+		$parentNode->removeChild($this);
 	}
 
 	/**
@@ -339,5 +333,21 @@ class Element extends DOMElement
 		$element = call_user_func_array($callback, $arguments);
 
 		return $this->insertAdjacentElement($where, $element);
+	}
+
+	/**
+	* Return this element's parent element if available, or throw an exception
+	*
+	* @param  DOMException $previous Previous exception
+	* @return DOMNode
+	*/
+	protected function parentOrThrow(DOMException $previous = null): DOMNode
+	{
+		if (isset($this->parentNode))
+		{
+			return $this->parentNode;
+		}
+
+		throw new DOMException('Not Found Error', DOM_NOT_FOUND_ERR, $previous);
 	}
 }
