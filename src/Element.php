@@ -13,7 +13,6 @@ use DOMException;
 use DOMNode;
 use DOMNodeList;
 use DOMText;
-use InvalidArgumentException;
 
 /**
 * @method self appendElement(string $nodeName, $text = '')
@@ -270,7 +269,7 @@ class Element extends DOMElement
 		}
 		else
 		{
-			throw new InvalidArgumentException;
+			throw new DOMException("'$where' is not one of 'beforebegin', 'afterbegin', 'beforeend', or 'afterend'", DOM_SYNTAX_ERR);
 		}
 	}
 

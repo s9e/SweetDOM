@@ -290,7 +290,7 @@ class ElementTest extends TestCase
 
 	public function testInsertAdjacentElementError()
 	{
-		$this->expectException('InvalidArgumentException');
+		$this->expectException('DOMException');
 
 		$dom = new Document;
 		$dom->loadXML('<x/>');
