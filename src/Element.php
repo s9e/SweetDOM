@@ -250,26 +250,32 @@ class Element extends DOMElement
 	*/
 	protected function insertAdjacentNode(string $where, DOMNode $node): void
 	{
-		$where = strtolower($where);
-		if ($where === 'beforebegin')
+		switch (strtolower($where))
 		{
-			$this->parentOrThrow()->insertBefore($node, $this);
-		}
-		elseif ($where === 'beforeend')
-		{
-			$this->appendChild($node);
-		}
-		elseif ($where === 'afterend')
-		{
-			$this->parentOrThrow()->insertBefore($node, $this->nextSibling);
-		}
-		elseif ($where === 'afterbegin')
-		{
-			$this->insertBefore($node, $this->firstChild);
-		}
-		else
-		{
-			throw new DOMException("'$where' is not one of 'beforebegin', 'afterbegin', 'beforeend', or 'afterend'", DOM_SYNTAX_ERR);
+			case 'afterbegin':
+				$this->insertBefore($node, $this->firstChild);
+				break;
+
+			case 'afterend':
+				if (isset($this->parentNode))
+				{
+					$this->parentNode->insertBefore($node, $this->nextSibling);
+				}
+				break;
+
+			case 'beforebegin':
+				if (isset($this->parentNode))
+				{
+					$this->parentNode->insertBefore($node, $this);
+				}
+				break;
+
+			case 'beforeend':
+				$this->appendChild($node);
+				break;
+
+			default:
+				throw new DOMException("'$where' is not one of 'beforebegin', 'afterbegin', 'beforeend', or 'afterend'", DOM_SYNTAX_ERR);
 		}
 	}
 
