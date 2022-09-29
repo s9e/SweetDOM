@@ -13,7 +13,7 @@ use DOMException;
 use DOMNode;
 use DOMNodeList;
 use DOMText;
-use const DOM_NO_MODIFICATION_ALLOWED_ERR, DOM_NOT_FOUND_ERR, DOM_SYNTAX_ERR, ENT_NOQUOTES, ENT_XML1;
+use const DOM_SYNTAX_ERR, ENT_NOQUOTES, ENT_XML1;
 use function array_flip, call_user_func_array, htmlspecialchars, is_callable, preg_match, preg_match_all, preg_replace_callback, strpos, strtolower, substr, ucfirst;
 
 /**
