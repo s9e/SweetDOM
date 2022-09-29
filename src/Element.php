@@ -184,37 +184,6 @@ class Element extends DOMElement
 	}
 
 	/**
-	* Remove this element from the document
-	*
-	* @return void
-	*/
-	public function remove(): void
-	{
-		$this->parentOrThrow()->removeChild($this);
-	}
-
-	/**
-	* Replace this element with given nodes/text
-	*
-	* @param  DOMNode|string $nodes
-	* @return void
-	*/
-	public function replaceWith(...$nodes): void
-	{
-		$parentNode = $this->parentOrThrow(new DOMException('No Modification Allowed Error', DOM_NO_MODIFICATION_ALLOWED_ERR));
-
-		foreach ($nodes as $node)
-		{
-			if (!($node instanceof DOMNode))
-			{
-				$node = $this->ownerDocument->createTextNode((string) $node);
-			}
-			$parentNode->insertBefore($node, $this);
-		}
-		$parentNode->removeChild($this);
-	}
-
-	/**
 	* Add namespace declarations that may be missing in given XML
 	*
 	* @param  string $xml Original XML
@@ -252,33 +221,14 @@ class Element extends DOMElement
 	*/
 	protected function insertAdjacentNode(string $where, DOMNode $node): void
 	{
-		switch (strtolower($where))
+		match (strtolower($where))
 		{
-			case 'afterbegin':
-				$this->insertBefore($node, $this->firstChild);
-				break;
-
-			case 'afterend':
-				if (isset($this->parentNode))
-				{
-					$this->parentNode->insertBefore($node, $this->nextSibling);
-				}
-				break;
-
-			case 'beforebegin':
-				if (isset($this->parentNode))
-				{
-					$this->parentNode->insertBefore($node, $this);
-				}
-				break;
-
-			case 'beforeend':
-				$this->appendChild($node);
-				break;
-
-			default:
-				throw new DOMException("'$where' is not one of 'beforebegin', 'afterbegin', 'beforeend', or 'afterend'", DOM_SYNTAX_ERR);
-		}
+			'beforebegin' => $this->parentNode?->insertBefore($node, $this),
+			'beforeend'   => $this->appendChild($node),
+			'afterend'    => $this->parentNode?->insertBefore($node, $this->nextSibling),
+			'afterbegin'  => $this->insertBefore($node, $this->firstChild),
+			default       => throw new DOMException("'$where' is not one of 'beforebegin', 'afterbegin', 'beforeend', or 'afterend'", DOM_SYNTAX_ERR)
+		};
 	}
 
 	/**
@@ -341,21 +291,5 @@ class Element extends DOMElement
 		$element = call_user_func_array($callback, $arguments);
 
 		return $this->insertAdjacentElement($where, $element);
-	}
-
-	/**
-	* Return this element's parent element if available, or throw an exception
-	*
-	* @param  DOMException $previous Previous exception
-	* @return DOMNode
-	*/
-	protected function parentOrThrow(DOMException $previous = null): DOMNode
-	{
-		if (isset($this->parentNode))
-		{
-			return $this->parentNode;
-		}
-
-		throw new DOMException('Not Found Error', DOM_NOT_FOUND_ERR, $previous);
 	}
 }
