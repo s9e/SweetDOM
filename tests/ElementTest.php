@@ -56,7 +56,7 @@ class ElementTest extends TestCase
 		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
 	}
 
-	public function getMagicMethodsTests()
+	public static function getMagicMethodsTests()
 	{
 		return [
 			[
@@ -362,7 +362,7 @@ class ElementTest extends TestCase
 		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML());
 	}
 
-	public function getInsertAdjacentXMLTests()
+	public static function getInsertAdjacentXMLTests()
 	{
 		return [
 			[

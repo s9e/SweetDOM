@@ -107,7 +107,7 @@ class DocumentTest extends TestCase
 		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($element));
 	}
 
-	public function getCreateTestCases()
+	public static function getCreateTestCases()
 	{
 		return [
 			[
