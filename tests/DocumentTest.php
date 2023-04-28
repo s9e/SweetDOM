@@ -104,7 +104,7 @@ class DocumentTest extends TestCase
 		$element = call_user_func_array([$dom, $methodName], $args);
 		$dom->documentElement->appendChild($element);
 
-		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($element));
+		$this->assertEquals($expected, $dom->saveXML($element));
 	}
 
 	public static function getCreateTestCases()
