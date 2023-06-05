@@ -9,7 +9,7 @@
          stopOnError="false"
          stopOnFailure="false"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd">
-	<coverage/>
+	<coverage pathCoverage="true"/>
 	<testsuites>
 		<testsuite name="SweetDOM">
 			<directory suffix="Test.php">tests</directory>
