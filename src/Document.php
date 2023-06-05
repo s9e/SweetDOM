@@ -247,6 +247,7 @@ class Document extends DOMDocument
 	{
 		$xpath = new DOMXPath($this);
 		$xpath->registerNamespace('xsl', 'http://www.w3.org/1999/XSL/Transform');
+		$xpath->registerNodeNamespaces = true;
 
 		return call_user_func_array([$xpath, $methodName], $args);
 	}

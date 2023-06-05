@@ -477,4 +477,18 @@ class ElementTest extends TestCase
 
 		$this->assertEquals('z', $dom->firstOf('/x')->query('.//x')->item(0)->getAttribute('id'));
 	}
+
+	public function testNSQuery()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x xmlns:x="urn:x"><y><x:x/></y></x>');
+
+		$nodes = $dom->firstOf('//y')->query('x:x');
+
+		$this->assertEquals(1, $nodes->length);
+		$this->assertEquals(
+			'<x:x/>',
+			$dom->saveXML($nodes->item(0))
+		);
+	}
 }

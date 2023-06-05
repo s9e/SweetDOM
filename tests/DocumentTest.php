@@ -59,6 +59,20 @@ class DocumentTest extends TestCase
 		);
 	}
 
+	public function testNSQuery()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x xmlns:x="urn:x"><x:x/></x>');
+
+		$nodes = $dom->query('//x:x');
+
+		$this->assertEquals(1, $nodes->length);
+		$this->assertEquals(
+			'<x:x/>',
+			$dom->saveXML($nodes->item(0))
+		);
+	}
+
 	public function testFirstOf()
 	{
 		$dom = new Document;
