@@ -11,8 +11,7 @@ use DOMDocument;
 use DOMNode;
 use DOMNodeList;
 use DOMXPath;
-use const ENT_XML1;
-use function call_user_func_array, func_get_args, htmlspecialchars;
+use function func_get_args;
 
 class Document extends DOMDocument
 {
