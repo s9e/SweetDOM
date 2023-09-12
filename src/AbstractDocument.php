@@ -13,10 +13,8 @@ use DOMNodeList;
 use DOMXPath;
 use function func_get_args;
 
-class Document extends DOMDocument
+abstract class AbstractDocument extends DOMDocument
 {
-	public NodeCreator $nodeCreator;
-
 	/**
 	* @link https://www.php.net/manual/domdocument.construct.php
 	*
@@ -26,8 +24,6 @@ class Document extends DOMDocument
 	public function __construct(string $version = '1.0', string $encoding = 'utf-8')
 	{
 		parent::__construct($version, $encoding);
-
-		$this->nodeCreator = new NodeCreator($this);
 
 		$this->registerNodeClass('DOMElement', Element::class);
 	}
