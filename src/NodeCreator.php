@@ -45,6 +45,22 @@ class NodeCreator
 	}
 
 	/**
+	* Create and return an XSL element
+	*
+	* @param  string  $name Element's local name
+	* @param  string  $text Text content for the element
+	* @return Element
+	*/
+	protected function createElementXSL(string $localName, string $text = ''): Element
+	{
+		return $this->ownerDocument->createElementNS(
+			'http://www.w3.org/1999/XSL/Transform',
+			'xsl:' . $localName,
+			htmlspecialchars($text, ENT_XML1)
+		);
+	}
+
+	/**
 	* Create and return an xsl:apply-templates element
 	*
 	* @param  string  $select XPath expression for the "select" attribute
