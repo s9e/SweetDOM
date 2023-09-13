@@ -39,6 +39,24 @@ class NodeCreatorTest extends TestCase
 		$dom->nodeCreator->createElement('foo:bar');
 	}
 
+	public function testCreateElementContent()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x xmlns:foo="urn:foo"/>');
+
+		$dom->documentElement->append(
+			$dom->nodeCreator->createElement('foo',     '<>&amp;"\''),
+			$dom->nodeCreator->createElement('foo:bar', '<>&amp;"\'')
+		);
+		$this->assertXmlStringEqualsXmlString(
+			'<x xmlns:foo="urn:foo">
+				    <foo>&lt;&gt;&amp;amp;"\'</foo>
+				<foo:bar>&lt;&gt;&amp;amp;"\'</foo:bar>
+			</x>',
+			$dom->saveXML()
+		);
+	}
+
 	#[DataProvider('getCreateTestXslCases')]
 	public function testCreateXsl(string $expected, string $methodName, array $args = [])
 	{
