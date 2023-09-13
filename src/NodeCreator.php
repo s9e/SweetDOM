@@ -35,7 +35,7 @@ class NodeCreator
 		}
 
 		$prefix = substr($nodeName, 0, $pos);
-		$nsURI  = $this->lookupNamespaceURI($prefix);
+		$nsURI  = $this->ownerDocument->lookupNamespaceURI($prefix);
 		if ($nsURI === null)
 		{
 			throw new DOMException('Undefined namespace prefix', DOM_NAMESPACE_ERR);

@@ -11,6 +11,34 @@ use s9e\SweetDOM\Document;
 */
 class NodeCreatorTest extends TestCase
 {
+	public function testCreateElement()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+
+		$element = $dom->nodeCreator->createElement('foo');
+		$this->assertEquals('<foo/>', $dom->saveXML($element));
+	}
+
+	public function testCreateElementPrefixed()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x xmlns:foo="urn:foo"/>');
+
+		$dom->documentElement->append($dom->nodeCreator->createElement('foo:bar'));
+		$this->assertXmlStringEqualsXmlString('<x xmlns:foo="urn:foo"><foo:bar/></x>', $dom->saveXML());
+	}
+
+	public function testCreateElementUnknownPrefix()
+	{
+		$this->expectException('DOMException');
+		$this->expectExceptionCode(\DOM_NAMESPACE_ERR);
+
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+		$dom->nodeCreator->createElement('foo:bar');
+	}
+
 	#[DataProvider('getCreateTestXslCases')]
 	public function testCreateXsl(string $expected, string $methodName, array $args = [])
 	{
