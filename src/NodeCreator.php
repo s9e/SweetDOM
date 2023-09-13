@@ -7,11 +7,9 @@
 */
 namespace s9e\SweetDOM;
 
-use DOMDocument;
-use DOMNode;
-use DOMNodeList;
-use DOMXPath;
-use function func_get_args;
+use DOMException;
+use const DOM_NAMESPACE_ERR, false;
+use function strpos, substr;
 
 class NodeCreator
 {
@@ -172,18 +170,29 @@ class NodeCreator
 	}
 
 	/**
-	* Create and return an XSL element
+	* Create and return an element
 	*
-	* @param  string  $name Element's local name
-	* @param  string  $text Text content for the element
+	* @param  string  $nodeName Element's node name
+	* @param  string  $text     Text content for the element
 	* @return Element
 	*/
-	protected function createElementXSL(string $localName, string $text = ''): Element
+	public function createElement(string $nodeName, string $text = ''): Element
 	{
-		return $this->createElementNS(
-			'http://www.w3.org/1999/XSL/Transform',
-			'xsl:' . $localName,
-			htmlspecialchars($text, ENT_XML1)
-		);
+		$pos = strpos($nodeName, ':');
+		if ($pos === false)
+		{
+			return $this->createElement($nodeName, $text);
+		}
+		else
+		{
+			$prefix = substr($nodeName, 0, $pos);
+			$nsURI  = $this->lookupNamespaceURI($prefix);
+			if ($nsURI === null)
+			{
+				throw new DOMException('Undefined namespace prefix', DOM_NAMESPACE_ERR);
+			}
+
+			return $this->ownerDocument->createElementNS($nsURI, $nodeName, $text);
+		}
 	}
 }
