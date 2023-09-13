@@ -4,11 +4,14 @@ namespace s9e\SweetDOM\Tests;
 
 use DOMDocument;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
 
 /**
 * @covers s9e\SweetDOM\Element
+* @covers s9e\SweetDOM\NodeTraits\MagicMethods
+* @covers s9e\SweetDOM\NodeTraits\XPathMethods
 */
 class ElementTest extends TestCase
 {
@@ -43,15 +46,13 @@ class ElementTest extends TestCase
 		$dom->documentElement->appendXslUnknown();
 	}
 
-	/**
-	* @dataProvider getMagicMethodsTests
-	*/
+	#[DataProvider('getMagicMethodsTests')]
 	public function testMagicMethods(string $expected, string $methodName, array $args = [])
 	{
 		$dom = new Document;
 		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
 
-		call_user_func_array([$dom->firstOf('//span'), $methodName], $args);
+		$dom->firstOf('//span')->$methodName(...$args);
 
 		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
 	}
@@ -61,23 +62,13 @@ class ElementTest extends TestCase
 		return [
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<xsl:text>prependXslTextSibling</xsl:text>
+					<xsl:text>beforeXslText</xsl:text>
 					<span>
 						<br/>
 					</span>
 				</p>',
-				'prependXslTextSibling',
-				['prependXslTextSibling']
-			],
-			[
-				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<xsl:text>prependxsltextsibling</xsl:text>
-					<span>
-						<br/>
-					</span>
-				</p>',
-				'prependxsltextsibling',
-				['prependxsltextsibling']
+				'beforeXslText',
+				['beforeXslText']
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -104,40 +95,20 @@ class ElementTest extends TestCase
 					<span>
 						<br/>
 					</span>
-					<xsl:text>appendXslTextSibling</xsl:text>
+					<xsl:text>afterXslText</xsl:text>
 				</p>',
-				'appendXslTextSibling',
-				['appendXslTextSibling']
+				'afterXslText',
+				['afterXslText']
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span>
 						<br/>
 					</span>
-					<xsl:text>appendxsltextsibling</xsl:text>
+					<xsl:text>afterElement</xsl:text>
 				</p>',
-				'appendxsltextsibling',
-				['appendxsltextsibling']
-			],
-			[
-				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<span>
-						<br/>
-					</span>
-					<xsl:text>appendxsltextsibling</xsl:text>
-				</p>',
-				'appendElementSibling',
-				['xsl:text', 'appendxsltextsibling']
-			],
-			[
-				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<before>beforetext</before>
-					<span>
-						<br/>
-					</span>
-				</p>',
-				'prependelementsibling',
-				['before', 'beforetext']
+				'afterElement',
+				['xsl:text', 'afterElement']
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -164,10 +135,10 @@ class ElementTest extends TestCase
 					<span>
 						<br/>
 					</span>
-					<text>appendElementSibling</text>
+					<text>afterElement</text>
 				</p>',
-				'appendElementSibling',
-				['text', 'appendElementSibling']
+				'afterElement',
+				['text', 'afterElement']
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -180,28 +151,11 @@ class ElementTest extends TestCase
 				['text', 'AT&amp;T']
 			],
 			[
-				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">before<span><br/></span></p>',
-				'prependtextsibling',
-				['before']
-			],
-			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<span>prependText<br/></span>
+					<p>replaceWithElement</p>
 				</p>',
-				'prependText',
-				['prependText']
-			],
-			[
-				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<span><br/>appendText</span>
-				</p>',
-				'appendText',
-				['appendText']
-			],
-			[
-				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span>after</p>',
-				'appendTextSibling',
-				['after']
+				'replaceWithElement',
+				['p', 'replaceWithElement']
 			],
 		];
 	}
@@ -219,87 +173,13 @@ class ElementTest extends TestCase
 		);
 	}
 
-	/**
-	* @requires PHP >= 8.0
-	*/
-	public function testRemoveException()
-	{
-		$exceptions = [];
-		foreach ([new DOMDocument, new Document] as $dom)
-		{
-			$dom->loadXML('<x><y/></x>');
-
-			$y = $dom->documentElement->firstChild;
-			$y->remove();
-			try
-			{
-				$y->remove();
-			}
-			catch (Exception $e)
-			{
-				$exceptions[] = $e;
-			}
-		}
-
-		$expected = $exceptions[0];
-		$actual   = $exceptions[1];
-
-		$this->assertExceptionsMatch($expected, $actual);
-	}
-
-	public function testReplaceWith()
-	{
-		$dom = new Document;
-		$dom->loadXML('<x><y><z/></y></x>');
-
-		$dom->firstOf('//y')->replaceWith($dom->createElement('X'), '?');
-
-		$this->assertXmlStringEqualsXmlString(
-			'<x><X/>?</x>',
-			$dom->saveXML()
-		);
-	}
-
-	/**
-	* @requires PHP >= 8.0
-	*/
-	public function testReplaceWithException()
-	{
-		$exceptions = [];
-		foreach ([new DOMDocument, new Document] as $dom)
-		{
-			$dom->loadXML('<x><y/></x>');
-
-			$y = $dom->documentElement->firstChild;
-			$y->remove();
-			try
-			{
-				$y->replaceWith('k');
-			}
-			catch (Exception $e)
-			{
-				$exceptions[] = $e;
-			}
-		}
-
-		if (empty($exceptions))
-		{
-			$this->markTestSkipped('Test did not produce a hierarchy error');
-		}
-
-		$expected = $exceptions[0];
-		$actual   = $exceptions[1];
-
-		$this->assertExceptionsMatch($expected, $actual);
-	}
-
 	public function testInsertAdjacentElementError()
 	{
 		$this->expectException('DOMException');
 
 		$dom = new Document;
 		$dom->loadXML('<x/>');
-		$dom->documentElement->insertAdjacentElement('idk', $dom->createXslIf('@foo'));
+		$dom->documentElement->insertAdjacentElement('idk', $dom->nodeCreator->createXslIf('@foo'));
 	}
 
 	/**
@@ -312,7 +192,7 @@ class ElementTest extends TestCase
 		$y = $dom->firstOf('//y');
 		$y->remove();
 
-		$y->insertAdjacentElement('afterend', $dom->createXslIf('@foo'));
+		$y->insertAdjacentElement('afterend', $dom->nodeCreator->createXslIf('@foo'));
 	}
 
 	/**
@@ -325,14 +205,14 @@ class ElementTest extends TestCase
 		$y = $dom->firstOf('//y');
 		$y->remove();
 
-		$y->insertAdjacentElement('beforebegin', $dom->createXslIf('@foo'));
+		$y->insertAdjacentElement('beforebegin', $dom->nodeCreator->createXslIf('@foo'));
 	}
 
 	public function testInsertAdjacentElement()
 	{
 		$dom = new Document;
 		$dom->loadXML('<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform"/>');
-		$dom->documentElement->insertAdjacentElement('aFteRbeGin', $dom->createXslText('...'));
+		$dom->documentElement->insertAdjacentElement('aFteRbeGin', $dom->nodeCreator->createXslText('...'));
 
 		$this->assertXmlStringEqualsXmlString(
 			'<x xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
