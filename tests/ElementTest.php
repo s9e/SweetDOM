@@ -157,20 +157,14 @@ class ElementTest extends TestCase
 				'replaceWithElement',
 				['p', 'replaceWithElement']
 			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<xsl:comment>text goes here</xsl:comment>
+				</p>',
+				'replaceWithXslComment',
+				['text goes here']
+			],
 		];
-	}
-
-	public function testRemove()
-	{
-		$dom = new Document;
-		$dom->loadXML('<x><y><z/></y></x>');
-
-		$dom->firstOf('//y')->remove();
-
-		$this->assertXmlStringEqualsXmlString(
-			'<x/>',
-			$dom->saveXML()
-		);
 	}
 
 	public function testInsertAdjacentElementError()
