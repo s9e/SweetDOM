@@ -7,6 +7,7 @@
 */
 namespace s9e\SweetDOM;
 
+use DOMElement;
 use s9e\SweetDOM\NodeTraits\MagicMethods;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
