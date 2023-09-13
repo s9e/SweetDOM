@@ -8,13 +8,40 @@
 namespace s9e\SweetDOM;
 
 use DOMException;
-use const DOM_NAMESPACE_ERR, false;
-use function strpos, substr;
+use const DOM_NAMESPACE_ERR, ENT_XML1, false;
+use function htmlspecialchars, strpos, substr;
 
 class NodeCreator
 {
 	public function __construct(protected Document $ownerDocument)
 	{
+	}
+
+	/**
+	* Create and return an element
+	*
+	* @param  string  $nodeName Element's node name (can be prefixed if the namespace already exists)
+	* @param  string  $text     Text content for the element
+	* @return Element
+	*/
+	public function createElement(string $nodeName, string $text = ''): Element
+	{
+		$nodeValue = htmlspecialchars($text, ENT_XML1);
+
+		$pos = strpos($nodeName, ':');
+		if ($pos === false)
+		{
+			return $this->ownerDocument->createElement($nodeName, $nodeValue);
+		}
+
+		$prefix = substr($nodeName, 0, $pos);
+		$nsURI  = $this->lookupNamespaceURI($prefix);
+		if ($nsURI === null)
+		{
+			throw new DOMException('Undefined namespace prefix', DOM_NAMESPACE_ERR);
+		}
+
+		return $this->ownerDocument->createElementNS($nsURI, $nodeName, $nodeValue);
 	}
 
 	/**
@@ -167,32 +194,5 @@ class NodeCreator
 		$element->setAttribute('test', $test);
 
 		return $element;
-	}
-
-	/**
-	* Create and return an element
-	*
-	* @param  string  $nodeName Element's node name
-	* @param  string  $text     Text content for the element
-	* @return Element
-	*/
-	public function createElement(string $nodeName, string $text = ''): Element
-	{
-		$pos = strpos($nodeName, ':');
-		if ($pos === false)
-		{
-			return $this->createElement($nodeName, $text);
-		}
-		else
-		{
-			$prefix = substr($nodeName, 0, $pos);
-			$nsURI  = $this->lookupNamespaceURI($prefix);
-			if ($nsURI === null)
-			{
-				throw new DOMException('Undefined namespace prefix', DOM_NAMESPACE_ERR);
-			}
-
-			return $this->ownerDocument->createElementNS($nsURI, $nodeName, $text);
-		}
 	}
 }
