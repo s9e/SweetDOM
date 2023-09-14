@@ -18,9 +18,9 @@ trait MagicMethods
 		if (!preg_match('(^(after|append|before|prepend|replaceWith)(\\w+)$)D', $name, $m))
 		{
 			// Use is_callable() to set $callableName
-			is_callable([$this, $methodName], true, $callableName);
+			is_callable([$this, $name], true, $callableName);
 
-			throw new BadMethodCallException('Call to undefined method ' . $callableName);
+			throw new BadMethodCallException('Call to undefined method ' . $callableName . '()');
 		}
 
 		$action         = $m[1];
@@ -29,7 +29,7 @@ trait MagicMethods
 		if (!is_callable($actionCallback, false, $callableName)
 		 || !is_callable($nodeCallback,   false, $callableName))
 		{
-			throw new BadMethodCallException('Call to undefined method ' . $callableName);
+			throw new BadMethodCallException('Call to undefined method ' . $callableName . '()');
 		}
 
 		$node = $nodeCallback(...$arguments);

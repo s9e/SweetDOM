@@ -30,6 +30,7 @@ class Document extends DOMDocument
 		$this->nodeCreator = new NodeCreator($this);
 
 		$this->registerNodeClass('DOMElement', Element::class);
+		$this->registerNodeClass('DOMText',    Text::class);
 	}
 
 	/**
