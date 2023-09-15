@@ -19,19 +19,15 @@ class NodeCreator
 
 	/**
 	* Create and return an element
-	*
-	* @param  string  $nodeName Element's node name (can be prefixed if the namespace already exists)
-	* @param  string  $text     Text content for the element
-	* @return Element
 	*/
-	public function createElement(string $nodeName, string $text = ''): Element
+	public function createElement(string $nodeName, string $textContent = ''): Element
 	{
-		$nodeValue = htmlspecialchars($text, ENT_XML1);
+		$value = htmlspecialchars($textContent, ENT_XML1);
 
 		$pos = strpos($nodeName, ':');
 		if ($pos === false)
 		{
-			return $this->ownerDocument->createElement($nodeName, $nodeValue);
+			return $this->ownerDocument->createElement($nodeName, $value);
 		}
 
 		$prefix = substr($nodeName, 0, $pos);
@@ -41,55 +37,44 @@ class NodeCreator
 			throw new DOMException('Undefined namespace prefix', DOM_NAMESPACE_ERR);
 		}
 
-		return $this->ownerDocument->createElementNS($nsURI, $nodeName, $nodeValue);
+		return $this->ownerDocument->createElementNS($nsURI, $nodeName, $value);
 	}
 
 	/**
 	* Create and return an XSL element
-	*
-	* @param  string  $name Element's local name
-	* @param  string  $text Text content for the element
-	* @return Element
 	*/
-	protected function createElementXSL(string $localName, string $text = ''): Element
+	protected function createElementXSL(string $localName, string $textContent = '', array $attributes = []): Element
 	{
-		return $this->ownerDocument->createElementNS(
+		$element = $this->ownerDocument->createElementNS(
 			'http://www.w3.org/1999/XSL/Transform',
 			'xsl:' . $localName,
-			htmlspecialchars($text, ENT_XML1)
+			htmlspecialchars($textContent, ENT_XML1)
 		);
-	}
-
-	/**
-	* Create and return an xsl:apply-templates element
-	*
-	* @param  string  $select XPath expression for the "select" attribute
-	* @return Element
-	*/
-	public function createXslApplyTemplates(string $select = null): Element
-	{
-		$element = $this->createElementXSL('apply-templates');
-		if (isset($select))
+		foreach ($attributes as $attrName => $attrValue)
 		{
-			$element->setAttribute('select', $select);
+			if (isset($attrValue))
+			{
+				$element->setAttribute($attrName, $attrValue);
+			}
 		}
 
 		return $element;
 	}
 
 	/**
-	* Create and return an xsl:attribute element
-	*
-	* @param  string  $name Attribute's name
-	* @param  string  $text Text content for the element
-	* @return Element
+	* Create and return an xsl:apply-templates element
 	*/
-	public function createXslAttribute(string $name, string $text = ''): Element
+	public function createXslApplyTemplates(string $select = null, string $mode = null): Element
 	{
-		$element = $this->createElementXSL('attribute', $text);
-		$element->setAttribute('name', $name);
+		return $this->createElementXSL('apply-templates', '', ['select' => $select, 'mode' => $mode]);
+	}
 
-		return $element;
+	/**
+	* Create and return an xsl:attribute element
+	*/
+	public function createXslAttribute(string $name, string $textContent = ''): Element
+	{
+		return $this->createElementXSL('attribute', $textContent, ['name' => $name]);
 	}
 
 	/**
@@ -105,12 +90,12 @@ class NodeCreator
 	/**
 	* Create and return an xsl:comment element
 	*
-	* @param  string  $text Text content for the comment
+	* @param  string  $textContent Text content for the comment
 	* @return Element
 	*/
-	public function createXslComment(string $text = ''): Element
+	public function createXslComment(string $textContent = ''): Element
 	{
-		return $this->createElementXSL('comment', $text);
+		return $this->createElementXSL('comment', $textContent);
 	}
 
 	/**
@@ -121,94 +106,62 @@ class NodeCreator
 	*/
 	public function createXslCopyOf(string $select): Element
 	{
-		$element = $this->createElementXSL('copy-of');
-		$element->setAttribute('select', $select);
-
-		return $element;
+		return $this->createElementXSL('copy-of', '', ['select' => $select]);
 	}
 
 	/**
 	* Create and return an xsl:if element
 	*
 	* @param  string  $test XPath expression for the "test" attribute
-	* @param  string  $text Text content for the element
+	* @param  string  $textContent Text content for the element
 	* @return Element
 	*/
-	public function createXslIf(string $test, string $text = ''): Element
+	public function createXslIf(string $test, string $textContent = ''): Element
 	{
-		$element = $this->createElementXSL('if', $text);
-		$element->setAttribute('test', $test);
-
-		return $element;
+		return $this->createElementXSL('if', $textContent, ['test' => $test]);
 	}
 
 	/**
 	* Create and return an xsl:otherwise element
 	*
-	* @param  string  $text Text content for the element
+	* @param  string  $textContent Text content for the element
 	* @return Element
 	*/
-	public function createXslOtherwise(string $text = ''): Element
+	public function createXslOtherwise(string $textContent = ''): Element
 	{
-		return $this->createElementXSL('otherwise', $text);
+		return $this->createElementXSL('otherwise', $textContent);
 	}
 
 	/**
 	* Create and return an xsl:text element
-	*
-	* @param  string  $text Text content for the element
-	* @return Element
 	*/
-	public function createXslText(string $text = ''): Element
+	public function createXslText(string $textContent = '', string $disableOutputEscaping = null): Element
 	{
-		return $this->createElementXSL('text', $text);
+		return $this->createElementXSL('text', $textContent, ['disable-output-escaping' => $disableOutputEscaping]);
 	}
 
 	/**
 	* Create and return an xsl:value-of element
-	*
-	* @param  string  $select XPath expression for the "select" attribute
-	* @return Element
 	*/
 	public function createXslValueOf(string $select): Element
 	{
-		$element = $this->createElementXSL('value-of');
-		$element->setAttribute('select', $select);
+		return $this->createElementXSL('value-of', '', ['select' => $select]);
 
-		return $element;
 	}
 
 	/**
 	* Create and return an xsl:variable element
-	*
-	* @param  string  $name   Name of the variable
-	* @param  string  $select XPath expression
-	* @return Element
 	*/
 	public function createXslVariable(string $name, string $select = null): Element
 	{
-		$element = $this->createElementXSL('variable');
-		$element->setAttribute('name', $name);
-		if (isset($select))
-		{
-			$element->setAttribute('select', $select);
-		}
-
-		return $element;
+		return $this->createElementXSL('variable', '', ['name' => $name, 'select' => $select]);
 	}
 
 	/**
 	* Create and return an xsl:when element
-	*
-	* @param  string  $test XPath expression for the "test" attribute
-	* @param  string  $text Text content for the element
-	* @return Element
 	*/
-	public function createXslWhen(string $test, string $text = ''): Element
+	public function createXslWhen(string $test, string $textContent = ''): Element
 	{
-		$element = $this->createElementXSL('when', $text);
-		$element->setAttribute('test', $test);
-
-		return $element;
+		return $this->createElementXSL('when', $textContent, ['test' => $test]);
 	}
 }
