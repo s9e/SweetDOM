@@ -45,6 +45,7 @@ class TextTest extends TestCase
 	{
 		return [
 			[
+				// DOMText does not support append()
 				'Call to unsupported method ' . Text::class . '::appendXslChoose() dependent of ' . Text::class . '::append()',
 				'appendXslChoose'
 			],
@@ -53,6 +54,7 @@ class TextTest extends TestCase
 				'prependElement', 'p'
 			],
 			[
+				// NodeCreator does have a createSomething() method
 				'Call to unsupported method ' . Text::class . '::afterSomething() dependent of ' . NodeCreator::class . '::createSomething()',
 				'afterSomething'
 			],
