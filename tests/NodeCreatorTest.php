@@ -82,6 +82,11 @@ class NodeCreatorTest extends TestCase
 				['foo | bar']
 			],
 			[
+				'<xsl:apply-templates select="//text()" mode="text"/>',
+				'createXslApplyTemplates',
+				['mode' => 'text', 'select' => '//text()']
+			],
+			[
 				'<xsl:attribute name="foo"/>',
 				'createXslAttribute',
 				['foo']
@@ -90,6 +95,11 @@ class NodeCreatorTest extends TestCase
 				'<xsl:attribute name="foo">&lt;bar&gt; &amp;amp;</xsl:attribute>',
 				'createXslAttribute',
 				['foo', '<bar> &amp;']
+			],
+			[
+				'<xsl:attribute name="bar" namespace="urn:bar"/>',
+				'createXslAttribute',
+				['namespace' => 'urn:bar', 'name' => 'bar']
 			],
 			[
 				'<xsl:choose/>',
@@ -136,6 +146,11 @@ class NodeCreatorTest extends TestCase
 				'<xsl:text>&lt;AT&amp;T&gt;</xsl:text>',
 				'createXslText',
 				['<AT&T>']
+			],
+			[
+				'<xsl:text disable-output-escaping="yes">&amp;custom;</xsl:text>',
+				'createXslText',
+				['textContent' => '&custom;', 'disableOutputEscaping' => 'yes']
 			],
 			[
 				'<xsl:value-of select="@foo"/>',
