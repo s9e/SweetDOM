@@ -26,10 +26,18 @@ trait MagicMethods
 		$action         = $m[1];
 		$actionCallback = [$this, $action];
 		$nodeCallback   = [$this->ownerDocument->nodeCreator, 'create' . $m[2]];
-		if (!is_callable($actionCallback, false, $callableName)
-		 || !is_callable($nodeCallback,   false, $callableName))
+		if (!method_exists($this, $action))
 		{
-			throw new BadMethodCallException('Call to undefined method ' . $callableName . '()');
+			is_callable([$this, $name],  true, $callableName);
+			is_callable($actionCallback, true, $dependentName);
+
+			throw new BadMethodCallException('Call to unsupported method ' . $callableName . '() dependent of ' . $dependentName . '()');
+		}
+		if (!is_callable($nodeCallback, false, $dependentName))
+		{
+			is_callable([$this, $name], true, $callableName);
+
+			throw new BadMethodCallException('Call to unsupported method ' . $callableName . '() dependent of ' . $dependentName . '()');
 		}
 
 		$node = $nodeCallback(...$arguments);

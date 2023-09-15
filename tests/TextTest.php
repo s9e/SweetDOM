@@ -7,6 +7,8 @@ use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
+use s9e\SweetDOM\NodeCreator;
+use s9e\SweetDOM\Text;
 
 /**
 * @covers s9e\SweetDOM\Text
@@ -26,7 +28,7 @@ class TextTest extends TestCase
 	}
 
 	#[DataProvider('getUnsupportedMethodsTests')]
-	public function testUnsupportedMethods(string $methodName, ...$args)
+	public function testUnsupportedMethods($message, string $methodName, ...$args)
 	{
 		$dom = new Document;
 		$dom->loadXML('<x>.</x>');
@@ -34,7 +36,7 @@ class TextTest extends TestCase
 		$node = $dom->documentElement->firstChild;
 
 		$this->expectException('BadMethodCallException');
-		$this->expectExceptionMessage('Call to undefined method ' . $node::class . '::' . preg_replace('([A-Z].*)', '', $methodName) . '()');
+		$this->expectExceptionMessage($message);
 
 		$node->$methodName(...$args);
 	}
@@ -42,8 +44,18 @@ class TextTest extends TestCase
 	public static function getUnsupportedMethodsTests(): array
 	{
 		return [
-			['appendXslChoose'],
-			['prependElement', 'p']
+			[
+				'Call to unsupported method ' . Text::class . '::appendXslChoose() dependent of ' . Text::class . '::append()',
+				'appendXslChoose'
+			],
+			[
+				'Call to unsupported method ' . Text::class . '::prependElement() dependent of ' . Text::class . '::prepend()',
+				'prependElement', 'p'
+			],
+			[
+				'Call to unsupported method ' . Text::class . '::afterSomething() dependent of ' . NodeCreator::class . '::createSomething()',
+				'afterSomething'
+			],
 		];
 	}
 
