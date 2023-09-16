@@ -23,7 +23,7 @@ class CommentTest extends TestCase
 		$this->expectExceptionMessage('Call to undefined method');
 
 		$dom = new Document;
-		$dom->loadXML('<x><!-- .. --></x>');
+		$dom->loadXML('<x></x>');
 		$dom->documentElement->firstChild->unknown();
 	}
 
