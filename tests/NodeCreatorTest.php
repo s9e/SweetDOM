@@ -120,6 +120,11 @@ class NodeCreatorTest extends TestCase
 				['@foo']
 			],
 			[
+				'<xsl:element name="hr"/>',
+				'createXslElement',
+				['hr']
+			],
+			[
 				'<xsl:if test="@foo"/>',
 				'createXslIf',
 				['@foo']
