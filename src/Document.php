@@ -19,67 +19,48 @@ class Document extends DOMDocument
 
 	/**
 	* @link https://www.php.net/manual/domdocument.construct.php
-	*
-	* @param string $version  Version number of the document
-	* @param string $encoding Encoding of the document
 	*/
-	public function __construct(string $version = '1.0', string $encoding = 'utf-8')
+	public function __construct(string $version = '1.0', string $encoding = '')
 	{
 		parent::__construct($version, $encoding);
 
 		$this->nodeCreator = new NodeCreator($this);
 
-		$this->registerNodeClass('DOMElement', Element::class);
-		$this->registerNodeClass('DOMText',    Text::class);
+		$this->registerNodeClass('DOMAttr',         Attr::class);
+		$this->registerNodeClass('DOMCdataSection', CdataSection::class);
+		$this->registerNodeClass('DOMComment',      Comment::class);
+		$this->registerNodeClass('DOMElement',      Element::class);
+		$this->registerNodeClass('DOMText',         Text::class);
 	}
 
 	/**
 	* Evaluate and return the result of a given XPath expression
-	*
-	* @param  string  $expr           XPath expression
-	* @param  DOMNode $node           Context node
-	* @param  bool    $registerNodeNS Whether to register the node's namespace
-	* @return mixed
 	*/
-	public function evaluate(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
+	public function evaluate(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true): mixed
 	{
 		return $this->xpath('evaluate', func_get_args());
 	}
 
 	/**
 	* Evaluate and return the first element of a given XPath query
-	*
-	* @param  string      $expr           XPath expression
-	* @param  DOMNode     $node           Context node
-	* @param  bool        $registerNodeNS Whether to register the node's namespace
-	* @return DOMNode|null
 	*/
-	public function firstOf(string $expr, DOMNode $node = null, bool $registerNodeNS = true): ?DOMNode
+	public function firstOf(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true): ?DOMNode
 	{
 		return $this->xpath('query', func_get_args())->item(0);
 	}
 
 	/**
 	* Evaluate and return the result of a given XPath query
-	*
-	* @param  string      $expr           XPath expression
-	* @param  DOMNode     $node           Context node
-	* @param  bool        $registerNodeNS Whether to register the node's namespace
-	* @return DOMNodeList
 	*/
-	public function query(string $expr, DOMNode $node = null, bool $registerNodeNS = true): DOMNodeList
+	public function query(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true): DOMNodeList
 	{
 		return $this->xpath('query', func_get_args());
 	}
 
 	/**
 	* Execute a DOMXPath method and return the result
-	*
-	* @param  string $methodName
-	* @param  array  $args
-	* @return mixed
 	*/
-	protected function xpath(string $methodName, array $args)
+	protected function xpath(string $methodName, array $args): mixed
 	{
 		$xpath = new DOMXPath($this);
 		$xpath->registerNamespace('xsl', 'http://www.w3.org/1999/XSL/Transform');
