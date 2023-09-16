@@ -6,16 +6,16 @@ use DOMDocument;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use s9e\SweetDOM\Comment;
+use s9e\SweetDOM\CdataSection;
 use s9e\SweetDOM\Document;
 use s9e\SweetDOM\NodeCreator;
 
 /**
-* @covers s9e\SweetDOM\Comment
+* @covers s9e\SweetDOM\CdataSection
 * @covers s9e\SweetDOM\NodeTraits\MagicMethods
 * @covers s9e\SweetDOM\NodeTraits\XPathMethods
 */
-class CommentTest extends TestCase
+class CdataSectionTest extends TestCase
 {
 	public function testUnknownMethod()
 	{
@@ -23,7 +23,7 @@ class CommentTest extends TestCase
 		$this->expectExceptionMessage('Call to undefined method');
 
 		$dom = new Document;
-		$dom->loadXML('<x><!-- .. --></x>');
+		$dom->loadXML('<x><![CDATA[..]]></x>');
 		$dom->documentElement->firstChild->unknown();
 	}
 
@@ -31,7 +31,7 @@ class CommentTest extends TestCase
 	public function testUnsupportedMethods($message, string $methodName, ...$args)
 	{
 		$dom = new Document;
-		$dom->loadXML('<x><!-- .. --></x>');
+		$dom->loadXML('<x><![CDATA[..]]></x>');
 
 		$node = $dom->documentElement->firstChild;
 
@@ -45,17 +45,17 @@ class CommentTest extends TestCase
 	{
 		return [
 			[
-				// DOMComment does not support append()
-				'Call to unsupported method ' . Comment::class . '::appendXslChoose() dependent of ' . Comment::class . '::append()',
+				// DOMCdataSection does not support append()
+				'Call to unsupported method ' . CdataSection::class . '::appendXslChoose() dependent of ' . CdataSection::class . '::append()',
 				'appendXslChoose'
 			],
 			[
-				'Call to unsupported method ' . Comment::class . '::prependElement() dependent of ' . Comment::class . '::prepend()',
+				'Call to unsupported method ' . CdataSection::class . '::prependElement() dependent of ' . CdataSection::class . '::prepend()',
 				'prependElement', 'p'
 			],
 			[
 				// NodeCreator does have a createSomething() method
-				'Call to unsupported method ' . Comment::class . '::afterSomething() dependent of ' . NodeCreator::class . '::createSomething()',
+				'Call to unsupported method ' . CdataSection::class . '::afterSomething() dependent of ' . NodeCreator::class . '::createSomething()',
 				'afterSomething'
 			],
 		];
@@ -64,24 +64,24 @@ class CommentTest extends TestCase
 	public function testEvaluate()
 	{
 		$dom = new Document;
-		$dom->loadXML('<x><!-- .. --><x id="z"/></x>');
+		$dom->loadXML('<x><![CDATA[..]]><x id="z"/></x>');
 
-		$this->assertEquals('z', $dom->firstOf('//comment()')->evaluate('string(following-sibling::x/@id)'));
+		$this->assertEquals('z', $dom->firstOf('//text()')->evaluate('string(following-sibling::x/@id)'));
 	}
 
 	public function testFirstOf()
 	{
 		$dom = new Document;
-		$dom->loadXML('<x><!-- .. --><x id="z"/></x>');
+		$dom->loadXML('<x><![CDATA[..]]><x id="z"/></x>');
 
-		$this->assertEquals('z', $dom->firstOf('//comment()/following-sibling::x')->getAttribute('id'));
+		$this->assertEquals('z', $dom->firstOf('//text()/following-sibling::x')->getAttribute('id'));
 	}
 
 	public function testQuery()
 	{
 		$dom = new Document;
-		$dom->loadXML('<x><!-- .. --><x id="z"/></x>');
+		$dom->loadXML('<x><![CDATA[..]]><x id="z"/></x>');
 
-		$this->assertEquals('z', $dom->firstOf('//comment()')->query('.//following-sibling::x')->item(0)->getAttribute('id'));
+		$this->assertEquals('z', $dom->firstOf('//text()')->query('.//following-sibling::x')->item(0)->getAttribute('id'));
 	}
 }
