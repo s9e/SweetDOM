@@ -53,25 +53,36 @@ class DocumentFragmentTest extends TestCase
 	public function testEvaluate()
 	{
 		$dom = new Document;
-		$dom->loadXML('<x><x id="z"/></x>');
+		$dom->loadXML('<x/>');
 
-		$this->assertEquals('z', $dom->firstOf('/x')->evaluate('string(x/@id)'));
+		$fragment = $dom->createDocumentFragment();
+		$fragment->appendElement('z')->setAttribute('value', 'xx');
+
+		$this->assertEquals('xx', $fragment->evaluate('string(z/@value)'));
 	}
 
 	public function testFirstOf()
 	{
 		$dom = new Document;
-		$dom->loadXML('<x><x id="z"/></x>');
+		$dom->loadXML('<x/>');
 
-		$this->assertEquals('z', $dom->firstOf('/x')->firstOf('x')->getAttribute('id'));
+		$fragment = $dom->createDocumentFragment();
+		$fragment->appendElement('x')->setAttribute('value', 'xx');
+
+		$this->assertEquals('xx', $fragment->firstOf('x')->getAttribute('value'));
+		$this->assertEquals('', $fragment->firstOf('//x')->getAttribute('value'));
+		$this->assertEquals('xx', $fragment->firstOf('.//x')->getAttribute('value'));
 	}
 
 	public function testQuery()
 	{
 		$dom = new Document;
-		$dom->loadXML('<x><x id="z"/></x>');
+		$dom->loadXML('<x/>');
 
-		$this->assertEquals('z', $dom->firstOf('/x')->query('.//x')->item(0)->getAttribute('id'));
+		$fragment = $dom->createDocumentFragment();
+		$fragment->appendElement('x')->setAttribute('value', 'xx');
+
+		$this->assertEquals('xx', $fragment->query('x')->item(0)->getAttribute('value'));
 	}
 
 	public function testNSQuery()
