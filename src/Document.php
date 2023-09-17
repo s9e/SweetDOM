@@ -8,6 +8,7 @@
 namespace s9e\SweetDOM;
 
 use DOMDocument;
+use DOMDocumentFragment;
 use DOMNode;
 use DOMNodeList;
 use DOMXPath;
@@ -26,11 +27,12 @@ class Document extends DOMDocument
 
 		$this->nodeCreator = new NodeCreator($this);
 
-		$this->registerNodeClass('DOMAttr',         Attr::class);
-		$this->registerNodeClass('DOMCdataSection', CdataSection::class);
-		$this->registerNodeClass('DOMComment',      Comment::class);
-		$this->registerNodeClass('DOMElement',      Element::class);
-		$this->registerNodeClass('DOMText',         Text::class);
+		$this->registerNodeClass('DOMAttr',             Attr::class);
+		$this->registerNodeClass('DOMCdataSection',     CdataSection::class);
+		$this->registerNodeClass('DOMComment',          Comment::class);
+		$this->registerNodeClass('DOMDocumentFragment', DocumentFragment::class);
+		$this->registerNodeClass('DOMElement',          Element::class);
+		$this->registerNodeClass('DOMText',             Text::class);
 	}
 
 	/**

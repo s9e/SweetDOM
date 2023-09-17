@@ -2,8 +2,6 @@
 
 namespace s9e\SweetDOM\Tests;
 
-use DOMDocument;
-use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\CdataSection;
