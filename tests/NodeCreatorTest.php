@@ -57,6 +57,16 @@ class NodeCreatorTest extends TestCase
 		);
 	}
 
+	public function testCreateIllegalComment()
+	{
+		$this->expectException('DOMException');
+		$this->expectExceptionCode(\DOM_SYNTAX_ERR);
+
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+		$dom->nodeCreator->createComment("can't use -- in comments");
+	}
+
 	#[DataProvider('getCreateTestXslCases')]
 	public function testCreateXsl(string $expected, string $methodName, array $args = [])
 	{
@@ -186,6 +196,16 @@ class NodeCreatorTest extends TestCase
 				'<xsl:when test="@foo">bar</xsl:when>',
 				'createXslWhen',
 				['@foo', 'bar']
+			],
+			[
+				'<!-- text goes here -->',
+				'createComment',
+				[' text goes here ']
+			],
+			[
+				'<foo:bar xmlns:foo="urn:foo"/>',
+				'createElementNS',
+				['urn:foo', 'foo:bar']
 			],
 		];
 	}

@@ -8,13 +8,23 @@
 namespace s9e\SweetDOM;
 
 use DOMException;
-use const DOM_NAMESPACE_ERR, ENT_XML1;
-use function htmlspecialchars, strpos, substr;
+use const DOM_NAMESPACE_ERR, DOM_SYNTAX_ERR, ENT_XML1;
+use function htmlspecialchars, str_contains, strpos, substr;
 
 class NodeCreator
 {
 	public function __construct(protected Document $ownerDocument)
 	{
+	}
+
+	public function createComment(string $data): Comment
+	{
+		if (str_contains($data, '--'))
+		{
+			throw new DOMException('Double hyphen within comment: ' . $data, DOM_SYNTAX_ERR);
+		}
+
+		return $this->ownerDocument->createComment($data);
 	}
 
 	/**
@@ -38,6 +48,13 @@ class NodeCreator
 		}
 
 		return $this->ownerDocument->createElementNS($nsURI, $nodeName, $value);
+	}
+
+	public function createElementNS(?string $namespace, string $nodeName, string $textContent = ''): Element
+	{
+		$value = htmlspecialchars($textContent, ENT_XML1);
+
+		return $this->ownerDocument->createElementNS($namespace, $nodeName, $value);
 	}
 
 	/**

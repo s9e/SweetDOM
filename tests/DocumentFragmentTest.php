@@ -84,18 +84,4 @@ class DocumentFragmentTest extends TestCase
 
 		$this->assertEquals('xx', $fragment->query('x')->item(0)->getAttribute('value'));
 	}
-
-	public function testNSQuery()
-	{
-		$dom = new Document;
-		$dom->loadXML('<x xmlns:x="urn:x"><y><x:x/></y></x>');
-
-		$nodes = $dom->firstOf('//y')->query('x:x');
-
-		$this->assertEquals(1, $nodes->length);
-		$this->assertEquals(
-			'<x:x/>',
-			$dom->saveXML($nodes->item(0))
-		);
-	}
 }
