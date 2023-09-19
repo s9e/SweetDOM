@@ -33,6 +33,7 @@ ksort($targets);
 
 foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
 {
+	$filepath = realpath($filepath);
 	$file = file_get_contents($filepath);
 	if (!preg_match('((\\w++) extends (DOM\\w+))', $file, $m) || $m[2] === 'DOMDocument')
 	{
