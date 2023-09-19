@@ -55,7 +55,7 @@ foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
 	}
 
 	$newFile = preg_replace_callback(
-		'(/\\*\\*\\n\\K.*?(?=\\n\\*/\\nclass))s',
+		'(/\\*\\*\\n\\K(?:\\* \\N++)*(?=\\n\\*/\\nclass))s',
 		fn() => implode("\n", $annotations),
 		$file
 	);
