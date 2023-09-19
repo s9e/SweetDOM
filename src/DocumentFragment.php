@@ -12,7 +12,7 @@ use s9e\SweetDOM\NodeTraits\MagicMethods;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
 /**
-*
+*  
 */
 class DocumentFragment extends DOMDocumentFragment
 {

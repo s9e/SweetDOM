@@ -12,7 +12,7 @@ use s9e\SweetDOM\NodeTraits\MagicMethods;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
 /**
-*
+*  
 */
 class Text extends DOMText
 {
