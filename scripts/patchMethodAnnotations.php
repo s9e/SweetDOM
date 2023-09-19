@@ -18,23 +18,49 @@ foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method)
 	{
 		continue;
 	}
-	$annotation = $m[1] . '(';
+	$annotation = str_replace('s9e\\SweetDOM\\', '', (string) $method->getReturnType()) . ' $ACTION' . $m[1] . '(';
 
 	$parameters = [];
 	foreach ($method->getParameters() as $parameter)
 	{
 		$parameters[] = $parameter->getType() . ' $' . $parameter->name . ($parameter->isOptional() ? ' = ' . export($parameter->getDefaultValue()) : '');
 	}
-	$annotation .= implode(', ', $parameters) . '): ' . str_replace('s9e\\SweetDOM\\', '', (string) $method->getReturnType());
-	var_dump($annotation);
+	$annotation .= implode(', ', $parameters) . ')';
 
+	$targets[] = $annotation;
 }
-exit;
-foreach (glob(__DIR__ . '/../src/*php') as $filepath)
+ksort($targets);
+
+foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
 {
 	$file = file_get_contents($filepath);
-	if (!preg_match('( extends (DOM\\w+))', $file, $m))
+	if (!preg_match('((\\w++) extends (DOM\\w+))', $file, $m) || $m[2] === 'DOMDocument')
 	{
 		continue;
+	}
+
+	$actions = array_intersect(
+		['after', 'append', 'before', 'prepend', 'replaceWith'],
+		get_class_methods('s9e\\SweetDOM\\' . $m[1])
+	);
+	$annotations = [];
+	foreach ($actions as $action)
+	{
+		foreach ($targets as $target)
+		{
+			$annotations[] = '* @method ' . str_replace('$ACTION', $action, $target);
+		}
+		sort($annotations);
+	}
+
+	$newFile = preg_replace_callback(
+		'(/\\*\\*\\n\\K.*?(?=\\n\\*/\\nclass))s',
+		fn() => implode("\n", $annotations),
+		$file
+	);
+	if ($newFile !== $file)
+	{
+		file_put_contents($filepath, $newFile);
+		echo "Patched $filepath\n";
 	}
 }
