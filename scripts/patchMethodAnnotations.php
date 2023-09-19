@@ -18,7 +18,7 @@ foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method)
 	{
 		continue;
 	}
-	$methodName = $m[1];
+	$methodName = '$ACTION' . $m[1];
 	$annotation = str_replace('s9e\\SweetDOM\\', '', (string) $method->getReturnType()) . ' ' . $methodName . '(';
 
 	$parameters = [];
@@ -50,7 +50,7 @@ foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
 	{
 		foreach ($targets as $methodName => $target)
 		{
-			$methodName = str_replace('$ACTION', $methodName, $action)
+			$methodName = str_replace('$ACTION', $action, $methodName);
 			$annotations[$methodName] = '* @method ' . str_replace('$ACTION', $action, $target);
 		}
 		ksort($annotations);
