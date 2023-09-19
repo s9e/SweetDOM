@@ -18,7 +18,8 @@ foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method)
 	{
 		continue;
 	}
-	$annotation = str_replace('s9e\\SweetDOM\\', '', (string) $method->getReturnType()) . ' $ACTION' . $m[1] . '(';
+	$methodName = $m[1];
+	$annotation = str_replace('s9e\\SweetDOM\\', '', (string) $method->getReturnType()) . ' ' . $methodName . '(';
 
 	$parameters = [];
 	foreach ($method->getParameters() as $parameter)
@@ -27,7 +28,7 @@ foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method)
 	}
 	$annotation .= implode(', ', $parameters) . ')';
 
-	$targets[] = $annotation;
+	$targets[$methodName] = $annotation;
 }
 ksort($targets);
 
@@ -47,11 +48,12 @@ foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
 	$annotations = [];
 	foreach ($actions as $action)
 	{
-		foreach ($targets as $target)
+		foreach ($targets as $methodName => $target)
 		{
-			$annotations[] = '* @method ' . str_replace('$ACTION', $action, $target);
+			$methodName = str_replace('$ACTION', $methodName, $action)
+			$annotations[$methodName] = '* @method ' . str_replace('$ACTION', $action, $target);
 		}
-		sort($annotations);
+		ksort($annotations);
 	}
 
 	$newFile = preg_replace_callback(
