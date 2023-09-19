@@ -11,10 +11,7 @@ use DOMAttr;
 use s9e\SweetDOM\NodeTraits\MagicMethods;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
-/**
-*/
 class Attr extends DOMAttr
 {
-	use MagicMethods;
 	use XPathMethods;
 }
