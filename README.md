@@ -17,27 +17,31 @@ composer require s9e/sweetdom
 
 #### s9e\SweetDOM\Document
 
-The `s9e\SweetDOM\Document` class extends `DOMDocument` to provide a set of methods to create XSL elements commonly used in templates:
-
+The `s9e\SweetDOM\Document` class extends `DOMDocument` to provide quick access to DOMXPath's `evaluate` and `query` methods. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.
 ```php
-Element createXslApplyTemplates(string $select = null)
-Element createXslAttribute(string $name, string $text = '')
-Element createXslChoose()
-Element createXslComment(string $text = '')
-Element createXslCopyOf(string $select)
-Element createXslIf(string $test, string $text = '')
-Element createXslOtherwise(string $text = '')
-Element createXslText(string $text = '')
-Element createXslValueOf(string $select)
-Element createXslVariable(string $name, string $select = null)
-Element createXslWhen(string $test, string $text = '')
+mixed       evaluate(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true)
+?DOMNode    firstOf(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true)
+DOMNodeList query(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true)
 ```
 
-It also provides quick access to DOMXPath's `evaluate` and `query` methods. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.
+The `s9e\SweetDOM\Document` class has a `$nodeCreator` property that provides a set of methods to create elements with an emphasis on XSL elements commonly used in templates. See `s9e\SweetDOM\NodeCreator` for the full content.
+
 ```php
-mixed       evaluate(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
-?DOMNode    firstOf(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
-DOMNodeList query(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
+Comment createComment(string $data)
+Element createElement(string $nodeName, string $textContent = '')
+Element createElementNS(?string $namespace, string $nodeName, string $textContent = '')
+Element createXslApplyTemplates(string $select = null, string $mode = null)
+Element createXslAttribute(string $name, string $textContent = '', string $namespace = null)
+Element createXslChoose()
+Element createXslComment(string $textContent = '')
+Element createXslCopyOf(string $select)
+Element createXslElement(string $name, string $namespace = null, string $useAttributeSets = null)
+Element createXslIf(string $test, string $textContent = '')
+Element createXslOtherwise(string $textContent = '')
+Element createXslText(string $textContent = '', string $disableOutputEscaping = null)
+Element createXslValueOf(string $select, string $disableOutputEscaping = null)
+Element createXslVariable(string $name, string $select = null)
+Element createXslWhen(string $test, string $textContent = '')
 ```
 
 
@@ -45,7 +49,7 @@ DOMNodeList query(string $expr, DOMNode $node = null, bool $registerNodeNS = tru
 
 The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a matching set of methods to simultaneously create an XSL element and insert it relative to the element. For each method from the `s9e\SweetDOM\Document` class that creates an XSL element, exist 4 corresponding methods.
 
-For instance, the `createXslText` method from `s9e\SweetDOM\Document` is declined into the `appendXslText`, `appendXslTextSibling`, `prependXslText`, and `prependXslTextSibling` methods in `s9e\SweetDOM\Element`. The following example illustrates where each `xsl:text` element is inserted relative to the `span` element from which they are created.
+For instance, the `createXslText` method from `s9e\SweetDOM\NodeCreator` is declined into the `afterXslText`, `appendXslText`, `beforeXslText`, `prependXslText`, and `replaceWithXslText` methods in `s9e\SweetDOM\Element`. Each method creates a node, performs the DOM action, then returns the node. The following example illustrates where each `xsl:text` element is inserted relative to the `span` element from which they are created.
 
 ```php
 $xsl = '<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
