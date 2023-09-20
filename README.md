@@ -58,7 +58,7 @@ $dom->preserveWhiteSpace = false;
 $dom->loadXML($xsl);
 
 $span    = $dom->firstOf('//span');
-$methods = ['appendXslText', 'appendXslTextSibling', 'prependXslText', 'prependXslTextSibling'];
+$methods = ['afterXslText', 'appendXslText', 'beforeXslText', 'prependXslText'];
 foreach ($methods as $methodName)
 {
 	$span->$methodName($methodName);
@@ -68,13 +68,13 @@ echo $dom->saveXML($dom->documentElement);
 ```xsl
 <xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <p>
-    <xsl:text>prependXslTextSibling</xsl:text>
+    <xsl:text>beforeXslText</xsl:text>
     <span>
       <xsl:text>prependXslText</xsl:text>
       <br/>
       <xsl:text>appendXslText</xsl:text>
     </span>
-    <xsl:text>appendXslTextSibling</xsl:text>
+    <xsl:text>afterXslText</xsl:text>
   </p>
 </xsl:template>
 ```
@@ -93,20 +93,12 @@ string(1) "1"
 string(1) "2"
 ```
 
-In addition, the `s9e\SweetDOM\Element` class provides a set of methods modeled after DOM's [insertAdjacentElement](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentElement) API.
-
-```php
-Element insertAdjacentElement(string $where, self $element)
-void    insertAdjacentText(string $where, string $text)
-void    insertAdjacentXML(string $where, string $xml)
-```
-
 Elements can be easily created and added relative to the context node via the following API:
 ```php
-self appendElement(string $nodeName, $text = '')
-self appendElementSibling(string $nodeName, $text = '')
-self prependElement(string $nodeName, $text = '')
-self prependElementSibling(string $nodeName, $text = '')
+Element afterElement(string $nodeName, string $text = '')
+Element appendElement(string $nodeName, string $text = '')
+Element beforeElement(string $nodeName, string $text = '')
+Element prependElement(string $nodeName, string $text = '')
 ```
 ```php
 $dom                     = new s9e\SweetDOM\Document;
@@ -115,7 +107,7 @@ $dom->preserveWhiteSpace = false;
 $dom->loadXML('<p><span><br/></span></p>');
 
 $span    = $dom->firstOf('//span');
-$methods = ['appendElement', 'appendElementSibling', 'prependElement', 'prependElementSibling'];
+$methods = ['afterElement', 'appendElement', 'beforeElement', 'prependElement'];
 foreach ($methods as $methodName)
 {
 	$span->$methodName('i', $methodName);
@@ -124,35 +116,12 @@ echo $dom->saveXML($dom->documentElement);
 ```
 ```xml
 <p>
-  <i>prependElementSibling</i>
+  <i>beforeElement</i>
   <span>
     <i>prependElement</i>
     <br/>
     <i>appendElement</i>
   </span>
-  <i>appendElementSibling</i>
+  <i>afterElement</i>
 </p>
-```
-
-Text nodes can be created via a similar API:
-```php
-DOMText appendText(string $text)
-DOMText appendTextSibling(string $text)
-DOMText prependText(string $text)
-DOMText prependTextSibling(string $text)
-```
-```php
-$dom = new s9e\SweetDOM\Document;
-$dom->loadXML('<p><span><br/></span></p>');
-
-$span    = $dom->firstOf('//span');
-$methods = ['appendText', 'appendTextSibling', 'prependText', 'prependTextSibling'];
-foreach ($methods as $methodName)
-{
-	$span->$methodName($methodName);
-}
-echo $dom->saveXML($dom->documentElement);
-```
-```html
-<p>prependTextSibling<span>prependText<br/>appendText</span>appendTextSibling</p>
 ```
