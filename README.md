@@ -47,9 +47,9 @@ Element createXslWhen(string $test, string $textContent = '')
 
 #### s9e\SweetDOM\Element
 
-The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a matching set of methods to simultaneously create an XSL element and insert it relative to the element. For each method from the `s9e\SweetDOM\Document` class that creates an XSL element, exist five corresponding methods.
+The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a set of magic methods to simultaneously create a node and insert it relative to the element. For each method from the `s9e\SweetDOM\NodeCreator` class, exist five corresponding methods on the `s9e\SweetDOM\Element`.
 
-For instance, the `createXslText` method from `s9e\SweetDOM\NodeCreator` is declined into the `afterXslText`, `appendXslText`, `beforeXslText`, `prependXslText`, and `replaceWithXslText` methods in `s9e\SweetDOM\Element`. Each method creates a node, performs the DOM action, then returns the node. The following example illustrates where each `xsl:text` element is inserted relative to the `span` element from which they are created.
+For instance, the `createXslText` method from `s9e\SweetDOM\NodeCreator` is declined into the `afterXslText`, `appendXslText`, `beforeXslText`, `prependXslText`, and `replaceWithXslText` methods in `s9e\SweetDOM\Element`. Each method creates a node, performs the DOM action, then returns the node. The following example illustrates where each `xsl:text` element is inserted relative to the `span` element from which they are created, then replaces the `br` element.
 
 ```php
 $xsl = '<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -67,6 +67,7 @@ foreach ($methods as $methodName)
 {
 	$span->$methodName($methodName);
 }
+$dom->firstOf('//br')->replaceWithXslText('replaceWithXslText');
 echo $dom->saveXML($dom->documentElement);
 ```
 ```xsl
@@ -75,7 +76,7 @@ echo $dom->saveXML($dom->documentElement);
     <xsl:text>beforeXslText</xsl:text>
     <span>
       <xsl:text>prependXslText</xsl:text>
-      <br/>
+      <xsl:text>replaceWithXslText</xsl:text>
       <xsl:text>appendXslText</xsl:text>
     </span>
     <xsl:text>afterXslText</xsl:text>
@@ -129,3 +130,15 @@ echo $dom->saveXML($dom->documentElement);
   <i>afterElement</i>
 </p>
 ```
+
+
+#### Other extended nodes
+
+The following DOM nodes are automatically extended and augmented with XPath methods as well as whichever magic methods are supported by the node type, usually via the [`DOMChildNode`](https://www.php.net/manual/class.domchildnode.php) and [`DOMParentNode`](https://www.php.net/manual/class.domparentnode.php) interfaces.
+
+ - `s9e\SweetDOM\Attr` extends `DOMAttr`
+ - `s9e\SweetDOM\CdataSection` extends `DOMCdataSection`
+ - `s9e\SweetDOM\Comment` extends `DOMComment`
+ - `s9e\SweetDOM\DocumentFragment` extends `DOMDocumentFragment`
+ - `s9e\SweetDOM\Element` extends `DOMElement`
+ - `s9e\SweetDOM\Text` extends `DOMText`
