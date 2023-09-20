@@ -13,8 +13,6 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 
 /**
 * @method Comment afterComment(string $data)
-* @method Comment beforeComment(string $data)
-* @method Comment replaceWithComment(string $data)
 * @method Element afterElement(string $nodeName, string $textContent = '')
 * @method Element afterElementNS(?string $namespace, string $nodeName, string $textContent = '')
 * @method Element afterXslApplyTemplates(?string $select = null, ?string $mode = null)
@@ -29,6 +27,7 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element afterXslValueOf(string $select, ?string $disableOutputEscaping = null)
 * @method Element afterXslVariable(string $name, ?string $select = null)
 * @method Element afterXslWhen(string $test, string $textContent = '')
+* @method Comment beforeComment(string $data)
 * @method Element beforeElement(string $nodeName, string $textContent = '')
 * @method Element beforeElementNS(?string $namespace, string $nodeName, string $textContent = '')
 * @method Element beforeXslApplyTemplates(?string $select = null, ?string $mode = null)
@@ -43,6 +42,7 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element beforeXslValueOf(string $select, ?string $disableOutputEscaping = null)
 * @method Element beforeXslVariable(string $name, ?string $select = null)
 * @method Element beforeXslWhen(string $test, string $textContent = '')
+* @method Comment replaceWithComment(string $data)
 * @method Element replaceWithElement(string $nodeName, string $textContent = '')
 * @method Element replaceWithElementNS(?string $namespace, string $nodeName, string $textContent = '')
 * @method Element replaceWithXslApplyTemplates(?string $select = null, ?string $mode = null)

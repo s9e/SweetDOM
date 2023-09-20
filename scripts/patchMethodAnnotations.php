@@ -51,14 +51,14 @@ foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
 		foreach ($targets as $methodName => $target)
 		{
 			$methodName = str_replace('$ACTION', $action, $methodName);
-			$annotations[$methodName] = '* @method ' . str_replace('$ACTION', $action, $target);
+			$annotations[$methodName] = "\n* @method " . str_replace('$ACTION', $action, $target);
 		}
 		ksort($annotations);
 	}
 
 	$newFile = preg_replace_callback(
-		'(/\\*\\*\\n\\K(?:\\* \\N++)*(?=\\n\\*/\\nclass))s',
-		fn() => implode("\n", $annotations),
+		'(/\\*\\*\\K(?:\\n\\* \\N++)*+(?=\\n\\*/\\nclass))s',
+		fn() => implode('', $annotations),
 		$file
 	);
 	if ($newFile !== $file)
