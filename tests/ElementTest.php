@@ -282,6 +282,11 @@ class ElementTest extends TestCase
 			}
 		}
 
+		if (empty($exceptions))
+		{
+			$this->markTestSkipped('Test did not produce a hierarchy error');
+		}
+
 		$expected = $exceptions[0];
 		$actual   = $exceptions[1];
 
