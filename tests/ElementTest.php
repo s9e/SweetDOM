@@ -55,7 +55,7 @@ class ElementTest extends TestCase
 		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
 	}
 
-	public static function getMagicMethodsTests()
+	public static function getMagicMethodsTests(): array
 	{
 		return [
 			[
@@ -161,6 +161,142 @@ class ElementTest extends TestCase
 				</p>',
 				'replaceWithXslComment',
 				['text goes here']
+			],
+		];
+	}
+
+	#[DataProvider('getLegacyMethodsTests')]
+	public function testLegacyMethods(string $expected, string $methodName, array $args = []): void
+	{
+		$this->testMagicMethods($expected, $methodName, $args);
+	}
+
+	public static function getLegacyMethodsTests(): array
+	{
+		return [
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<xsl:text>prependXslTextSibling</xsl:text>
+					<span>
+						<br/>
+					</span>
+				</p>',
+				'prependXslTextSibling',
+				['prependXslTextSibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<xsl:text>prependxsltextsibling</xsl:text>
+					<span>
+						<br/>
+					</span>
+				</p>',
+				'prependxsltextsibling',
+				['prependxsltextsibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<xsl:text>appendXslTextSibling</xsl:text>
+				</p>',
+				'appendXslTextSibling',
+				['appendXslTextSibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<xsl:text>appendxsltextsibling</xsl:text>
+				</p>',
+				'appendxsltextsibling',
+				['appendxsltextsibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<xsl:text>appendxsltextsibling</xsl:text>
+				</p>',
+				'appendElementSibling',
+				['xsl:text', 'appendxsltextsibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<before>beforetext</before>
+					<span>
+						<br/>
+					</span>
+				</p>',
+				'prependelementsibling',
+				['before', 'beforetext']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<text>prependElement</text>
+						<br/>
+					</span>
+				</p>',
+				'prependElement',
+				['text', 'prependElement']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+						<text>appendElement</text>
+					</span>
+				</p>',
+				'appendElement',
+				['text', 'appendElement']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<text>appendElementSibling</text>
+				</p>',
+				'appendElementSibling',
+				['text', 'appendElementSibling']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+						<text>AT&amp;amp;T</text>
+					</span>
+				</p>',
+				'appendElement',
+				['text', 'AT&amp;T']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">before<span><br/></span></p>',
+				'prependtextsibling',
+				['before']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>prependText<br/></span>
+				</p>',
+				'prependText',
+				['prependText']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span><br/>appendText</span>
+				</p>',
+				'appendText',
+				['appendText']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span>after</p>',
+				'appendTextSibling',
+				['after']
 			],
 		];
 	}

@@ -5,7 +5,7 @@
 * @copyright Copyright (c) The s9e authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\SweetDOM;
+namespace s9e\SweetDOM\NodeTraits;
 
 use BadMethodCallException;
 use DOMElement;
@@ -16,16 +16,44 @@ use DOMText;
 use const DOM_SYNTAX_ERR, ENT_NOQUOTES, ENT_XML1;
 use function array_flip, call_user_func_array, htmlspecialchars, is_callable, preg_match, preg_match_all, preg_replace_callback, strpos, strtolower, substr, ucfirst;
 
-trait Legacy
+trait LegacyMethods
 {
+	use MagicMethods
+	{
+		MagicMethods::__call as magicMethodsCall;
+	}
+
+	public function __call(string $name, array $arguments)
+	{
+		if (preg_match('(^insertAdjacent(?:Element|Text)$)i', $name))
+		{
+			$methodName = '_' . $name;
+
+			return $this->$methodName(...$arguments);
+		}
+		if (preg_match('(^(ap|pre)pendText(Sibling|)$)i', $name, $m))
+		{
+			$methodName = [
+				'ap'         => 'append',
+				'pre'        => 'prepend',
+				'apsibling'  => 'after',
+				'presibling' => 'before'
+			][strtolower($m[1] . $m[2])];
+
+			return $this->$methodName(...$arguments);
+		}
+		if (preg_match('(^(ap|pre)pend(\\w+)Sibling$)i', $name, $m))
+		{
+			$name = ['ap' => 'after', 'pre' => 'before'][$m[1]] . $m[2];
+		}
+
+		return $this->magicMethodsCall($name, $arguments);
+	}
+
 	/**
-	* Insert given element relative to this element's position
-	*
-	* @param  string $where   One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-	* @param  self   $element
-	* @return self
+	* @deprecated
 	*/
-	public function insertAdjacentElement(string $where, self $element): self
+	protected function _insertAdjacentElement(string $where, self $element): self
 	{
 		$this->insertAdjacentNode($where, $element);
 
@@ -33,13 +61,9 @@ trait Legacy
 	}
 
 	/**
-	* Insert given text relative to this element's position
-	*
-	* @param  string $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-	* @param  string $text
-	* @return void
+	* @deprecated
 	*/
-	public function insertAdjacentText(string $where, string $text): void
+	protected function _insertAdjacentText(string $where, string $text): void
 	{
 		$this->insertText($where, $text);
 	}

@@ -8,7 +8,7 @@
 namespace s9e\SweetDOM;
 
 use DOMElement;
-use s9e\SweetDOM\NodeTraits\MagicMethods;
+use s9e\SweetDOM\NodeTraits\LegacyMethods;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
 /**
@@ -90,6 +90,6 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 */
 class Element extends DOMElement
 {
-	use MagicMethods;
+	use LegacyMethods;
 	use XPathMethods;
 }
