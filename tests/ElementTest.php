@@ -8,6 +8,7 @@ use s9e\SweetDOM\Document;
 
 /**
 * @covers s9e\SweetDOM\Element
+* @covers s9e\SweetDOM\NodeTraits\LegacyMethods
 * @covers s9e\SweetDOM\NodeTraits\MagicMethods
 * @covers s9e\SweetDOM\NodeTraits\XPathMethods
 */

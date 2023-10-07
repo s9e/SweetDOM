@@ -50,30 +50,20 @@ trait LegacyMethods
 		return $this->magicMethodsCall($name, $arguments);
 	}
 
-	/**
-	* @deprecated
-	*/
-	protected function _insertAdjacentElement(string $where, self $element): self
+	private function _insertAdjacentElement(string $where, self $element): self
 	{
 		$this->insertAdjacentNode($where, $element);
 
 		return $element;
 	}
 
-	/**
-	* @deprecated
-	*/
-	protected function _insertAdjacentText(string $where, string $text): void
+	private function _insertAdjacentText(string $where, string $text): void
 	{
 		$this->insertText($where, $text);
 	}
 
 	/**
-	* Insert given XML relative to this element's position
-	*
-	* @param  string $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-	* @param  string $xml
-	* @return void
+	* @deprecated
 	*/
 	public function insertAdjacentXML(string $where, string $xml): void
 	{
