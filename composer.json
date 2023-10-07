@@ -21,5 +21,8 @@
 		"psr-4": {
 			"s9e\\SweetDOM\\Tests\\": "tests"
 		}
+	},
+	"scripts": {
+		"test": "vendor/bin/phpunit"
 	}
 }
