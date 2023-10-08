@@ -50,18 +50,6 @@ trait LegacyMethods
 		return $this->magicMethodsCall($name, $arguments);
 	}
 
-	private function _insertAdjacentElement(string $where, self $element): self
-	{
-		$this->insertAdjacentNode($where, $element);
-
-		return $element;
-	}
-
-	private function _insertAdjacentText(string $where, string $text): void
-	{
-		$this->insertText($where, $text);
-	}
-
 	/**
 	* @deprecated
 	*/
@@ -121,18 +109,16 @@ trait LegacyMethods
 		};
 	}
 
-	/**
-	* Insert given text relative to this element's position
-	*
-	* @param  string  $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-	* @param  string  $text
-	* @return DOMText
-	*/
-	protected function insertText(string $where, string $text): DOMText
+	private function _insertAdjacentElement(string $where, self $element): self
+	{
+		$this->insertAdjacentNode($where, $element);
+
+		return $element;
+	}
+
+	private function _insertAdjacentText(string $where, string $text): void
 	{
 		$node = $this->ownerDocument->createTextNode($text);
 		$this->insertAdjacentNode($where, $node);
-
-		return $node;
 	}
 }

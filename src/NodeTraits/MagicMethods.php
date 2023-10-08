@@ -9,7 +9,7 @@ namespace s9e\SweetDOM\NodeTraits;
 
 use BadMethodCallException;
 use DOMNode;
-use function get_class, is_callable, preg_match;
+use function get_class, is_callable, method_exists, preg_match;
 
 trait MagicMethods
 {
