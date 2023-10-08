@@ -17,7 +17,7 @@ composer require s9e/sweetdom
 
 #### s9e\SweetDOM\Document
 
-The `s9e\SweetDOM\Document` class extends `DOMDocument` to provide quick access to DOMXPath's `evaluate` and `query` methods. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.
+The `s9e\SweetDOM\Document` class extends `DOMDocument` and provides quick access to DOMXPath's `evaluate` and `query` methods. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.
 ```php
 mixed       evaluate(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true)
 ?DOMNode    firstOf(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true)
