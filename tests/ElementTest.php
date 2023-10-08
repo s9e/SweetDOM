@@ -3,6 +3,7 @@
 namespace s9e\SweetDOM\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
 
@@ -167,6 +168,7 @@ class ElementTest extends TestCase
 	}
 
 	#[DataProvider('getLegacyMethodsTests')]
+	#[Group('deprecated')]
 	public function testLegacyMethods(string $expected, string $methodName, array $args = []): void
 	{
 		$this->testMagicMethods($expected, $methodName, $args);
@@ -338,5 +340,196 @@ class ElementTest extends TestCase
 			'<x:x/>',
 			$dom->saveXML($nodes->item(0))
 		);
+	}
+
+	#[DataProvider('getInsertAdjacentElementTests')]
+	#[Group('deprecated')]
+	public function testInsertAdjacentElement($position, $expected)
+	{
+		$dom = new Document;
+		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
+
+		$element = $dom->createElement('span', $position);
+
+		$dom->firstOf('//span')->__call('insertAdjacentElement', [$position, $element]);
+		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
+	}
+
+	public static function getInsertAdjacentElementTests()
+	{
+		return [
+			[
+				'afterbegin',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<span>afterbegin</span>
+						<br/>
+					</span>
+				</p>'
+			],
+			[
+				'afterend',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+					</span>
+					<span>afterend</span>
+				</p>'
+			],
+			[
+				'beforebegin',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>beforebegin</span>
+					<span>
+						<br/>
+					</span>
+				</p>'
+			],
+			[
+				'beforeend',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+						<span>beforeend</span>
+					</span>
+				</p>'
+			],
+			[
+				'BeforeEnd',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>
+						<br/>
+						<span>BeforeEnd</span>
+					</span>
+				</p>'
+			],
+		];
+	}
+
+	#[DataProvider('getInsertAdjacentTextTests')]
+	#[Group('deprecated')]
+	public function testInsertAdjacentText($position, $expected)
+	{
+		$dom = new Document;
+		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
+
+		$dom->firstOf('//span')->__call('insertAdjacentText', [$position, $position]);
+		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
+	}
+
+	public static function getInsertAdjacentTextTests()
+	{
+		return [
+			[
+				'afterbegin',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>afterbegin<br/></span>
+				</p>'
+			],
+			[
+				'afterend',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span>afterend</p>'
+			],
+			[
+				'beforebegin',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">beforebegin<span><br/></span></p>'
+			],
+			[
+				'beforeend',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span><br/>beforeend</span>
+				</p>'
+			],
+			[
+				'BeforeEnd',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span><br/>BeforeEnd</span>
+				</p>'
+			],
+		];
+	}
+
+	#[DataProvider('getInsertAdjacentXMLTests')]
+	#[Group('deprecated')]
+	public function testInsertAdjacentXML($original, $position, $xml, $expected)
+	{
+		$dom = new Document;
+		$dom->loadXML($original);
+
+		$dom->firstOf('//x')->insertAdjacentXML($position, $xml);
+
+		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML());
+	}
+
+	public static function getInsertAdjacentXMLTests()
+	{
+		return [
+			[
+				'<root><x/></root>',
+				'beforebegin',
+				'<foo/><bar/>',
+				'<root><foo/><bar/><x/></root>'
+			],
+			[
+				'<root><z/><x/></root>',
+				'beforebegin',
+				'<foo/><bar/>',
+				'<root><z/><foo/><bar/><x/></root>'
+			],
+			[
+				'<root><x/></root>',
+				'afterbegin',
+				'<foo/><bar/>',
+				'<root><x><foo/><bar/></x></root>'
+			],
+			[
+				'<root><x><z/></x></root>',
+				'afterbegin',
+				'<foo/><bar/>',
+				'<root><x><foo/><bar/><z/></x></root>'
+			],
+			[
+				'<root><x/></root>',
+				'beforeend',
+				'<foo/><bar/>',
+				'<root><x><foo/><bar/></x></root>'
+			],
+			[
+				'<root><x><z/></x></root>',
+				'beforeend',
+				'<foo/><bar/>',
+				'<root><x><z/><foo/><bar/></x></root>'
+			],
+			[
+				'<root><x/></root>',
+				'afterend',
+				'<foo/><bar/>',
+				'<root><x/><foo/><bar/></root>'
+			],
+			[
+				'<root><x/><z/></root>',
+				'afterend',
+				'<foo/><bar/>',
+				'<root><x/><foo/><bar/><z/></root>'
+			],
+			[
+				'<root xmlns:foo="urn:foo"><x/><z/></root>',
+				'afterend',
+				'<foo:bar xmlns:foo="urn:foo"/>',
+				'<root xmlns:foo="urn:foo"><x/><foo:bar/><z/></root>'
+			],
+			[
+				'<root xmlns:foo="urn:foo"><x/><z/></root>',
+				'afterend',
+				'<foo:bar/>',
+				'<root xmlns:foo="urn:foo"><x/><foo:bar/><z/></root>'
+			],
+			[
+				'<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><x/></root>',
+				'afterend',
+				'<xsl:if test="@bar">...</xsl:if>',
+				'<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><x/><xsl:if test="@bar">...</xsl:if></root>'
+			],
+		];
 	}
 }
