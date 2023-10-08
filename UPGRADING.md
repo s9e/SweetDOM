@@ -1,7 +1,42 @@
 ## From 2.x to 3.0
 
-Magic methods whose names end in `Sibling` have been renamed after the DOM4 methods `after` and `before`. Methods using the naming scheme `append{Element}Sibling` should be renamed `after{Element}`, and `prepend{Element}Sibling` should be renamed `before{Element}`.
+A number of `s9e\SweetDOM\Element` methods are now deprecated. Support for those deprecated methods is maintained in 3.0 but may generate a `E_USER_DEPRECATED` notice. Deprecated methods will be removed in a future version. Most deprecated methods can be replaced with native calls, see the table below for a conversion guide.
 
-Text methods `appendText`, `prependText`, and `insertAdjacentText`, as well as the legacy method `insertAdjacentElement` have been removed. Those operations can be performed using the native DOM methods `after`, `append`, `before`, and `prepend`.
+Magic methods whose names end in `Sibling` are deprecated and . They have been renamed after the DOM methods `after` and `before`. Methods using the naming scheme `append{Element}Sibling` should be renamed `after{Element}`, and `prepend{Element}Sibling` should be renamed `before{Element}`.
 
-The method `insertAdjacentXML` has been removed without replacement. It can be performed using native methods using [`DOMDocumentFragment::appendXML`](https://www.php.net/manual/domdocumentfragment.appendxml.php).
+Text methods `appendText`, `appendTextSibling`, `prependText`, and `prependTextSibling` are deprecated in favour of native DOM operations `append`, `after`, `prepend`, and `before`.
+
+The method `insertAdjacentXML` is deprecated without a replacement. It can be replaced with native methods using [`DOMDocumentFragment::appendXML`](https://www.php.net/manual/domdocumentfragment.appendxml.php).
+
+|---------------------------------+-------------------------|
+|               2.x               |           3.0           |
+|---------------------------------+-------------------------|
+| appendElementSibling            | afterElement            |
+| appendText                      | append                  |
+| appendTextSibling               | after                   |
+| appendXslApplyTemplatesSibling  | afterXslApplyTemplates  |
+| appendXslAttributeSibling       | afterXslAttribute       |
+| appendXslChooseSibling          | afterXslChoose          |
+| appendXslCommentSibling         | afterXslComment         |
+| appendXslCopyOfSibling          | afterXslCopyOf          |
+| appendXslIfSibling              | afterXslIf              |
+| appendXslOtherwiseSibling       | afterXslOtherwise       |
+| appendXslTextSibling            | afterXslText            |
+| appendXslValueOfSibling         | afterXslValueOf         |
+| appendXslVariableSibling        | afterXslVariable        |
+| appendXslWhenSibling            | afterXslWhen            |
+| prependElementSibling           | beforeElement           |
+| prependText                     | prepend                 |
+| prependTextSibling              | before                  |
+| prependXslApplyTemplatesSibling | beforeXslApplyTemplates |
+| prependXslAttributeSibling      | beforeXslAttribute      |
+| prependXslChooseSibling         | beforeXslChoose         |
+| prependXslCommentSibling        | beforeXslComment        |
+| prependXslCopyOfSibling         | beforeXslCopyOf         |
+| prependXslIfSibling             | beforeXslIf             |
+| prependXslOtherwiseSibling      | beforeXslOtherwise      |
+| prependXslTextSibling           | beforeXslText           |
+| prependXslValueOfSibling        | beforeXslValueOf        |
+| prependXslVariableSibling       | beforeXslVariable       |
+| prependXslWhenSibling           | beforeXslWhen           |
+|---------------------------------+-------------------------|

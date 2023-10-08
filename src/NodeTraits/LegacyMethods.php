@@ -44,7 +44,7 @@ trait LegacyMethods
 		}
 		if (preg_match('(^(ap|pre)pend(\\w+)Sibling$)i', $name, $m))
 		{
-			$name = ['ap' => 'after', 'pre' => 'before'][$m[1]] . $m[2];
+			$name = ['ap' => 'after', 'pre' => 'before'][strtolower($m[1])] . $m[2];
 		}
 
 		return $this->magicMethodsCall($name, $arguments);
