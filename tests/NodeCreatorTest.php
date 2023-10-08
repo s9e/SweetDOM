@@ -2,13 +2,12 @@
 
 namespace s9e\SweetDOM\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
 
-/**
-* @covers s9e\SweetDOM\NodeCreator
-*/
+#[CoversClass('s9e\SweetDOM\NodeCreator')]
 class NodeCreatorTest extends TestCase
 {
 	public function testCreateElement()

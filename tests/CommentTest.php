@@ -2,17 +2,16 @@
 
 namespace s9e\SweetDOM\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Comment;
 use s9e\SweetDOM\Document;
 use s9e\SweetDOM\NodeCreator;
 
-/**
-* @covers s9e\SweetDOM\Comment
-* @covers s9e\SweetDOM\NodeTraits\MagicMethods
-* @covers s9e\SweetDOM\NodeTraits\XPathMethods
-*/
+#[CoversClass('s9e\SweetDOM\Comment')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\MagicMethods')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\XPathMethods')]
 class CommentTest extends TestCase
 {
 	public function testUnknownMethod()

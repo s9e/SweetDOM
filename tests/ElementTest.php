@@ -2,17 +2,16 @@
 
 namespace s9e\SweetDOM\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
 
-/**
-* @covers s9e\SweetDOM\Element
-* @covers s9e\SweetDOM\NodeTraits\LegacyMethods
-* @covers s9e\SweetDOM\NodeTraits\MagicMethods
-* @covers s9e\SweetDOM\NodeTraits\XPathMethods
-*/
+#[CoversClass('s9e\SweetDOM\Element')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\LegacyMethods')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\MagicMethods')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\XPathMethods')]
 class ElementTest extends TestCase
 {
 	protected function assertExceptionsMatch(Exception $expected, Exception $actual)

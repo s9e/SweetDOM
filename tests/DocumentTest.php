@@ -2,12 +2,11 @@
 
 namespace s9e\SweetDOM\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
 
-/**
-* @covers s9e\SweetDOM\Document
-*/
+#[CoversClass('s9e\SweetDOM\Document')]
 class DocumentTest extends TestCase
 {
 	public function testEvaluate()
