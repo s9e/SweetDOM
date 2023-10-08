@@ -96,6 +96,11 @@ class NodeCreatorTest extends TestCase
 				['mode' => 'text', 'select' => '//text()']
 			],
 			[
+				'<xsl:apply-templates select="//text()"/>',
+				'createXslApplyTemplates',
+				['mode' => null, 'select' => '//text()']
+			],
+			[
 				'<xsl:attribute name="foo"/>',
 				'createXslAttribute',
 				['foo']
