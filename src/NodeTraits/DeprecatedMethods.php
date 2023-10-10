@@ -7,30 +7,19 @@
 */
 namespace s9e\SweetDOM\NodeTraits;
 
-use BadMethodCallException;
-use DOMElement;
 use DOMException;
-use DOMNode;
-use DOMNodeList;
-use DOMText;
-use const DOM_SYNTAX_ERR, ENT_NOQUOTES, ENT_XML1;
-use function array_flip, call_user_func_array, htmlspecialchars, is_callable, preg_match, preg_match_all, preg_replace_callback, strpos, strtolower, substr, ucfirst;
+use const ENT_COMPAT, ENT_XML1;
+use function array_flip, htmlspecialchars, preg_match, preg_match_all, preg_replace_callback, strtolower;
 
 trait DeprecatedMethods
 {
-	use MagicMethods
+	use PolyfillMethods
 	{
-		MagicMethods::__call as magicMethodsCall;
+		PolyfillMethods::__call as polyfillMethodsCall;
 	}
 
 	public function __call(string $name, array $arguments)
 	{
-		if (preg_match('(^insertAdjacent(?:Element|Text)$)i', $name))
-		{
-			$methodName = '_' . $name;
-
-			return $this->$methodName(...$arguments);
-		}
 		if (preg_match('(^(ap|pre)pendText(Sibling|)$)i', $name, $m))
 		{
 			$methodName = [
@@ -47,7 +36,7 @@ trait DeprecatedMethods
 			$name = ['ap' => 'after', 'pre' => 'before'][strtolower($m[1])] . $m[2];
 		}
 
-		return $this->magicMethodsCall($name, $arguments);
+		return $this->polyfillMethodsCall($name, $arguments);
 	}
 
 	/**
@@ -81,44 +70,12 @@ trait DeprecatedMethods
 				if (!isset($prefixes[$prefix]))
 				{
 					$nsURI  = $this->lookupNamespaceURI($prefix);
-					$return = ' xmlns:' . $prefix . '="' . htmlspecialchars($nsURI, ENT_XML1) . '"' . $return;
+					$return = ' xmlns:' . $prefix . '="' . htmlspecialchars($nsURI, ENT_COMPAT | ENT_XML1) . '"' . $return;
 				}
 
 				return $return;
 			},
 			$xml
 		);
-	}
-
-	/**
-	* Insert given node relative to this element's position
-	*
-	* @param  string  $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-	* @param  DOMNode $node
-	* @return void
-	*/
-	protected function insertAdjacentNode(string $where, DOMNode $node): void
-	{
-		match (strtolower($where))
-		{
-			'beforebegin' => $this->parentNode?->insertBefore($node, $this),
-			'beforeend'   => $this->appendChild($node),
-			'afterend'    => $this->parentNode?->insertBefore($node, $this->nextSibling),
-			'afterbegin'  => $this->insertBefore($node, $this->firstChild),
-			default       => throw new DOMException("'$where' is not one of 'beforebegin', 'afterbegin', 'beforeend', or 'afterend'", DOM_SYNTAX_ERR)
-		};
-	}
-
-	private function _insertAdjacentElement(string $where, self $element): self
-	{
-		$this->insertAdjacentNode($where, $element);
-
-		return $element;
-	}
-
-	private function _insertAdjacentText(string $where, string $text): void
-	{
-		$node = $this->ownerDocument->createTextNode($text);
-		$this->insertAdjacentNode($where, $node);
 	}
 }
