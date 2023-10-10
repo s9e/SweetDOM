@@ -11,6 +11,9 @@ use DOMException;
 use const ENT_COMPAT, ENT_XML1;
 use function array_flip, htmlspecialchars, preg_match, preg_match_all, preg_replace_callback, strtolower;
 
+/**
+* @method mixed polyfillMethodsCall(string $name, array $arguments)
+*/
 trait DeprecatedMethods
 {
 	use PolyfillMethods

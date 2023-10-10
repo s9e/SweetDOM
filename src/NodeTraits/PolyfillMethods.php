@@ -13,6 +13,9 @@ use DOMNode;
 use const DOM_SYNTAX_ERR;
 use function preg_match, strtolower;
 
+/**
+* @method mixed magicMethodsCall(string $name, array $arguments)
+*/
 trait PolyfillMethods
 {
 	use MagicMethods
