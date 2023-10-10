@@ -7,8 +7,8 @@
 */
 namespace s9e\SweetDOM;
 
-use DOMElement;
-use s9e\SweetDOM\NodeTraits\DeprecatedMethods;
+use DOMCdataSection;
+use s9e\SweetDOM\NodeTraits\MagicMethods;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
 /**
@@ -27,21 +27,6 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element afterXslValueOf(string $select, ?string $disableOutputEscaping = null)
 * @method Element afterXslVariable(string $name, ?string $select = null)
 * @method Element afterXslWhen(string $test, string $textContent = '')
-* @method Comment appendComment(string $data)
-* @method Element appendElement(string $nodeName, string $textContent = '')
-* @method Element appendElementNS(?string $namespace, string $nodeName, string $textContent = '')
-* @method Element appendXslApplyTemplates(?string $select = null, ?string $mode = null)
-* @method Element appendXslAttribute(string $name, string $textContent = '', ?string $namespace = null)
-* @method Element appendXslChoose()
-* @method Element appendXslComment(string $textContent = '')
-* @method Element appendXslCopyOf(string $select)
-* @method Element appendXslElement(string $name, ?string $namespace = null, ?string $useAttributeSets = null)
-* @method Element appendXslIf(string $test, string $textContent = '')
-* @method Element appendXslOtherwise(string $textContent = '')
-* @method Element appendXslText(string $textContent = '', ?string $disableOutputEscaping = null)
-* @method Element appendXslValueOf(string $select, ?string $disableOutputEscaping = null)
-* @method Element appendXslVariable(string $name, ?string $select = null)
-* @method Element appendXslWhen(string $test, string $textContent = '')
 * @method Comment beforeComment(string $data)
 * @method Element beforeElement(string $nodeName, string $textContent = '')
 * @method Element beforeElementNS(?string $namespace, string $nodeName, string $textContent = '')
@@ -57,21 +42,6 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element beforeXslValueOf(string $select, ?string $disableOutputEscaping = null)
 * @method Element beforeXslVariable(string $name, ?string $select = null)
 * @method Element beforeXslWhen(string $test, string $textContent = '')
-* @method Comment prependComment(string $data)
-* @method Element prependElement(string $nodeName, string $textContent = '')
-* @method Element prependElementNS(?string $namespace, string $nodeName, string $textContent = '')
-* @method Element prependXslApplyTemplates(?string $select = null, ?string $mode = null)
-* @method Element prependXslAttribute(string $name, string $textContent = '', ?string $namespace = null)
-* @method Element prependXslChoose()
-* @method Element prependXslComment(string $textContent = '')
-* @method Element prependXslCopyOf(string $select)
-* @method Element prependXslElement(string $name, ?string $namespace = null, ?string $useAttributeSets = null)
-* @method Element prependXslIf(string $test, string $textContent = '')
-* @method Element prependXslOtherwise(string $textContent = '')
-* @method Element prependXslText(string $textContent = '', ?string $disableOutputEscaping = null)
-* @method Element prependXslValueOf(string $select, ?string $disableOutputEscaping = null)
-* @method Element prependXslVariable(string $name, ?string $select = null)
-* @method Element prependXslWhen(string $test, string $textContent = '')
 * @method Comment replaceWithComment(string $data)
 * @method Element replaceWithElement(string $nodeName, string $textContent = '')
 * @method Element replaceWithElementNS(?string $namespace, string $nodeName, string $textContent = '')
@@ -88,8 +58,8 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element replaceWithXslVariable(string $name, ?string $select = null)
 * @method Element replaceWithXslWhen(string $test, string $textContent = '')
 */
-class Element extends DOMElement
+class CdataSection extends DOMCdataSection
 {
-	use DeprecatedMethods;
+	use MagicMethods;
 	use XPathMethods;
 }

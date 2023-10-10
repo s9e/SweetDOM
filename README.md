@@ -17,35 +17,40 @@ composer require s9e/sweetdom
 
 #### s9e\SweetDOM\Document
 
-The `s9e\SweetDOM\Document` class extends `DOMDocument` to provide a set of methods to create XSL elements commonly used in templates:
+The `s9e\SweetDOM\Document` class extends `DOMDocument` and provides quick access to DOMXPath's `evaluate` and `query` methods. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.
 
 ```php
-Element createXslApplyTemplates(string $select = null)
-Element createXslAttribute(string $name, string $text = '')
-Element createXslChoose()
-Element createXslComment(string $text = '')
-Element createXslCopyOf(string $select)
-Element createXslIf(string $test, string $text = '')
-Element createXslOtherwise(string $text = '')
-Element createXslText(string $text = '')
-Element createXslValueOf(string $select)
-Element createXslVariable(string $name, string $select = null)
-Element createXslWhen(string $test, string $text = '')
+mixed       evaluate(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true)
+?DOMNode    firstOf(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true)
+DOMNodeList query(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true)
 ```
 
-It also provides quick access to DOMXPath's `evaluate` and `query` methods. The `firstOf` method evaluates the XPath query and returns the first node of the list, or `null` if the list is empty.
+The `s9e\SweetDOM\Document` class has a `$nodeCreator` property that provides a set of methods to create elements with an emphasis on XSL elements commonly used in templates. See `s9e\SweetDOM\NodeCreator` for the full content.
+
 ```php
-mixed       evaluate(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
-?DOMNode    firstOf(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
-DOMNodeList query(string $expr, DOMNode $node = null, bool $registerNodeNS = true)
+Comment createComment(string $data)
+Element createElement(string $nodeName, string $textContent = '')
+Element createElementNS(?string $namespace, string $nodeName, string $textContent = '')
+Element createXslApplyTemplates(string $select = null, string $mode = null)
+Element createXslAttribute(string $name, string $textContent = '', string $namespace = null)
+Element createXslChoose()
+Element createXslComment(string $textContent = '')
+Element createXslCopyOf(string $select)
+Element createXslElement(string $name, string $namespace = null, string $useAttributeSets = null)
+Element createXslIf(string $test, string $textContent = '')
+Element createXslOtherwise(string $textContent = '')
+Element createXslText(string $textContent = '', string $disableOutputEscaping = null)
+Element createXslValueOf(string $select, string $disableOutputEscaping = null)
+Element createXslVariable(string $name, string $select = null)
+Element createXslWhen(string $test, string $textContent = '')
 ```
 
 
 #### s9e\SweetDOM\Element
 
-The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a matching set of methods to simultaneously create an XSL element and insert it relative to the element. For each method from the `s9e\SweetDOM\Document` class that creates an XSL element, exist 4 corresponding methods.
+The `s9e\SweetDOM\Element` class extends `DOMElement` and provides a set of magic methods to simultaneously create a node and insert it relative to the element. For each method from the `s9e\SweetDOM\NodeCreator` class, exist five corresponding methods on the `s9e\SweetDOM\Element`.
 
-For instance, the `createXslText` method from `s9e\SweetDOM\Document` is declined into the `appendXslText`, `appendXslTextSibling`, `prependXslText`, and `prependXslTextSibling` methods in `s9e\SweetDOM\Element`. The following example illustrates where each `xsl:text` element is inserted relative to the `span` element from which they are created.
+For instance, the `createXslText` method from `s9e\SweetDOM\NodeCreator` is declined into the `afterXslText`, `appendXslText`, `beforeXslText`, `prependXslText`, and `replaceWithXslText` methods in `s9e\SweetDOM\Element`. Each method creates a node, performs the DOM action, then returns the node. The following example illustrates where each `xsl:text` element is inserted relative to the `span` element from which they are created, then replaces the `br` element.
 
 ```php
 $xsl = '<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -58,23 +63,24 @@ $dom->preserveWhiteSpace = false;
 $dom->loadXML($xsl);
 
 $span    = $dom->firstOf('//span');
-$methods = ['appendXslText', 'appendXslTextSibling', 'prependXslText', 'prependXslTextSibling'];
+$methods = ['afterXslText', 'appendXslText', 'beforeXslText', 'prependXslText'];
 foreach ($methods as $methodName)
 {
 	$span->$methodName($methodName);
 }
+$dom->firstOf('//br')->replaceWithXslText('replaceWithXslText');
 echo $dom->saveXML($dom->documentElement);
 ```
 ```xsl
 <xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <p>
-    <xsl:text>prependXslTextSibling</xsl:text>
+    <xsl:text>beforeXslText</xsl:text>
     <span>
       <xsl:text>prependXslText</xsl:text>
-      <br/>
+      <xsl:text>replaceWithXslText</xsl:text>
       <xsl:text>appendXslText</xsl:text>
     </span>
-    <xsl:text>appendXslTextSibling</xsl:text>
+    <xsl:text>afterXslText</xsl:text>
   </p>
 </xsl:template>
 ```
@@ -93,20 +99,12 @@ string(1) "1"
 string(1) "2"
 ```
 
-In addition, the `s9e\SweetDOM\Element` class provides a set of methods modeled after DOM's [insertAdjacentElement](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentElement) API.
-
-```php
-Element insertAdjacentElement(string $where, self $element)
-void    insertAdjacentText(string $where, string $text)
-void    insertAdjacentXML(string $where, string $xml)
-```
-
 Elements can be easily created and added relative to the context node via the following API:
 ```php
-self appendElement(string $nodeName, $text = '')
-self appendElementSibling(string $nodeName, $text = '')
-self prependElement(string $nodeName, $text = '')
-self prependElementSibling(string $nodeName, $text = '')
+Element afterElement(string $nodeName, string $text = '')
+Element appendElement(string $nodeName, string $text = '')
+Element beforeElement(string $nodeName, string $text = '')
+Element prependElement(string $nodeName, string $text = '')
 ```
 ```php
 $dom                     = new s9e\SweetDOM\Document;
@@ -115,7 +113,7 @@ $dom->preserveWhiteSpace = false;
 $dom->loadXML('<p><span><br/></span></p>');
 
 $span    = $dom->firstOf('//span');
-$methods = ['appendElement', 'appendElementSibling', 'prependElement', 'prependElementSibling'];
+$methods = ['afterElement', 'appendElement', 'beforeElement', 'prependElement'];
 foreach ($methods as $methodName)
 {
 	$span->$methodName('i', $methodName);
@@ -124,35 +122,24 @@ echo $dom->saveXML($dom->documentElement);
 ```
 ```xml
 <p>
-  <i>prependElementSibling</i>
+  <i>beforeElement</i>
   <span>
     <i>prependElement</i>
     <br/>
     <i>appendElement</i>
   </span>
-  <i>appendElementSibling</i>
+  <i>afterElement</i>
 </p>
 ```
 
-Text nodes can be created via a similar API:
-```php
-DOMText appendText(string $text)
-DOMText appendTextSibling(string $text)
-DOMText prependText(string $text)
-DOMText prependTextSibling(string $text)
-```
-```php
-$dom = new s9e\SweetDOM\Document;
-$dom->loadXML('<p><span><br/></span></p>');
 
-$span    = $dom->firstOf('//span');
-$methods = ['appendText', 'appendTextSibling', 'prependText', 'prependTextSibling'];
-foreach ($methods as $methodName)
-{
-	$span->$methodName($methodName);
-}
-echo $dom->saveXML($dom->documentElement);
-```
-```html
-<p>prependTextSibling<span>prependText<br/>appendText</span>appendTextSibling</p>
-```
+#### Other extended nodes
+
+The following DOM nodes are automatically extended and augmented with XPath methods as well as whichever magic methods are supported by the node type, usually via the [`DOMChildNode`](https://www.php.net/manual/class.domchildnode.php) and [`DOMParentNode`](https://www.php.net/manual/class.domparentnode.php) interfaces.
+
+ - `s9e\SweetDOM\Attr` extends `DOMAttr`
+ - `s9e\SweetDOM\CdataSection` extends `DOMCdataSection`
+ - `s9e\SweetDOM\Comment` extends `DOMComment`
+ - `s9e\SweetDOM\DocumentFragment` extends `DOMDocumentFragment`
+ - `s9e\SweetDOM\Element` extends `DOMElement`
+ - `s9e\SweetDOM\Text` extends `DOMText`

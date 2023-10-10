@@ -6,7 +6,7 @@
 	"keywords": ["dom", "xsl", "xslt"],
 	"license": "MIT",
 	"require": {
-		"php":     ">=8.0",
+		"php":     ">=8.1",
 		"ext-dom": "*"
 	},
 	"require-dev": {
@@ -23,6 +23,7 @@
 		}
 	},
 	"scripts": {
+		"patch-files": "php scripts/patchMethodAnnotations.php",
 		"test": "vendor/bin/phpunit"
 	}
 }

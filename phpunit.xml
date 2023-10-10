@@ -5,6 +5,7 @@
          bootstrap="vendor/autoload.php"
          cacheDirectory=".phpunit.cache"
          colors="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
          processIsolation="false"
          stopOnError="false"
          stopOnFailure="false"
