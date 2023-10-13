@@ -8,6 +8,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
+use s9e\SweetDOM\Element;
+use s9e\SweetDOM\NodeCreator;
 
 #[CoversClass('s9e\SweetDOM\Element')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\DeprecatedMethods')]
@@ -45,6 +47,19 @@ class ElementTest extends TestCase
 		$dom = new Document;
 		$dom->loadXML('<x/>');
 		$dom->documentElement->appendXslUnknown();
+	}
+
+	public function testCustomNodeCreator()
+	{
+		$dom = new Document;
+		$dom->loadXML('<html/>');
+		$dom->nodeCreator = new MyNodeCreator($dom);
+		$dom->documentElement->appendBr();
+
+		$this->assertXmlStringEqualsXmlString(
+			'<html><br/></html>',
+			$dom->saveXML()
+		);
 	}
 
 	#[DataProvider('getMagicMethodsTests')]
@@ -539,5 +554,13 @@ class ElementTest extends TestCase
 				'<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><x/><xsl:if test="@bar">...</xsl:if></root>'
 			],
 		];
+	}
+}
+
+class MyNodeCreator extends NodeCreator
+{
+	public function createBr(): Element
+	{
+		return $this->ownerDocument->createElement('br');
 	}
 }
