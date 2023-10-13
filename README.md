@@ -106,6 +106,7 @@ Element appendElement(string $nodeName, string $text = '')
 Element beforeElement(string $nodeName, string $text = '')
 Element prependElement(string $nodeName, string $text = '')
 ```
+
 ```php
 $dom                     = new s9e\SweetDOM\Document;
 $dom->formatOutput       = true;
