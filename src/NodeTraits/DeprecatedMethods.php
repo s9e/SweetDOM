@@ -8,8 +8,8 @@
 namespace s9e\SweetDOM\NodeTraits;
 
 use DOMException;
-use const ENT_COMPAT, ENT_XML1;
-use function array_flip, htmlspecialchars, preg_match, preg_match_all, preg_replace_callback, strtolower;
+use const ENT_COMPAT, ENT_XML1, E_USER_DEPRECATED;
+use function array_flip, htmlspecialchars, preg_match, preg_match_all, preg_replace_callback, strtolower, trigger_error;
 
 /**
 * @method mixed polyfillMethodsCall(string $name, array $arguments)
@@ -32,11 +32,18 @@ trait DeprecatedMethods
 				'presibling' => 'before'
 			][strtolower($m[1] . $m[2])];
 
+			trigger_error('Deprecated: ' . $name . '() calls should be replaced with ' . $methodName . '(). See https://github.com/s9e/SweetDOM/blob/master/UPGRADING.md#from-2x-to-30', E_USER_DEPRECATED);
+
 			return $this->$methodName(...$arguments);
 		}
 		if (preg_match('(^(ap|pre)pend(\\w+)Sibling$)i', $name, $m))
 		{
-			$name = ['ap' => 'after', 'pre' => 'before'][strtolower($m[1])] . $m[2];
+			$methodName = ['ap' => 'after', 'pre' => 'before'][strtolower($m[1])] . $m[2];
+
+			trigger_error('Deprecated: ' . $name . '() calls should be replaced with ' . $methodName . '(). See https://github.com/s9e/SweetDOM/blob/master/UPGRADING.md#from-2x-to-30', E_USER_DEPRECATED);
+
+			$name = $methodName;
+
 		}
 
 		return $this->polyfillMethodsCall($name, $arguments);
@@ -47,6 +54,8 @@ trait DeprecatedMethods
 	*/
 	public function insertAdjacentXML(string $where, string $xml): void
 	{
+		trigger_error('Deprecated: insertAdjacentXML() is deprecated. See https://github.com/s9e/SweetDOM/blob/master/UPGRADING.md#from-2x-to-30', E_USER_DEPRECATED);
+
 		$fragment = $this->ownerDocument->createDocumentFragment();
 		$fragment->appendXML($this->addMissingNamespaceDeclarations($xml));
 

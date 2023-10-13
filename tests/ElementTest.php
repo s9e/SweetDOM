@@ -5,6 +5,7 @@ namespace s9e\SweetDOM\Tests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestCase;
 use s9e\SweetDOM\Document;
 
@@ -168,9 +169,22 @@ class ElementTest extends TestCase
 
 	#[DataProvider('getDeprecatedMethodsTests')]
 	#[Group('deprecated')]
-	public function testDeprecatedMethods(string $expected, string $methodName, array $args = []): void
+	#[WithoutErrorHandler()]
+	public function testDeprecatedMethods(string $expected, string $methodName, array $args = [], string $newMethodName = null): void
 	{
+		$actualError = '';
+		$expectedError = 'Deprecated: ' . $methodName . '() calls should be replaced with ' . $newMethodName . '(). See https://github.com/s9e/SweetDOM/blob/master/UPGRADING.md#from-2x-to-30';
+
+		set_error_handler(
+			function (int $errno, string $errstr) use (&$actualError)
+			{
+				$actualError = $errstr;
+			},
+			E_USER_DEPRECATED
+		);
 		$this->testMagicMethods($expected, $methodName, $args);
+		restore_error_handler();
+		$this->assertEquals($expectedError, $actualError);
 	}
 
 	public static function getDeprecatedMethodsTests(): array
@@ -184,7 +198,8 @@ class ElementTest extends TestCase
 					</span>
 				</p>',
 				'prependXslTextSibling',
-				['prependXslTextSibling']
+				['prependXslTextSibling'],
+				'beforeXslText'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -194,7 +209,8 @@ class ElementTest extends TestCase
 					</span>
 				</p>',
 				'prependxsltextsibling',
-				['prependxsltextsibling']
+				['prependxsltextsibling'],
+				'beforexsltext'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -204,7 +220,8 @@ class ElementTest extends TestCase
 					<xsl:text>appendXslTextSibling</xsl:text>
 				</p>',
 				'appendXslTextSibling',
-				['appendXslTextSibling']
+				['appendXslTextSibling'],
+				'afterXslText'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -214,7 +231,8 @@ class ElementTest extends TestCase
 					<xsl:text>appendxsltextsibling</xsl:text>
 				</p>',
 				'appendxsltextsibling',
-				['appendxsltextsibling']
+				['appendxsltextsibling'],
+				'afterxsltext'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -224,7 +242,8 @@ class ElementTest extends TestCase
 					<xsl:text>appendxsltextsibling</xsl:text>
 				</p>',
 				'appendElementSibling',
-				['xsl:text', 'appendxsltextsibling']
+				['xsl:text', 'appendxsltextsibling'],
+				'afterElement'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -234,27 +253,8 @@ class ElementTest extends TestCase
 					</span>
 				</p>',
 				'prependelementsibling',
-				['before', 'beforetext']
-			],
-			[
-				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<span>
-						<text>prependElement</text>
-						<br/>
-					</span>
-				</p>',
-				'prependElement',
-				['text', 'prependElement']
-			],
-			[
-				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<span>
-						<br/>
-						<text>appendElement</text>
-					</span>
-				</p>',
-				'appendElement',
-				['text', 'appendElement']
+				['before', 'beforetext'],
+				'beforeelement'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -264,41 +264,36 @@ class ElementTest extends TestCase
 					<text>appendElementSibling</text>
 				</p>',
 				'appendElementSibling',
-				['text', 'appendElementSibling']
-			],
-			[
-				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<span>
-						<br/>
-						<text>AT&amp;amp;T</text>
-					</span>
-				</p>',
-				'appendElement',
-				['text', 'AT&amp;T']
+				['text', 'appendElementSibling'],
+				'afterElement'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">before<span><br/></span></p>',
 				'prependtextsibling',
-				['before']
+				['before'],
+				'before'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span>prependText<br/></span>
 				</p>',
 				'prependText',
-				['prependText']
+				['prependText'],
+				'prepend'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span><br/>appendText</span>
 				</p>',
 				'appendText',
-				['appendText']
+				['appendText'],
+				'append'
 			],
 			[
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span>after</p>',
 				'appendTextSibling',
-				['after']
+				['after'],
+				'after'
 			],
 		];
 	}
@@ -450,14 +445,27 @@ class ElementTest extends TestCase
 
 	#[DataProvider('getInsertAdjacentXMLTests')]
 	#[Group('deprecated')]
+	#[WithoutErrorHandler()]
 	public function testInsertAdjacentXML($original, $position, $xml, $expected)
 	{
+		$actualError   = '';
+		$expectedError = 'Deprecated: insertAdjacentXML() is deprecated. See https://github.com/s9e/SweetDOM/blob/master/UPGRADING.md#from-2x-to-30';
+
+		set_error_handler(
+			function (int $errno, string $errstr) use (&$actualError)
+			{
+				$actualError = $errstr;
+			},
+			E_USER_DEPRECATED
+		);
 		$dom = new Document;
 		$dom->loadXML($original);
-
 		$dom->firstOf('//x')->insertAdjacentXML($position, $xml);
 
 		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML());
+
+		restore_error_handler();
+		$this->assertEquals($expectedError, $actualError);
 	}
 
 	public static function getInsertAdjacentXMLTests()
