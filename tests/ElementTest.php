@@ -12,6 +12,7 @@ use s9e\SweetDOM\Document;
 #[CoversClass('s9e\SweetDOM\Element')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\DeprecatedMethods')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\MagicMethods')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\PolyfillMethods')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\XPathMethods')]
 class ElementTest extends TestCase
 {
