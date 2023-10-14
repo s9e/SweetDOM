@@ -8,7 +8,6 @@
 namespace s9e\SweetDOM;
 
 use DOMAttr;
-use s9e\SweetDOM\NodeTraits\MagicMethods;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
 class Attr extends DOMAttr

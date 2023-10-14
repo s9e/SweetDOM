@@ -8,7 +8,6 @@
 namespace s9e\SweetDOM;
 
 use DOMDocument;
-use DOMDocumentFragment;
 use DOMNode;
 use DOMNodeList;
 use DOMXPath;

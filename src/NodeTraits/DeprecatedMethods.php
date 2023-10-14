@@ -7,7 +7,6 @@
 */
 namespace s9e\SweetDOM\NodeTraits;
 
-use DOMException;
 use const ENT_COMPAT, ENT_XML1, E_USER_DEPRECATED;
 use function array_flip, htmlspecialchars, preg_match, preg_match_all, preg_replace_callback, strtolower, trigger_error;
 
