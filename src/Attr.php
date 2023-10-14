@@ -10,6 +10,11 @@ namespace s9e\SweetDOM;
 use DOMAttr;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
+/**
+* @property ?Document $ownerDocument
+* @property ?Element $ownerElement
+* @property ?Element $parentElement
+*/
 class Attr extends DOMAttr
 {
 	use XPathMethods;

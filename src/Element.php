@@ -57,6 +57,7 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element beforeXslValueOf(string $select, ?string $disableOutputEscaping = null)
 * @method Element beforeXslVariable(string $name, ?string $select = null)
 * @method Element beforeXslWhen(string $test, string $textContent = '')
+* @method ?Element insertAdjacentElement(string $where, DOMElement $element)
 * @method Comment prependComment(string $data)
 * @method Element prependElement(string $nodeName, string $textContent = '')
 * @method Element prependElementNS(?string $namespace, string $nodeName, string $textContent = '')
@@ -87,6 +88,12 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element replaceWithXslValueOf(string $select, ?string $disableOutputEscaping = null)
 * @method Element replaceWithXslVariable(string $name, ?string $select = null)
 * @method Element replaceWithXslWhen(string $test, string $textContent = '')
+* @property ?Element $firstElementChild
+* @property ?Element $lastElementChild
+* @property ?Element $nextElementSibling
+* @property ?Document $ownerDocument
+* @property ?Element $parentElement
+* @property ?Element $previousElementSibling
 */
 class Element extends DOMElement
 {

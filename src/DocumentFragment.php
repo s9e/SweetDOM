@@ -42,6 +42,10 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element prependXslValueOf(string $select, ?string $disableOutputEscaping = null)
 * @method Element prependXslVariable(string $name, ?string $select = null)
 * @method Element prependXslWhen(string $test, string $textContent = '')
+* @property ?Element $firstElementChild
+* @property ?Element $lastElementChild
+* @property ?Document $ownerDocument
+* @property ?Element $parentElement
 */
 class DocumentFragment extends DOMDocumentFragment
 {

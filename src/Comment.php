@@ -57,6 +57,10 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element replaceWithXslValueOf(string $select, ?string $disableOutputEscaping = null)
 * @method Element replaceWithXslVariable(string $name, ?string $select = null)
 * @method Element replaceWithXslWhen(string $test, string $textContent = '')
+* @property ?Element $nextElementSibling
+* @property ?Document $ownerDocument
+* @property ?Element $parentElement
+* @property ?Element $previousElementSibling
 */
 class Comment extends DOMComment
 {
