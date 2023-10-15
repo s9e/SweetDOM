@@ -4,7 +4,9 @@ namespace s9e\SweetDOM\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestCase;
+use const DOM_SYNTAX_ERR;
 use s9e\SweetDOM\Document;
 
 #[CoversClass('s9e\SweetDOM\NodeCreator')]
@@ -59,11 +61,21 @@ class NodeCreatorTest extends TestCase
 	public function testCreateIllegalComment()
 	{
 		$this->expectException('DOMException');
-		$this->expectExceptionCode(\DOM_SYNTAX_ERR);
+		$this->expectExceptionCode(DOM_SYNTAX_ERR);
 
 		$dom = new Document;
 		$dom->loadXML('<x/>');
 		$dom->nodeCreator->createComment("can't use -- in comments");
+	}
+
+	#[WithoutErrorHandler()]
+	public function testCreateIllegalElement()
+	{
+		$this->expectException('DOMException');
+
+		$dom = new Document;
+		$dom->strictErrorChecking = false;
+		@$dom->nodeCreator->createElement('??');
 	}
 
 	#[DataProvider('getCreateTestXslCases')]

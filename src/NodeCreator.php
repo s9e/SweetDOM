@@ -32,29 +32,34 @@ class NodeCreator
 	*/
 	public function createElement(string $nodeName, string $textContent = ''): Element
 	{
-		$value = htmlspecialchars($textContent, ENT_XML1);
-
 		$pos = strpos($nodeName, ':');
 		if ($pos === false)
 		{
-			return $this->ownerDocument->createElement($nodeName, $value);
+			$namespace = null;
 		}
-
-		$prefix = substr($nodeName, 0, $pos);
-		$nsURI  = $this->ownerDocument->lookupNamespaceURI($prefix);
-		if ($nsURI === null)
+		else
 		{
-			throw new DOMException('Undefined namespace prefix', DOM_NAMESPACE_ERR);
+			$prefix    = substr($nodeName, 0, $pos);
+			$namespace = $this->ownerDocument->lookupNamespaceURI($prefix);
+			if ($namespace === null)
+			{
+				throw new DOMException('Undefined namespace prefix', DOM_NAMESPACE_ERR);
+			}
 		}
 
-		return $this->ownerDocument->createElementNS($nsURI, $nodeName, $value);
+		return $this->createElementNS($namespace, $nodeName, $textContent);
 	}
 
 	public function createElementNS(?string $namespace, string $nodeName, string $textContent = ''): Element
 	{
-		$value = htmlspecialchars($textContent, ENT_XML1);
+		$value   = htmlspecialchars($textContent, ENT_XML1);
+		$element = $this->ownerDocument->createElementNS($namespace, $nodeName, $value);
+		if ($element instanceof Element)
+		{
+			return $element;
+		}
 
-		return $this->ownerDocument->createElementNS($namespace, $nodeName, $value);
+		throw new DOMException;
 	}
 
 	/**
@@ -110,10 +115,10 @@ class NodeCreator
 	*/
 	protected function createXslElementByName(string $localName, string $textContent = '', array $attributes = []): Element
 	{
-		$element = $this->ownerDocument->createElementNS(
+		$element = $this->createElementNS(
 			'http://www.w3.org/1999/XSL/Transform',
 			'xsl:' . $localName,
-			htmlspecialchars($textContent, ENT_XML1)
+			$textContent
 		);
 		foreach ($attributes as $attrName => $attrValue)
 		{
