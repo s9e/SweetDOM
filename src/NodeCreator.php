@@ -29,6 +29,10 @@ class NodeCreator
 
 	/**
 	* Create and return an element
+	*
+	* @param  string $nodeName    Full qualified name for the node
+	* @param  string $textContent Text content, will be automatically escaped
+	* @return Element
 	*/
 	public function createElement(string $nodeName, string $textContent = ''): Element
 	{

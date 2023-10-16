@@ -101,10 +101,10 @@ string(1) "2"
 
 Elements can be easily created and added relative to the context node via the following API:
 ```php
-Element afterElement(string $nodeName, string $text = '')
-Element appendElement(string $nodeName, string $text = '')
-Element beforeElement(string $nodeName, string $text = '')
-Element prependElement(string $nodeName, string $text = '')
+Element afterElement(string $nodeName, string $textContent = '')
+Element appendElement(string $nodeName, string $textContent = '')
+Element beforeElement(string $nodeName, string $textContent = '')
+Element prependElement(string $nodeName, string $textContent = '')
 ```
 
 ```php
