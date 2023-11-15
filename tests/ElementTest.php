@@ -62,6 +62,26 @@ class ElementTest extends TestCase
 		);
 	}
 
+	public function testDocumentFragmentSetup()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+
+		$x = $dom->firstOf('//x');
+		$x->appendDocumentFragment(
+			function ($fragment)
+			{
+				$fragment->appendElement('y');
+				$fragment->appendElement('z');
+			}
+		);
+
+		$this->assertXmlStringEqualsXmlString(
+			'<x><y/><z/></x>',
+			$dom->saveXML($x)
+		);
+	}
+
 	#[DataProvider('getMagicMethodsTests')]
 	public function testMagicMethods(string $expected, string $methodName, array $args = [])
 	{

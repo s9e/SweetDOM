@@ -12,6 +12,38 @@ use s9e\SweetDOM\Document;
 #[CoversClass('s9e\SweetDOM\NodeCreator')]
 class NodeCreatorTest extends TestCase
 {
+	public function testCreateDocumentFragment()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+
+		$fragment = $dom->nodeCreator->createDocumentFragment();
+		$fragment->appendComment(' foo ');
+
+		$x = $dom->firstOf('//x');
+		$x->append($fragment);
+
+		$this->assertEquals('<x><!-- foo --></x>', $dom->saveXML($x));
+	}
+
+	public function testCreateDocumentFragmentSetup()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+
+		$fragment = $dom->nodeCreator->createDocumentFragment(
+			function ($frag)
+			{
+				$frag->appendComment(' foo ');
+			}
+		);
+
+		$x = $dom->firstOf('//x');
+		$x->append($fragment);
+
+		$this->assertEquals('<x><!-- foo --></x>', $dom->saveXML($x));
+	}
+
 	public function testCreateElement()
 	{
 		$dom = new Document;

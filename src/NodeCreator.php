@@ -28,6 +28,20 @@ class NodeCreator
 	}
 
 	/**
+	* Create a DocumentFragment and execute given callback on it before returning it
+	*/
+	public function createDocumentFragment(callable $callback = null): DocumentFragment
+	{
+		$fragment = $this->ownerDocument->createDocumentFragment();
+		if (isset($callback))
+		{
+			$callback($fragment);
+		}
+
+		return $fragment;
+	}
+
+	/**
 	* Create and return an element
 	*
 	* @param  string $nodeName    Full qualified name for the node

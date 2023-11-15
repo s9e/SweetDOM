@@ -133,6 +133,24 @@ echo $dom->saveXML($dom->documentElement);
 </p>
 ```
 
+Document fragments can be used to batch operations, or insert XML in a DOM.
+
+```php
+$dom = new s9e\SweetDOM\Document;
+$dom->loadXML('<x/>');
+
+$x = $dom->firstOf('//x');
+$x->appendDocumentFragment(
+	// The callback will be executed before the fragment is appended
+	fn($fragment) => $fragment->appendXML('<y/><z/>')
+);
+
+echo $dom->saveXML($x);
+```
+```xml
+<x><y/><z/></x>
+```
+
 
 #### Other extended nodes
 

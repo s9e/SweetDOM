@@ -1,4 +1,4 @@
-## From 2.x to 3.0
+## From 2.x to 3.x
 
 A number of `s9e\SweetDOM\Element` methods are now deprecated. Those deprecated methods remain in 3.x but may generate a `E_USER_DEPRECATED` notice. Most deprecated methods can be replaced with native calls, see the table below for a conversion guide. Deprecated methods will be removed in a future version.
 
@@ -6,7 +6,8 @@ Magic methods whose names end in `Sibling` are deprecated and have been renamed 
 
 Text methods `appendText`, `appendTextSibling`, `prependText`, and `prependTextSibling` are deprecated in favour of native DOM operations `append`, `after`, `prepend`, and `before`.
 
-The method `insertAdjacentXML` is deprecated without a replacement planned. It can be replaced with native methods using [`DOMDocumentFragment::appendXML`](https://www.php.net/manual/domdocumentfragment.appendxml.php).
+The method `insertAdjacentXML` is deprecated without a replacement planned. It can be replaced with native methods using [`DOMDocumentFragment::appendXML`](https://www.php.net/manual/domdocumentfragment.appendxml.php). Starting with 3.1, magic methods such as `appendDocumentFragment(callable $callback)` can be used to simplify operations related to document fragments.
+
 
 |               2.x               |           3.0           |
 |---------------------------------|-------------------------|
