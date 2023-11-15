@@ -8,9 +8,8 @@ Text methods `appendText`, `appendTextSibling`, `prependText`, and `prependTextS
 
 The method `insertAdjacentXML` is deprecated without a replacement planned. It can be replaced with native methods using [`DOMDocumentFragment::appendXML`](https://www.php.net/manual/domdocumentfragment.appendxml.php).
 
-|---------------------------------+-------------------------|
 |               2.x               |           3.0           |
-|---------------------------------+-------------------------|
+|---------------------------------|-------------------------|
 | appendElementSibling            | afterElement            |
 | appendText                      | append                  |
 | appendTextSibling               | after                   |
@@ -39,4 +38,3 @@ The method `insertAdjacentXML` is deprecated without a replacement planned. It c
 | prependXslValueOfSibling        | beforeXslValueOf        |
 | prependXslVariableSibling       | beforeXslVariable       |
 | prependXslWhenSibling           | beforeXslWhen           |
-|---------------------------------+-------------------------|
