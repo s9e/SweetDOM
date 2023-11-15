@@ -10,6 +10,18 @@ function export($var)
 	return ($str === 'NULL') ? 'null' : $str;
 }
 
+function getTraits(string $fqn): array
+{
+	$traits = [];
+	foreach (class_uses($fqn) as $trait)
+	{
+		$traits[$trait] = $trait;
+		$traits += getTraits($trait);
+	}
+
+	return $traits;
+}
+
 function exportMethodParameters(ReflectionMethod $method): string
 {
 	$parameters = [];
@@ -72,7 +84,7 @@ foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
 	}
 }
 
-foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
+foreach (glob(__DIR__ . '/../src/Element.php') as $filepath)
 {
 	$filepath = realpath($filepath);
 	$file = file_get_contents($filepath);
@@ -82,7 +94,7 @@ foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
 	}
 
 	$annotations     = [];
-	$className       = $m[1];
+	$className       = 's9e\\SweetDOM\\' . $m[1];
 	$parentClassName = $m[2];
 
 	if ($parentClassName === 'DOMDocument')
@@ -124,20 +136,23 @@ foreach (glob(__DIR__ . '/../src/*.php') as $filepath)
 	}
 
 	// Add magic methods
-	$actions = array_intersect(
-		['after', 'append', 'before', 'prepend', 'replaceWith'],
-		get_class_methods('s9e\\SweetDOM\\' . $m[1])
-	);
-	foreach ($actions as $action)
+	if (array_key_exists('s9e\\SweetDOM\\NodeTraits\\MagicMethods', getTraits($className)))
 	{
-		foreach ($targets as $methodName => $target)
+		$actions = array_intersect(
+			['after', 'append', 'before', 'prepend', 'replaceWith'],
+			get_class_methods($className)
+		);
+		foreach ($actions as $action)
 		{
-			$methodName = str_replace('$ACTION', $action, $methodName);
-			$annotations['m' . $methodName] = "\n* @method " . str_replace('$ACTION', $action, $target);
+			foreach ($targets as $methodName => $target)
+			{
+				$methodName = str_replace('$ACTION', $action, $methodName);
+				$annotations['m' . $methodName] = "\n* @method " . str_replace('$ACTION', $action, $target);
+			}
 		}
 	}
-	ksort($annotations);
 
+	ksort($annotations);
 	$newFile = preg_replace_callback(
 		'(/\\*\\*\\K(?:\\n\\* \\N++)*+(?=\\n\\*/\\nclass))s',
 		fn() => implode('', $annotations),

@@ -14,21 +14,6 @@ use DOMXPath;
 use function func_get_args;
 
 /**
-* @method Comment appendComment(string $data)
-* @method Element appendElement(string $nodeName, string $textContent = '')
-* @method Element appendElementNS(?string $namespace, string $nodeName, string $textContent = '')
-* @method Element appendXslApplyTemplates(?string $select = null, ?string $mode = null)
-* @method Element appendXslAttribute(string $name, string $textContent = '', ?string $namespace = null)
-* @method Element appendXslChoose()
-* @method Element appendXslComment(string $textContent = '')
-* @method Element appendXslCopyOf(string $select)
-* @method Element appendXslElement(string $name, ?string $namespace = null, ?string $useAttributeSets = null)
-* @method Element appendXslIf(string $test, string $textContent = '')
-* @method Element appendXslOtherwise(string $textContent = '')
-* @method Element appendXslText(string $textContent = '', ?string $disableOutputEscaping = null)
-* @method Element appendXslValueOf(string $select, ?string $disableOutputEscaping = null)
-* @method Element appendXslVariable(string $name, ?string $select = null)
-* @method Element appendXslWhen(string $test, string $textContent = '')
 * @method Attr|false createAttribute(string $localName)
 * @method Attr|false createAttributeNS(?string $namespace, string $qualifiedName)
 * @method CdataSection|false createCDATASection(string $data)
@@ -38,21 +23,6 @@ use function func_get_args;
 * @method Element|false createElementNS(?string $namespace, string $qualifiedName, string $value = '')
 * @method Text createTextNode(string $data)
 * @method ?Element getElementById(string $elementId)
-* @method Comment prependComment(string $data)
-* @method Element prependElement(string $nodeName, string $textContent = '')
-* @method Element prependElementNS(?string $namespace, string $nodeName, string $textContent = '')
-* @method Element prependXslApplyTemplates(?string $select = null, ?string $mode = null)
-* @method Element prependXslAttribute(string $name, string $textContent = '', ?string $namespace = null)
-* @method Element prependXslChoose()
-* @method Element prependXslComment(string $textContent = '')
-* @method Element prependXslCopyOf(string $select)
-* @method Element prependXslElement(string $name, ?string $namespace = null, ?string $useAttributeSets = null)
-* @method Element prependXslIf(string $test, string $textContent = '')
-* @method Element prependXslOtherwise(string $textContent = '')
-* @method Element prependXslText(string $textContent = '', ?string $disableOutputEscaping = null)
-* @method Element prependXslValueOf(string $select, ?string $disableOutputEscaping = null)
-* @method Element prependXslVariable(string $name, ?string $select = null)
-* @method Element prependXslWhen(string $test, string $textContent = '')
 * @property ?DocumentType $doctype
 * @property ?Element $documentElement
 * @property ?Element $firstElementChild
