@@ -73,6 +73,11 @@ trait PolyfillMethods
 		{
 			$this->lastChild->remove();
 		}
-		$this->append(...$nodes);
+		// https://github.com/php/php-src/pull/11768
+		// Fixed in 8.1.23, 8.2.10
+		if (!empty($nodes))
+		{
+			$this->append(...$nodes);
+		}
 	}
 }
