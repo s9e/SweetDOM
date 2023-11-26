@@ -598,6 +598,44 @@ class ElementTest extends TestCase
 			],
 		];
 	}
+
+	#[DataProvider('getReplaceChildrenTests')]
+	#[Group('polyfill')]
+	public function testReplaceChildren(string $expected, array $arguments)
+	{
+		$dom = new Document;
+		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
+
+		$dom->firstOf('//span')->__call('replaceChildren', $arguments);
+		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
+
+		if (version_compare(PHP_VERSION, '8.3.0alpha') >= 0)
+		{
+			$dom = new Document;
+			$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
+
+			$dom->firstOf('//span')->replaceChildren(...$arguments);
+			$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
+		}
+	}
+
+	public static function getReplaceChildrenTests()
+	{
+		return [
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>...</span>
+				</p>',
+				['...']
+			],
+			[
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span/>
+				</p>',
+				[]
+			],
+		];
+	}
 }
 
 class MyNodeCreator extends NodeCreator

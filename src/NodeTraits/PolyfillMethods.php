@@ -25,7 +25,7 @@ trait PolyfillMethods
 
 	public function __call(string $name, array $arguments)
 	{
-		if (preg_match('(^insertAdjacent(?:Element|Text)$)i', $name))
+		if (preg_match('(^(insertAdjacent(?:Element|Text)|replaceChildren)$)i', $name))
 		{
 			$methodName = '_' . $name;
 
@@ -65,5 +65,14 @@ trait PolyfillMethods
 	{
 		$node = $this->ownerDocument->createTextNode($text);
 		$this->insertAdjacentNode($where, $node);
+	}
+
+	private function _replaceChildren(...$nodes): void
+	{
+		while (isset($this->lastChild))
+		{
+			$this->lastChild->remove();
+		}
+		$this->append(...$nodes);
 	}
 }
