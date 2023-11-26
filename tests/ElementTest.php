@@ -383,6 +383,17 @@ class ElementTest extends TestCase
 
 		$dom->firstOf('//span')->__call('insertAdjacentElement', [$position, $element]);
 		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
+
+		if (version_compare(PHP_VERSION, '8.3.0alpha') >= 0)
+		{
+			$dom = new Document;
+			$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
+
+			$element = $dom->createElement('span', $position);
+
+			$dom->firstOf('//span')->insertAdjacentElement($position, $element);
+			$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
+		}
 	}
 
 	public static function getInsertAdjacentElementTests()
@@ -442,9 +453,21 @@ class ElementTest extends TestCase
 	{
 		$dom = new Document;
 		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
-
 		$dom->firstOf('//span')->__call('insertAdjacentText', [$position, $position]);
-		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
+		$actual = $dom->saveXML($dom->documentElement);
+
+		$this->assertXmlStringEqualsXmlString($expected, $actual);
+
+		if (version_compare(PHP_VERSION, '8.3.0alpha') >= 0)
+		{
+			$dom = new Document;
+			$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
+			$dom->firstOf('//span')->insertAdjacentText($position, $position);
+
+			$reference = $dom->saveXML($dom->documentElement);
+
+			$this->assertXmlStringEqualsXmlString($expected, $reference, 'Does not match reference');
+		}
 	}
 
 	public static function getInsertAdjacentTextTests()
