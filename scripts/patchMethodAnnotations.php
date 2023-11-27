@@ -66,8 +66,17 @@ foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method)
 	{
 		continue;
 	}
+
+	$returnType = str_replace('s9e\\SweetDOM\\', '', (string) $method->getReturnType());
+	if ($returnType === 'DocumentFragment')
+	{
+		// Document fragments are never returned themselves. Magic methods that return something
+		// will either return the first node that was inserted, or nothing (null)
+		$returnType = 'mixed';
+	}
+
 	$methodName = '$ACTION' . $m[1];
-	$annotation = str_replace('s9e\\SweetDOM\\', '', (string) $method->getReturnType()) . ' ' . $methodName . '(' . exportMethodParameters($method) . ')';
+	$annotation = $returnType . ' ' . $methodName . '(' . exportMethodParameters($method) . ')';
 
 	$targets[$methodName] = $annotation;
 }
