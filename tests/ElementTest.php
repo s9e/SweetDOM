@@ -372,28 +372,33 @@ class ElementTest extends TestCase
 		);
 	}
 
-	#[DataProvider('getInsertAdjacentElementTests')]
-	#[Group('polyfill')]
-	public function testInsertAdjacentElement($position, $expected)
+	protected function runPolyfillTest(string $expected, string $methodName, callable $argumentsCallback): void
 	{
 		$dom = new Document;
 		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
 
-		$element = $dom->createElement('span', $position);
-
-		$dom->firstOf('//span')->__call('insertAdjacentElement', [$position, $element]);
+		$dom->firstOf('//span')->__call($methodName, $argumentsCallback($dom));
 		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
 
-		if (version_compare(PHP_VERSION, '8.3.0alpha') >= 0)
+		if (method_exists('DOMElement', $methodName))
 		{
 			$dom = new Document;
 			$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
 
-			$element = $dom->createElement('span', $position);
-
-			$dom->firstOf('//span')->insertAdjacentElement($position, $element);
-			$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
+			$dom->firstOf('//span')->$methodName(...$argumentsCallback($dom));
+			$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement), 'Reference does not match');
 		}
+	}
+
+	#[DataProvider('getInsertAdjacentElementTests')]
+	#[Group('polyfill')]
+	public function testInsertAdjacentElement($position, $expected)
+	{
+		$this->runPolyfillTest(
+			$expected,
+			'insertAdjacentElement',
+			fn($dom) => [$position, $dom->createElement('span', $position)]
+		);
 	}
 
 	public static function getInsertAdjacentElementTests()
@@ -451,23 +456,7 @@ class ElementTest extends TestCase
 	#[Group('polyfill')]
 	public function testInsertAdjacentText($position, $expected)
 	{
-		$dom = new Document;
-		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
-		$dom->firstOf('//span')->__call('insertAdjacentText', [$position, $position]);
-		$actual = $dom->saveXML($dom->documentElement);
-
-		$this->assertXmlStringEqualsXmlString($expected, $actual);
-
-		if (version_compare(PHP_VERSION, '8.3.0alpha') >= 0)
-		{
-			$dom = new Document;
-			$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
-			$dom->firstOf('//span')->insertAdjacentText($position, $position);
-
-			$reference = $dom->saveXML($dom->documentElement);
-
-			$this->assertXmlStringEqualsXmlString($expected, $reference, 'Does not match reference');
-		}
+		$this->runPolyfillTest($expected, 'insertAdjacentText', fn() => [$position, $position]);
 	}
 
 	public static function getInsertAdjacentTextTests()
@@ -603,20 +592,7 @@ class ElementTest extends TestCase
 	#[Group('polyfill')]
 	public function testReplaceChildren(string $expected, array $arguments)
 	{
-		$dom = new Document;
-		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
-
-		$dom->firstOf('//span')->__call('replaceChildren', $arguments);
-		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
-
-		if (version_compare(PHP_VERSION, '8.3.0alpha') >= 0)
-		{
-			$dom = new Document;
-			$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
-
-			$dom->firstOf('//span')->replaceChildren(...$arguments);
-			$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
-		}
+		$this->runPolyfillTest($expected, 'replaceChildren', fn() => $arguments);
 	}
 
 	public static function getReplaceChildrenTests()
