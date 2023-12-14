@@ -11,7 +11,8 @@ use DOMDocument;
 use DOMNode;
 use DOMNodeList;
 use DOMXPath;
-use function func_get_args;
+use RuntimeException;
+use function func_get_args, libxml_get_last_error;
 
 /**
 * @method Attr|false createAttribute(string $localName)
@@ -64,7 +65,7 @@ class Document extends DOMDocument
 	*/
 	public function firstOf(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true): ?DOMNode
 	{
-		return $this->xpath('query', func_get_args())->item(0);
+		return $this->query(...func_get_args())->item(0);
 	}
 
 	/**
@@ -72,7 +73,15 @@ class Document extends DOMDocument
 	*/
 	public function query(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true): DOMNodeList
 	{
-		return $this->xpath('query', func_get_args());
+		$result = $this->xpath('query', func_get_args());
+		if ($result === false)
+		{
+			$errorMessage = libxml_get_last_error()?->message ?? 'No error message';
+
+			throw new RuntimeException('Invalid XPath query: ' . trim($errorMessage));
+		}
+
+		return $result;
 	}
 
 	/**

@@ -72,6 +72,17 @@ class DocumentTest extends TestCase
 		);
 	}
 
+	public function testQueryError()
+	{
+		$this->expectException('RuntimeException');
+		$this->expectExceptionMessage('Invalid XPath query: Invalid expression');
+
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+
+		@$dom->query('x x');
+	}
+
 	public function testFirstOf()
 	{
 		$dom = new Document;
@@ -104,5 +115,16 @@ class DocumentTest extends TestCase
 		$dom->loadXML('<root><x id="123"/></root>');
 
 		$this->assertNull($dom->firstOf('.//z'));
+	}
+
+	public function testFirstOfError()
+	{
+		$this->expectException('RuntimeException');
+		$this->expectExceptionMessage('Invalid XPath query: Invalid expression');
+
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+
+		@$dom->firstOf('x x');
 	}
 }
