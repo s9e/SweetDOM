@@ -90,15 +90,18 @@ class Document extends DOMDocument
 
 	protected function needsWorkarounds(): bool
 	{
-		if (version_compare(PHP_VERSION, '8.2.10', '>='))
-		{
-			return false;
-		}
 		if (version_compare(PHP_VERSION, '8.1.23', '<'))
 		{
+			// Anything before 8.1.23 requires workarounds
 			return true;
 		}
+		if (version_compare(PHP_VERSION, '8.2.10', '>='))
+		{
+			// Anything from 8.2.10 onwards is fine
+			return false;
+		}
 
+		// 8.2.0 to 8.2.9 need workarounds, but ^8.1.23 does not
 		return version_compare(PHP_VERSION, '8.2.0-dev', '>=');
 	}
 
