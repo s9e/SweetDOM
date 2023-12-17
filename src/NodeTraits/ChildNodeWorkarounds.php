@@ -13,7 +13,7 @@ use function array_reverse;
 trait ChildNodeWorkarounds
 {
 	// https://github.com/php/php-src/pull/11768 - fixed in ~8.1.23, ^8.2.10
-	// https://github.com/php/php-src/pull/11905 - fixed in ~8.1.23, ^8.2.10
+	// https://github.com/php/php-src/pull/11905 - behaviour changed in 8.3.0
 	public function after(...$nodes): void
 	{
 		if (isset($this->parentNode))
