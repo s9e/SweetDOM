@@ -6,7 +6,7 @@
 	"keywords": ["dom", "xsl", "xslt"],
 	"license": "MIT",
 	"require": {
-		"php":     ">=8.1",
+		"php":     "^8.1.2",
 		"ext-dom": "*"
 	},
 	"require-dev": {

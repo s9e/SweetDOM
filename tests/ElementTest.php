@@ -4,6 +4,7 @@ namespace s9e\SweetDOM\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestCase;
@@ -12,8 +13,10 @@ use s9e\SweetDOM\Element;
 use s9e\SweetDOM\NodeCreator;
 
 #[CoversClass('s9e\SweetDOM\Element')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\ChildNodeWorkarounds')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\DeprecatedMethods')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\MagicMethods')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\ParentNodeWorkarounds')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\PolyfillMethods')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\XPathMethods')]
 class ElementTest extends TestCase
@@ -79,6 +82,112 @@ class ElementTest extends TestCase
 		$this->assertXmlStringEqualsXmlString(
 			'<x><y/><z/></x>',
 			$dom->saveXML($x)
+		);
+	}
+
+	#[DoesNotPerformAssertions]
+	#[Group('workarounds')]
+	public function testAfterNoParent()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+		$dom->createElement('x')->after('.');
+	}
+
+	#[Group('workarounds')]
+	public function testAfterNothing()
+	{
+		$dom = new Document;
+		$dom->loadXML('<p><span>.<br/>.</span></p>');
+		$dom->firstOf('//br')->after();
+
+		$this->assertXmlStringEqualsXmlString('<p><span>.<br/>.</span></p>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testAppendNothing()
+	{
+		$dom = new Document;
+		$dom->loadXML('<p><span>.<br/>.</span></p>');
+		$dom->firstOf('//br')->append();
+
+		$this->assertXmlStringEqualsXmlString('<p><span>.<br/>.</span></p>', $dom->saveXML());
+	}
+
+	#[DoesNotPerformAssertions]
+	#[Group('workarounds')]
+	public function testBeforeNoParent()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x/>');
+		$dom->createElement('x')->before('.');
+	}
+
+	#[Group('workarounds')]
+	public function testBeforeNothing()
+	{
+		$dom = new Document;
+		$dom->loadXML('<p><span>.<br/>.</span></p>');
+		$dom->firstOf('//br')->before();
+
+		$this->assertXmlStringEqualsXmlString('<p><span>.<br/>.</span></p>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testPrependNothing()
+	{
+		$dom = new Document;
+		$dom->loadXML('<p><span>.<br/>.</span></p>');
+		$dom->firstOf('//br')->prepend();
+
+		$this->assertXmlStringEqualsXmlString('<p><span>.<br/>.</span></p>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testReplaceWithText()
+	{
+		$dom = new Document;
+		$dom->loadXML('<p><span>.<br/>.</span></p>');
+		$dom->firstOf('//br')->replaceWith('??');
+
+		$this->assertXmlStringEqualsXmlString('<p><span>.??.</span></p>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testReplaceWithNothing()
+	{
+		$dom = new Document;
+		$dom->loadXML('<p><span>.<br/>.</span></p>');
+		$dom->firstOf('//br')->replaceWith();
+
+		$this->assertXmlStringEqualsXmlString('<p><span>..</span></p>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testAppendNamespace()
+	{
+		$dom = new Document;
+		$dom->loadXML('<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><xsl:if test="@foo"><span><xsl:attribute name="title"><xsl:value-of select="@foo"/></xsl:attribute><xsl:apply-templates/></span></xsl:if></xsl:template>');
+		$dom->firstOf('//xsl:if')->append(...$dom->firstOf('//span')->childNodes);
+		$xml = $dom->saveXML($dom->documentElement);
+
+		$this->assertEquals(
+			'<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><xsl:if test="@foo"><span/><xsl:attribute name="title"><xsl:value-of select="@foo"/></xsl:attribute><xsl:apply-templates/></xsl:if></xsl:template>',
+			$xml
+		);
+	}
+
+	#[Group('workarounds')]
+	public function testPrependNamespace()
+	{
+		$dom = new Document;
+		$dom->loadXML('<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><xsl:choose><xsl:when test="@foo"><span><xsl:attribute name="title"><xsl:value-of select="@foo"/></xsl:attribute><xsl:apply-templates/></span></xsl:when><xsl:otherwise><span><xsl:apply-templates/></span></xsl:otherwise></xsl:choose></xsl:template>');
+		$dom->firstOf('//xsl:when')->prepend(...$dom->firstOf('//span')->childNodes);
+		$xml = $dom->saveXML($dom->documentElement);
+
+		$this->assertEquals(
+			'<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><xsl:choose><xsl:when test="@foo"><xsl:attribute name="title"><xsl:value-of select="@foo"/></xsl:attribute><xsl:apply-templates/><span/></xsl:when><xsl:otherwise><span><xsl:apply-templates/></span></xsl:otherwise></xsl:choose></xsl:template>',
+			$xml
 		);
 	}
 

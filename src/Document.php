@@ -12,7 +12,7 @@ use DOMNode;
 use DOMNodeList;
 use DOMXPath;
 use RuntimeException;
-use function func_get_args, libxml_get_last_error;
+use function func_get_args, libxml_get_last_error, version_compare;
 
 /**
 * @method Attr|false createAttribute(string $localName)
@@ -44,12 +44,16 @@ class Document extends DOMDocument
 
 		$this->nodeCreator = new NodeCreator($this);
 
-		$this->registerNodeClass('DOMAttr',             Attr::class);
-		$this->registerNodeClass('DOMCdataSection',     CdataSection::class);
-		$this->registerNodeClass('DOMComment',          Comment::class);
-		$this->registerNodeClass('DOMDocumentFragment', DocumentFragment::class);
-		$this->registerNodeClass('DOMElement',          Element::class);
-		$this->registerNodeClass('DOMText',             Text::class);
+		$classes   = ['Attr', 'CdataSection', 'Comment', 'DocumentFragment', 'Element', 'Text'];
+		$namespace = __NAMESPACE__;
+		if ($this->needsWorkarounds())
+		{
+			$namespace .= '\\Workarounds';
+		}
+		foreach ($classes as $className)
+		{
+			$this->registerNodeClass('DOM' . $className, $namespace . '\\' . $className);
+		}
 	}
 
 	/**
@@ -82,6 +86,20 @@ class Document extends DOMDocument
 		}
 
 		return $result;
+	}
+
+	protected function needsWorkarounds(): bool
+	{
+		if (version_compare(PHP_VERSION, '8.2.10', '>='))
+		{
+			return false;
+		}
+		if (version_compare(PHP_VERSION, '8.1.23', '<'))
+		{
+			return true;
+		}
+
+		return version_compare(PHP_VERSION, '8.2.0-dev', '>=');
 	}
 
 	/**
