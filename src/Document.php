@@ -48,7 +48,7 @@ class Document extends DOMDocument
 		$namespace = __NAMESPACE__;
 		if ($this->needsWorkarounds())
 		{
-			$namespace .= '\\Workarounds';
+			$namespace .= '\\PatchedNodes';
 		}
 		foreach ($classes as $className)
 		{

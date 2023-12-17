@@ -5,7 +5,7 @@
 * @copyright Copyright (c) The s9e authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\SweetDOM\Workarounds;
+namespace s9e\SweetDOM\PatchedNodes;
 
 use s9e\SweetDOM\NodeTraits\ChildNodeWorkarounds;
 use s9e\SweetDOM\CdataSection as ParentClass;
