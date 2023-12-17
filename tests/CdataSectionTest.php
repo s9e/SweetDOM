@@ -33,7 +33,7 @@ class CdataSectionTest extends TestCase
 		$node = $dom->documentElement->firstChild;
 
 		$this->expectException('BadMethodCallException');
-		$this->expectExceptionMessage($message);
+		$this->expectExceptionMessage(str_replace('$class', $node::class, $message));
 
 		$node->$methodName(...$args);
 	}
@@ -43,16 +43,16 @@ class CdataSectionTest extends TestCase
 		return [
 			[
 				// DOMCdataSection does not support append()
-				'Call to unsupported method ' . CdataSection::class . '::appendXslChoose() dependent of ' . CdataSection::class . '::append()',
+				'Call to unsupported method $class::appendXslChoose() dependent of $class::append()',
 				'appendXslChoose'
 			],
 			[
-				'Call to unsupported method ' . CdataSection::class . '::prependElement() dependent of ' . CdataSection::class . '::prepend()',
+				'Call to unsupported method $class::prependElement() dependent of $class::prepend()',
 				'prependElement', 'p'
 			],
 			[
 				// NodeCreator does have a createSomething() method
-				'Call to unsupported method ' . CdataSection::class . '::afterSomething() dependent of ' . NodeCreator::class . '::createSomething()',
+				'Call to unsupported method $class::afterSomething() dependent of ' . NodeCreator::class . '::createSomething()',
 				'afterSomething'
 			],
 		];
