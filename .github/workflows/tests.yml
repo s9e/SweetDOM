@@ -39,7 +39,7 @@ jobs:
     - name: Run test suite
       run: composer run-script test
 
-  outdated-8.1.2:
+  outdated-8-1-2:
     runs-on: ubuntu-latest
     container: setupphp/node@sha256:9271c0a914deb70c1717ec113410c9d43e48123d0ed398bb696f00f4f0ef15ba
 
