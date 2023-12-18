@@ -18,7 +18,7 @@ trait ParentNodeWorkarounds
 	{
 		foreach ($nodes as $node)
 		{
-			parent::append($node);
+			$this->appendChild(is_string($node) ? $this->ownerDocument->createTextNode($node) : $node);
 		}
 	}
 
@@ -27,7 +27,7 @@ trait ParentNodeWorkarounds
 	{
 		foreach (array_reverse($nodes) as $node)
 		{
-			parent::prepend($node);
+			$this->insertBefore(is_string($node) ? $this->ownerDocument->createTextNode($node) : $node, $this->firstChild);
 		}
 	}
 }

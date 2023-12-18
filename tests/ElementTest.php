@@ -105,6 +105,26 @@ class ElementTest extends TestCase
 	}
 
 	#[Group('workarounds')]
+	public function testAfterSelf()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->after($dom->firstOf('//y'));
+
+		$this->assertXmlStringEqualsXmlString('<x><y/></x>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testAfterSelfAndOthers()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->after('x', $dom->firstOf('//y'), 'z');
+
+		$this->assertXmlStringEqualsXmlString('<x>x<y/>z</x>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
 	public function testAppendNothing()
 	{
 		$dom = new Document;
@@ -112,6 +132,39 @@ class ElementTest extends TestCase
 		$dom->firstOf('//br')->append();
 
 		$this->assertXmlStringEqualsXmlString('<p><span>.<br/>.</span></p>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testAppendSelf()
+	{
+		$this->expectException('DOMException');
+		$this->expectExceptionCode(DOM_HIERARCHY_REQUEST_ERR);
+
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->append($dom->firstOf('//y'));
+	}
+
+	#[Group('workarounds')]
+	public function testAppendSelfAndOthers()
+	{
+		$this->expectException('DOMException');
+		$this->expectExceptionCode(DOM_HIERARCHY_REQUEST_ERR);
+
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->append('x', $dom->firstOf('//y'), 'z');
+	}
+
+	#[Group('workarounds')]
+	public function testAppendParent()
+	{
+		$this->expectException('DOMException');
+		$this->expectExceptionCode(DOM_HIERARCHY_REQUEST_ERR);
+
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->append($dom->firstOf('//x'));
 	}
 
 	#[DoesNotPerformAssertions]
@@ -134,6 +187,26 @@ class ElementTest extends TestCase
 	}
 
 	#[Group('workarounds')]
+	public function testBeforeSelf()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->before($dom->firstOf('//y'));
+
+		$this->assertXmlStringEqualsXmlString('<x><y/></x>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testBeforeSelfAndOthers()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->before('x', $dom->firstOf('//y'), 'z');
+
+		$this->assertXmlStringEqualsXmlString('<x>x<y/>z</x>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
 	public function testPrependNothing()
 	{
 		$dom = new Document;
@@ -141,6 +214,39 @@ class ElementTest extends TestCase
 		$dom->firstOf('//br')->prepend();
 
 		$this->assertXmlStringEqualsXmlString('<p><span>.<br/>.</span></p>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testPrependSelf()
+	{
+		$this->expectException('DOMException');
+		$this->expectExceptionCode(DOM_HIERARCHY_REQUEST_ERR);
+
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->prepend($dom->firstOf('//y'));
+	}
+
+	#[Group('workarounds')]
+	public function testPrependSelfAndOthers()
+	{
+		$this->expectException('DOMException');
+		$this->expectExceptionCode(DOM_HIERARCHY_REQUEST_ERR);
+
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->prepend('x', $dom->firstOf('//y'), 'z');
+	}
+
+	#[Group('workarounds')]
+	public function testPrependParent()
+	{
+		$this->expectException('DOMException');
+		$this->expectExceptionCode(DOM_HIERARCHY_REQUEST_ERR);
+
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->prepend($dom->firstOf('//x'));
 	}
 
 	#[Group('workarounds')]
@@ -161,6 +267,47 @@ class ElementTest extends TestCase
 		$dom->firstOf('//br')->replaceWith();
 
 		$this->assertXmlStringEqualsXmlString('<p><span>..</span></p>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testReplaceWithNextSibling()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x><y/><z/></x>');
+		$dom->firstOf('//y')->replaceWith($dom->firstOf('//z'));
+
+		$this->assertXmlStringEqualsXmlString('<x><z/></x>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testReplaceWithOnlySelf()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->replaceWith($dom->firstOf('//y'));
+
+		$this->assertXmlStringEqualsXmlString('<x><y/></x>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testReplaceWithSelfAndOthers()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x><y/></x>');
+		$dom->firstOf('//y')->replaceWith('x', $dom->firstOf('//y'), 'z');
+
+		$this->assertXmlStringEqualsXmlString('<x>x<y/>z</x>', $dom->saveXML());
+	}
+
+	#[Group('workarounds')]
+	public function testReplaceWithParent()
+	{
+		$this->expectException('DOMException');
+		$this->expectExceptionCode(DOM_HIERARCHY_REQUEST_ERR);
+
+		$dom = new Document;
+		$dom->loadXML('<x><y><z/></y></x>');
+		$dom->firstOf('//z')->replaceWith($dom->firstOf('//y'));
 	}
 
 	#[Group('workarounds')]
