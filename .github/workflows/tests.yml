@@ -69,22 +69,26 @@ jobs:
 
   mystery:
     runs-on: ubuntu-latest
-    container: php@sha256:162790870909b24c3202c39839d65efac4b342e59405bfc4e2737ae8fd77f76b
+    container: setupphp/node@sha256:3eaa887049f77ef6e05d2f8c4c4cf32b5a5e8395c27bad8b09fa3f62f6cd10e2
 
     strategy:
       matrix:
         php-version:
+          - "8.1"
           - "8.2"
 
     steps:
     - uses: "actions/checkout@v3"
+    - uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: ${{ matrix.php-version }}
 
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
       with:
         path: vendor
-        key: php-mystery
+        key: php-outdated
 
     - name: Install Composer dependencies
       run: composer install --prefer-dist --no-progress
