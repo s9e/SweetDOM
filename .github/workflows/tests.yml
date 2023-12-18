@@ -7,7 +7,39 @@ on:
     branches: [ master ]
 
 jobs:
-  outdated:
+  current:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version:
+          - "8.1"
+          - "8.2"
+          - "8.3"
+          - "8.4"
+
+    steps:
+    - uses: "actions/checkout@v3"
+    - uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: ${{ matrix.php-version }}
+
+    - name: Validate composer.json
+      run: composer validate --strict
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: php-${{ matrix.php-version }}
+
+    - name: Install Composer dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run test suite
+      run: composer run-script test
+
+  outdated-8.1.2:
     runs-on: ubuntu-latest
     container: setupphp/node@sha256:9271c0a914deb70c1717ec113410c9d43e48123d0ed398bb696f00f4f0ef15ba
 
@@ -35,15 +67,15 @@ jobs:
     - name: Run test suite
       run: composer run-script test
 
-  current:
+  mystery:
     runs-on: ubuntu-latest
+    container: setupphp/node@sha256:91a85f927cbe45fd9c287fb892c6467f603a8f39764580e9bc702a247b44eaff
+
     strategy:
       matrix:
         php-version:
           - "8.1"
           - "8.2"
-          - "8.3"
-          - "8.4"
 
     steps:
     - uses: "actions/checkout@v3"
@@ -51,15 +83,12 @@ jobs:
       with:
         php-version: ${{ matrix.php-version }}
 
-    - name: Validate composer.json
-      run: composer validate --strict
-
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
       with:
         path: vendor
-        key: php-${{ matrix.php-version }}
+        key: php-outdated
 
     - name: Install Composer dependencies
       run: composer install --prefer-dist --no-progress
