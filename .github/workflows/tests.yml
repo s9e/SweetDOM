@@ -69,7 +69,7 @@ jobs:
 
   mystery:
     runs-on: ubuntu-latest
-    container: setupphp/node@sha256:3eaa887049f77ef6e05d2f8c4c4cf32b5a5e8395c27bad8b09fa3f62f6cd10e2
+    container: setupphp/node@sha256:02d4d81a5d466ae842b6f976283d1cb7691ef206cfe0d62c17aa33a4a44c073b
 
     strategy:
       matrix:
