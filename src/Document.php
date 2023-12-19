@@ -12,7 +12,8 @@ use DOMNode;
 use DOMNodeList;
 use DOMXPath;
 use RuntimeException;
-use function func_get_args, libxml_get_last_error, version_compare;
+use constant PHP_VERSION;
+use function func_get_args, libxml_get_last_error, trim, version_compare;
 
 /**
 * @method Attr|false createAttribute(string $localName)

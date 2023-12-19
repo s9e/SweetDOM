@@ -8,7 +8,7 @@
 namespace s9e\SweetDOM\NodeTraits;
 
 use DOMNode;
-use function array_reverse;
+use function array_reverse, is_string;
 
 trait ParentNodeWorkarounds
 {
