@@ -8,15 +8,21 @@
 namespace s9e\SweetDOM\NodeTraits;
 
 use DOMElement;
+use function strtolower;
 
 trait ParentNodePolyfill
 {
 	public function insertAdjacentElement(string $where, DOMElement $element): ?DOMElement
 	{
+		$this->insertAdjacentNode($where, $element);
+
+		return $element;
 	}
 
 	public function insertAdjacentText(string $where, string $data): void
 	{
+		$node = $this->ownerDocument->createTextNode($text);
+		$this->insertAdjacentNode($where, $node);
 	}
 
 	public function replaceChildren(...$nodes): void
@@ -26,5 +32,24 @@ trait ParentNodePolyfill
 			$this->lastChild->remove();
 		}
 		$this->append(...$nodes);
+	}
+
+	/**
+	* Insert given node relative to this element's position
+	*
+	* @param  string  $where One of 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+	* @param  DOMNode $node
+	* @return void
+	*/
+	private function insertAdjacentNode(string $where, DOMNode $node): void
+	{
+		match (strtolower($where))
+		{
+			'beforebegin' => $this->before($node),
+			'beforeend'   => $this->appendChild($node),
+			'afterend'    => $this->after($node),
+			'afterbegin'  => $this->prepend($node),
+			default       => throw new DOMException("'$where' is not one of 'beforebegin', 'afterbegin', 'beforeend', or 'afterend'", DOM_SYNTAX_ERR)
+		};
 	}
 }
