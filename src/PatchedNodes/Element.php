@@ -7,9 +7,9 @@
 */
 namespace s9e\SweetDOM\PatchedNodes;
 
+use s9e\SweetDOM\Element as ParentClass;
 use s9e\SweetDOM\NodeTraits\ChildNodeWorkarounds;
 use s9e\SweetDOM\NodeTraits\ParentNodeWorkarounds;
-use s9e\SweetDOM\Element as ParentClass;
 
 class Element extends ParentClass
 {

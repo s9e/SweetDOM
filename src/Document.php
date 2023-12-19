@@ -12,7 +12,7 @@ use DOMNode;
 use DOMNodeList;
 use DOMXPath;
 use RuntimeException;
-use constant PHP_VERSION;
+use const PHP_VERSION;
 use function func_get_args, libxml_get_last_error, trim, version_compare;
 
 /**
@@ -91,7 +91,19 @@ class Document extends DOMDocument
 
 	protected function needsWorkarounds(): bool
 	{
-		return version_compare(PHP_VERSION, '8.3.0', '<');
+		if (version_compare(PHP_VERSION, '8.2.10', '>='))
+		{
+			// PHP ^8.2.10 needs no workarounds
+			return false;
+		}
+		if (version_compare(PHP_VERSION, '8.1.23', '<'))
+		{
+			// Anything older than 8.1.23 does
+			return true;
+		}
+
+		// ~8.1.23 is okay, anything between 8.2.0 and 8.2.9 needs workarounds
+		return version_compare(PHP_VERSION, '8.2.0-dev', '>=');
 	}
 
 	/**
