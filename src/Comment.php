@@ -8,7 +8,6 @@
 namespace s9e\SweetDOM;
 
 use DOMComment;
-use s9e\SweetDOM\NodeTraits\ChildNodeForwardCompatibility;
 use s9e\SweetDOM\NodeTraits\MagicMethods;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
@@ -65,7 +64,6 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 */
 class Comment extends DOMComment
 {
-	use ChildNodeForwardCompatibility;
 	use MagicMethods;
 	use XPathMethods;
 }

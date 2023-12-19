@@ -8,7 +8,6 @@
 namespace s9e\SweetDOM;
 
 use DOMElement;
-use s9e\SweetDOM\NodeTraits\ChildNodeForwardCompatibility;
 use s9e\SweetDOM\NodeTraits\DeprecatedMethods;
 use s9e\SweetDOM\NodeTraits\XPathMethods;
 
@@ -103,7 +102,6 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 */
 class Element extends DOMElement
 {
-	use ChildNodeForwardCompatibility;
 	use DeprecatedMethods;
 	use XPathMethods;
 }
