@@ -12,7 +12,8 @@ use DOMNode;
 use DOMNodeList;
 use DOMXPath;
 use RuntimeException;
-use function func_get_args, libxml_get_last_error;
+use const PHP_VERSION;
+use function func_get_args, libxml_get_last_error, trim, version_compare;
 
 /**
 * @method Attr|false createAttribute(string $localName)
@@ -44,12 +45,12 @@ class Document extends DOMDocument
 
 		$this->nodeCreator = new NodeCreator($this);
 
-		$this->registerNodeClass('DOMAttr',             Attr::class);
-		$this->registerNodeClass('DOMCdataSection',     CdataSection::class);
-		$this->registerNodeClass('DOMComment',          Comment::class);
-		$this->registerNodeClass('DOMDocumentFragment', DocumentFragment::class);
-		$this->registerNodeClass('DOMElement',          Element::class);
-		$this->registerNodeClass('DOMText',             Text::class);
+		$classes   = ['Attr', 'CdataSection', 'Comment', 'DocumentFragment', 'Element', 'Text'];
+		$namespace = $this->getNodesNamespace();
+		foreach ($classes as $className)
+		{
+			$this->registerNodeClass('DOM' . $className, $namespace . '\\' . $className);
+		}
 	}
 
 	/**
@@ -82,6 +83,38 @@ class Document extends DOMDocument
 		}
 
 		return $result;
+	}
+
+	protected function getNodesNamespace(): string
+	{
+		$namespace = __NAMESPACE__;
+		if ($this->needsWorkarounds())
+		{
+			$namespace .= '\\PatchedNodes';
+		}
+		elseif (version_compare(PHP_VERSION, '8.3.0', '<'))
+		{
+			$namespace .= '\\ForwardCompatibleNodes';
+		}
+
+		return $namespace;
+	}
+
+	protected function needsWorkarounds(): bool
+	{
+		if (version_compare(PHP_VERSION, '8.2.10', '>='))
+		{
+			// PHP ^8.2.10 needs no workarounds
+			return false;
+		}
+		if (version_compare(PHP_VERSION, '8.1.23', '<'))
+		{
+			// Anything older than 8.1.23 does
+			return true;
+		}
+
+		// ~8.1.23 is okay, anything between 8.2.0 and 8.2.9 needs workarounds
+		return version_compare(PHP_VERSION, '8.2.0-dev', '>=');
 	}
 
 	/**
