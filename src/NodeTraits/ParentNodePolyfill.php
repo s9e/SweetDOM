@@ -8,6 +8,9 @@
 namespace s9e\SweetDOM\NodeTraits;
 
 use DOMElement;
+use DOMException;
+use DOMNode;
+use const DOM_SYNTAX_ERR;
 use function strtolower;
 
 trait ParentNodePolyfill

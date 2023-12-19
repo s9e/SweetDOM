@@ -633,17 +633,9 @@ class ElementTest extends TestCase
 		$dom = new Document;
 		$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
 
-		$dom->firstOf('//span')->__call($methodName, $argumentsCallback($dom));
+		$dom->firstOf('//span')->$methodName(...$argumentsCallback($dom));
 		$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement));
 
-		if (method_exists('DOMElement', $methodName))
-		{
-			$dom = new Document;
-			$dom->loadXML('<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span></p>');
-
-			$dom->firstOf('//span')->$methodName(...$argumentsCallback($dom));
-			$this->assertXmlStringEqualsXmlString($expected, $dom->saveXML($dom->documentElement), 'Reference does not match');
-		}
 	}
 
 	#[DataProvider('getInsertAdjacentElementTests')]
