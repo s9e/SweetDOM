@@ -46,11 +46,7 @@ class Document extends DOMDocument
 		$this->nodeCreator = new NodeCreator($this);
 
 		$classes   = ['Attr', 'CdataSection', 'Comment', 'DocumentFragment', 'Element', 'Text'];
-		$namespace = __NAMESPACE__;
-		if ($this->needsWorkarounds())
-		{
-			$namespace .= '\\PatchedNodes';
-		}
+		$namespace = $this->getNodesNamespace();
 		foreach ($classes as $className)
 		{
 			$this->registerNodeClass('DOM' . $className, $namespace . '\\' . $className);
@@ -87,6 +83,21 @@ class Document extends DOMDocument
 		}
 
 		return $result;
+	}
+
+	protected function getNodesNamespace(): string
+	{
+		$namespace = __NAMESPACE__;
+		if ($this->needsWorkarounds())
+		{
+			$namespace .= '\\PatchedNodes';
+		}
+		elseif (version_compare(PHP_VERSION, '8.3.0', '<'))
+		{
+			$namespace .= '\\ForwardCompatibleNodes';
+		}
+
+		return $namespace;
 	}
 
 	protected function needsWorkarounds(): bool
