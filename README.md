@@ -177,7 +177,7 @@ Polyfills for the following methods are provided for PHP < 8.3:
  - `ParentNode::insertAdjacentText`
  - `ParentNode::replaceChildren`
 
-On PHP older than 8.1.23, and in PHP versions from 8.2.0 to 8.2.9, the following methods are emulated:
+On PHP older than 8.1.23, and on PHP versions from 8.2.0 to 8.2.9, the following methods are emulated:
 
  - `ChildNode::after`
  - `ChildNode::before`
