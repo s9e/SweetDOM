@@ -162,3 +162,34 @@ The following DOM nodes are automatically extended and augmented with XPath meth
  - `s9e\SweetDOM\DocumentFragment` extends `DOMDocumentFragment`
  - `s9e\SweetDOM\Element` extends `DOMElement`
  - `s9e\SweetDOM\Text` extends `DOMText`
+
+
+## Backward and forward compatibility with older and future versions of PHP
+
+In order to improve compatibility with older versions of PHP as well as future versions of PHP, this library uses a different set of classes to implement node types depending on the PHP version. The base classes are those listed above, in the `s9e\SweetDOM` namespace, and only those classes should be used when checking for class types.
+
+
+#### Backward compatibility with older versions of PHP
+
+Polyfills for the following methods are provided for PHP < 8.3:
+
+ - `ParentNode::insertAdjacentElement`
+ - `ParentNode::insertAdjacentText`
+ - `ParentNode::replaceChildren`
+
+On PHP older than 8.1.23, and in PHP versions from 8.2.0 to 8.2.9, the following methods are emulated:
+
+ - `ChildNode::after`
+ - `ChildNode::before`
+ - `ChildNode::replaceWith`
+ - `ParentNode::append`
+ - `ParentNode::prepend`
+
+
+#### Forward compatibility with future versions of PHP
+
+The following methods have been modified to match PHP 8.3's behaviour with regards to disconnected nodes (nodes with no parent) and align with the DOM specification.
+
+ - `ChildNode::after`
+ - `ChildNode::before`
+ - `ChildNode::replaceWith`
