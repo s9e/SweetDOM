@@ -7,17 +7,18 @@
 */
 namespace s9e\SweetDOM\NodeTraits;
 
-use const ENT_COMPAT, ENT_XML1, E_USER_DEPRECATED;
+use DOMException;
+use const DOM_SYNTAX_ERR, ENT_COMPAT, ENT_XML1, E_USER_DEPRECATED;
 use function array_flip, htmlspecialchars, preg_match, preg_match_all, preg_replace_callback, strtolower, trigger_error;
 
 /**
-* @method mixed polyfillMethodsCall(string $name, array $arguments)
+* @method mixed magicMethodsCall(string $name, array $arguments)
 */
 trait DeprecatedMethods
 {
-	use PolyfillMethods
+	use MagicMethods
 	{
-		PolyfillMethods::__call as polyfillMethodsCall;
+		MagicMethods::__call as magicMethodsCall;
 	}
 
 	public function __call(string $name, array $arguments)
@@ -45,7 +46,7 @@ trait DeprecatedMethods
 
 		}
 
-		return $this->polyfillMethodsCall($name, $arguments);
+		return $this->magicMethodsCall($name, $arguments);
 	}
 
 	/**
@@ -58,7 +59,14 @@ trait DeprecatedMethods
 		$fragment = $this->ownerDocument->createDocumentFragment();
 		$fragment->appendXML($this->addMissingNamespaceDeclarations($xml));
 
-		$this->insertAdjacentNode($where, $fragment);
+		match (strtolower($where))
+		{
+			'afterbegin'  => $this->prepend($fragment),
+			'afterend'    => $this->after($fragment),
+			'beforebegin' => $this->before($fragment),
+			'beforeend'   => $this->appendChild($fragment),
+			default       => throw new DOMException("'$where' is not one of 'beforebegin', 'afterbegin', 'beforeend', or 'afterend'", DOM_SYNTAX_ERR)
+		};
 	}
 
 	/**
