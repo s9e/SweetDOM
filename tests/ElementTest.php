@@ -702,9 +702,9 @@ class ElementTest extends TestCase
 
 	#[DataProvider('getInsertAdjacentTextTests')]
 	#[Group('polyfill')]
-	public function testInsertAdjacentText($position, $expected)
+	public function testInsertAdjacentText($position, $data, $expected)
 	{
-		$this->runPolyfillTest($expected, 'insertAdjacentText', fn() => [$position, $position]);
+		$this->runPolyfillTest($expected, 'insertAdjacentText', fn() => [$position, $data]);
 	}
 
 	public static function getInsertAdjacentTextTests()
@@ -712,25 +712,37 @@ class ElementTest extends TestCase
 		return [
 			[
 				'afterbegin',
+				'afterbegin',
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span>afterbegin<br/></span>
 				</p>'
 			],
 			[
+				'afterbegin',
+				'after&<>\'"begin',
+				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<span>after&amp;&lt;&gt;\'"begin<br/></span>
+				</p>'
+			],
+			[
+				'afterend',
 				'afterend',
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><span><br/></span>afterend</p>'
 			],
 			[
 				'beforebegin',
+				'beforebegin',
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">beforebegin<span><br/></span></p>'
 			],
 			[
+				'beforeend',
 				'beforeend',
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span><br/>beforeend</span>
 				</p>'
 			],
 			[
+				'BeforeEnd',
 				'BeforeEnd',
 				'<p xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<span><br/>BeforeEnd</span>

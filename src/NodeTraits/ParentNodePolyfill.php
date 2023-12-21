@@ -24,7 +24,7 @@ trait ParentNodePolyfill
 
 	public function insertAdjacentText(string $where, string $data): void
 	{
-		$node = $this->ownerDocument->createTextNode($text);
+		$node = $this->ownerDocument->createTextNode($data);
 		$this->insertAdjacentNode($where, $node);
 	}
 
