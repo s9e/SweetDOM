@@ -53,6 +53,27 @@ class NodeComparatorTest extends TestCase
 				'//y'
 			],
 			[
+				true,
+				'<x a="0"/>',
+				'//@a',
+				'<x a="0"/>',
+				'//@a'
+			],
+			[
+				false,
+				'<x a="0"/>',
+				'//@a',
+				'<x a=""/>',
+				'//@a'
+			],
+			[
+				false,
+				'<x a=""/>',
+				'//@a',
+				'<x b=""/>',
+				'//@b'
+			],
+			[
 				false,
 				'<x/>',
 				'//x',
@@ -71,6 +92,27 @@ class NodeComparatorTest extends TestCase
 				'<x xmlns:xx="urn:xx"/>',
 				'//x',
 				'<x xmlns:x="urn:x"/>',
+				'//x'
+			],
+			[
+				false,
+				'<x a=""/>',
+				'//x',
+				'<x/>',
+				'//x'
+			],
+			[
+				false,
+				'<x/>',
+				'//x',
+				'<x a=""/>',
+				'//x'
+			],
+			[
+				false,
+				'<x b=""/>',
+				'//x',
+				'<x a=""/>',
 				'//x'
 			],
 			[
