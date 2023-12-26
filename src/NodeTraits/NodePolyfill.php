@@ -7,20 +7,16 @@
 */
 namespace s9e\SweetDOM\NodeTraits;
 
+use DOMAttr;
+use DOMCharacterData;
+use DOMElement;
 use DOMNode;
+use s9e\SweetDOM\NodeComparator;
 
 trait NodePolyfill
 {
 	public function isEqualNode(?DOMNode $otherNode): bool
 	{
-		if ($this->isSameNode($otherNode))
-		{
-			return true;
-		}
-
-		if ($this->nodeType !== $otherNode?->nodeType
-		 || $this->nodeName !== $otherNode->nodeName)
-		{
-		}
+		return NodeComparator::isEqualNode($this, $otherNode);
 	}
 }
