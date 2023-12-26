@@ -25,7 +25,7 @@ class NodeComparator
 		}
 		if ($node instanceof DOMElement && $otherNode instanceof DOMElement)
 		{
-			return static::isEqualElementNode($node, $otherNode);
+			return self::isEqualElementNode($node, $otherNode);
 		}
 		if ($node instanceof DOMCharacterData && $otherNode instanceof DOMCharacterData)
 		{
@@ -45,6 +45,29 @@ class NodeComparator
 		// TODO: test that CdataSection is not equal Text
 
 		return false;
+	}
+
+	/**
+	* @return array<string, string>
+	*/
+	protected function getNamespaceDeclarations(DOMElement $element): array
+	{
+		$namespaces = [];
+		$xpath      = new DOMXPath($element->ownerDocument);
+		foreach ($xpath->query('namespace::*', $element) as $node)
+		{
+			if ($element->hasAttribute($node->nodeName))
+			{
+				$namespaces[$node->nodeName] = $node->nodeValue;
+			}
+		}
+
+		return $namespaces;
+	}
+
+	protected static function hasEqualNamespaceDeclarations(DOMElement $element, DOMElement $otherElement): bool
+	{
+		return self::getNamespaceDeclarations($element) == self::getNamespaceDeclarations($otherElement);
 	}
 
 	protected static function isEqualElementNode(DOMElement $element, DOMElement $otherElement): bool
@@ -67,12 +90,12 @@ class NodeComparator
 
 		foreach ($element->childNodes as $i => $childNode)
 		{
-			if (!static::isEqualNode($childNode, $otherElement->childNodes[$i]))
+			if (!self::isEqualNode($childNode, $otherElement->childNodes[$i]))
 			{
 				return false;
 			}
 		}
 
-		return true;
+		return self::hasEqualNamespaceDeclarations($element, $otherElement);
 	}
 }
