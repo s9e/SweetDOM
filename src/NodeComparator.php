@@ -5,13 +5,14 @@
 * @copyright Copyright (c) The s9e authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\SweetDOM\Helpers;
+namespace s9e\SweetDOM;
 
 use DOMAttr;
 use DOMCharacterData;
 use DOMElement;
 use DOMNode;
 use DOMProcessingInstruction;
+use DOMXPath;
 
 class NodeComparator
 {
@@ -50,7 +51,7 @@ class NodeComparator
 	/**
 	* @return array<string, string>
 	*/
-	protected function getNamespaceDeclarations(DOMElement $element): array
+	protected static function getNamespaceDeclarations(DOMElement $element): array
 	{
 		$namespaces = [];
 		$xpath      = new DOMXPath($element->ownerDocument);

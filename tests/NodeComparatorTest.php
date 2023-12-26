@@ -19,7 +19,7 @@ class NodeComparatorTest extends TestCase
 		$node      = $this->getNodeFromXML($xml1, $xpath1);
 		$otherNode = $this->getNodeFromXML($xml2, $xpath2);
 
-		$this->assertSame($expected, $node->isEqualNode($otherNode));
+		$this->assertSame($expected, NodeComparator::isEqualNode($node, $otherNode));
 	}
 
 	protected function getNodeFromXML(string $xml, string $query): DOMNode
@@ -38,6 +38,41 @@ class NodeComparatorTest extends TestCase
 				'<x/>',
 				'//x',
 				'<x/>',
+				'//x'
+			],
+			[
+				false,
+				'<x/>',
+				'//x',
+				'<y/>',
+				'//y'
+			],
+			[
+				false,
+				'<x/>',
+				'//x',
+				'<x xmlns="urn:x"/>',
+				'//*'
+			],
+			[
+				false,
+				'<x a="0"/>',
+				'//x',
+				'<x a=""/>',
+				'//x'
+			],
+			[
+				true,
+				'<x a="" b=""/>',
+				'//x',
+				'<x a="" b=""/>',
+				'//x'
+			],
+			[
+				true,
+				'<x a="" b=""/>',
+				'//x',
+				'<x b="" a=""/>',
 				'//x'
 			],
 		];
