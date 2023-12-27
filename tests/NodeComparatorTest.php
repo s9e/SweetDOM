@@ -23,7 +23,7 @@ class NodeComparatorTest extends TestCase
 
 		if (version_compare(PHP_VERSION, $phpVersion, '>='))
 		{
-			$this->assertSame($expected, $node->isEqualNode($otherNode), 'Does not match native implementation');
+			$this->assertSame($expected, $node->isEqualNode($otherNode), 'Does not match ext/dom');
 		}
 	}
 
@@ -93,6 +93,21 @@ class NodeComparatorTest extends TestCase
 				'//x',
 				'<x xmlns:x="urn:x"/>',
 				'//x'
+			],
+			[
+				true,
+				'<x xmlns:a="urn:a" xmlns:b="urn:b"/>',
+				'//x',
+				'<x xmlns:a="urn:a" xmlns:b="urn:b"/>',
+				'//x'
+			],
+			[
+				true,
+				'<x xmlns:a="urn:a" xmlns:b="urn:b"/>',
+				'//x',
+				'<x xmlns:b="urn:b" xmlns:a="urn:a"/>',
+				'//x',
+				'8.3.2'
 			],
 			[
 				false,
@@ -234,6 +249,20 @@ class NodeComparatorTest extends TestCase
 				'//x',
 				'<x><?xx?></x>',
 				'//x'
+			],
+			[
+				false,
+				'<x>..</x>',
+				'//x',
+				'<x><![CDATA[..]]></x>',
+				'//x'
+			],
+			[
+				false,
+				'<x x=""/>',
+				'//x',
+				'<x x=""/>',
+				'//@x'
 			],
 		];
 	}
