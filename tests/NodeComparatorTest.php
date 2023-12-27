@@ -303,7 +303,7 @@ class NodeComparatorTest extends TestCase
 				</body>
 			</html>
 		EOT);
-//		$this->assertIsEqualNode($dom1->doctype, $dom1->doctype);
+		$this->assertIsEqualNode(true, $dom1->doctype, $dom1->doctype);
 
 		$dom2 = new DOMDocument;
 		$dom2->loadXML('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/x.dtd"><html/>');
