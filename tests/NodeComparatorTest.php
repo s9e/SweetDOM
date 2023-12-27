@@ -251,6 +251,20 @@ class NodeComparatorTest extends TestCase
 				'//x'
 			],
 			[
+				true,
+				'<x><?x a="a"?></x>',
+				'//x',
+				'<x><?x a="a"?></x>',
+				'//x'
+			],
+			[
+				false,
+				'<x><?x a="a"?></x>',
+				'//x',
+				'<x><?x a="a" ?></x>',
+				'//x'
+			],
+			[
 				false,
 				'<x>..</x>',
 				'//x',
