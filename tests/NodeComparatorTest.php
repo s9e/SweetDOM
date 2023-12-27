@@ -13,18 +13,22 @@ use s9e\SweetDOM\NodeComparator;
 #[CoversClass('s9e\SweetDOM\NodeComparator')]
 class NodeComparatorTest extends TestCase
 {
+	protected function assertIsEqualNode(bool $expected, DOMNode $node, DOMNode $otherNode, string $phpVersion = '8.3.0'): void
+	{
+		$this->assertSame($expected, NodeComparator::isEqualNode($node, $otherNode));
+		if (version_compare(PHP_VERSION, $phpVersion, '>='))
+		{
+			$this->assertSame($expected, $node->isEqualNode($otherNode), 'Does not match ext/dom');
+		}
+	}
+
 	#[DataProvider('getIsEqualNodeCases')]
 	public function testIsEqualNode(bool $expected, string $xml1, string $xpath1, string $xml2, string $xpath2, string $phpVersion = '8.3.0'): void
 	{
 		$node      = $this->getNodeFromXML($xml1, $xpath1);
 		$otherNode = $this->getNodeFromXML($xml2, $xpath2);
 
-		$this->assertSame($expected, NodeComparator::isEqualNode($node, $otherNode));
-
-		if (version_compare(PHP_VERSION, $phpVersion, '>='))
-		{
-			$this->assertSame($expected, $node->isEqualNode($otherNode), 'Does not match ext/dom');
-		}
+		$this->assertIsEqualNode($expected, $node, $otherNode, $phpVersion);
 	}
 
 	protected function getNodeFromXML(string $xml, string $query): DOMNode
@@ -279,5 +283,36 @@ class NodeComparatorTest extends TestCase
 				'//@x'
 			],
 		];
+	}
+
+	// https://github.com/php/php-src/blob/master/ext/dom/tests/DOMNode_isEqualNode.phpt
+	public function testDocumentNode()
+	{
+		$this->assertIsEqualNode(true, new DOMDocument, new DOMDocument);
+
+		$dom1 = new DOMDocument;
+		$dom1->loadXML(<<<'EOT'
+			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd" [
+				<!ENTITY bar '<bar>bartext</bar>'>
+				<!ENTITY foo '<foo/>'>
+				<!NOTATION myNotation SYSTEM "test.dtd">
+			]>
+			<html>
+				<body>
+					<p>...</p>
+				</body>
+			</html>
+		EOT);
+//		$this->assertIsEqualNode($dom1->doctype, $dom1->doctype);
+
+		$dom2 = new DOMDocument;
+		$dom2->loadXML('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/x.dtd"><html/>');
+		$this->assertIsEqualNode(false, $dom1->doctype, $dom2->doctype);
+		$dom2->loadXML('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN2" "http://www.w3.org/TR/html4/strict.dtd"><html/>');
+		$this->assertIsEqualNode(false, $dom1->doctype, $dom2->doctype);
+		$dom2->loadXML('<!DOCTYPE HTML2 PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html/>');
+		$this->assertIsEqualNode(false, $dom1->doctype, $dom2->doctype);
+		$dom2->loadXML('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html/>');
+		$this->assertIsEqualNode(true, $dom1->doctype, $dom2->doctype);
 	}
 }

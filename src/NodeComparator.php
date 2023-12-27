@@ -9,6 +9,7 @@ namespace s9e\SweetDOM;
 
 use DOMAttr;
 use DOMCharacterData;
+use DOMDocument;
 use DOMElement;
 use DOMNode;
 use DOMProcessingInstruction;
@@ -42,10 +43,12 @@ class NodeComparator
 			    && $node->localName    === $otherNode->localName
 			    && $node->value        === $otherNode->value;
 		}
+		if ($node instanceof DOMDocument && $otherNode instanceof DOMDocument)
+		{
+			return self::isEqualDocumentNode($node, $otherNode);
+		}
 
-		// TODO: test that CdataSection is not equal Text
-
-		return false;
+		return $node->isSameNode($otherNode);
 	}
 
 	/**
@@ -69,6 +72,23 @@ class NodeComparator
 	protected static function hasEqualNamespaceDeclarations(DOMElement $element, DOMElement $otherElement): bool
 	{
 		return self::getNamespaceDeclarations($element) == self::getNamespaceDeclarations($otherElement);
+	}
+
+	protected static function isEqualDocumentNode(DOMDocument $document, DOMDocument $otherDocument): bool
+	{
+		if ($document->childNodes->length !== $otherDocument->childNodes->length)
+		{
+			return false;
+		}
+		foreach ($document->childNodes as $i => $childNode)
+		{
+			if (!self::isEqualNode($childNode, $otherDocument->childNodes[$i]))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	protected static function isEqualElementNode(DOMElement $element, DOMElement $otherElement): bool
