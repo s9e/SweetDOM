@@ -3,6 +3,7 @@
 namespace s9e\SweetDOM\Tests;
 
 use DOMDocument;
+use DOMEntityReference;
 use DOMNode;
 use DOMXPath;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -286,10 +287,13 @@ class NodeComparatorTest extends TestCase
 	}
 
 	// https://github.com/php/php-src/blob/master/ext/dom/tests/DOMNode_isEqualNode.phpt
-	public function testDocumentNode()
+	public function testIsEqualDocumentNode()
 	{
 		$this->assertIsEqualNode(true, new DOMDocument, new DOMDocument);
+	}
 
+	public function testIsEqualDocumentTypeNode()
+	{
 		$dom1 = new DOMDocument;
 		$dom1->loadXML(<<<'EOT'
 			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd" [
@@ -314,5 +318,11 @@ class NodeComparatorTest extends TestCase
 		$this->assertIsEqualNode(false, $dom1->doctype, $dom2->doctype);
 		$dom2->loadXML('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html/>');
 		$this->assertIsEqualNode(true, $dom1->doctype, $dom2->doctype);
+	}
+
+	public function testIsEqualEntityReference()
+	{
+		$this->assertIsEqualNode(false, new DOMEntityReference('ref'), new DOMEntityReference('ref2'));
+		$this->assertIsEqualNode(true, new DOMEntityReference('ref'), new DOMEntityReference('ref'));
 	}
 }

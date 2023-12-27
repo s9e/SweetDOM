@@ -10,7 +10,9 @@ namespace s9e\SweetDOM;
 use DOMAttr;
 use DOMCharacterData;
 use DOMDocument;
+use DOMDocumentType;
 use DOMElement;
+use DOMEntityReference;
 use DOMNode;
 use DOMProcessingInstruction;
 use DOMXPath;
@@ -46,6 +48,16 @@ class NodeComparator
 		if ($node instanceof DOMDocument && $otherNode instanceof DOMDocument)
 		{
 			return self::isEqualDocumentNode($node, $otherNode);
+		}
+		if ($node instanceof DOMDocumentType && $otherNode instanceof DOMDocumentType)
+		{
+			return $node->name     === $otherNode->name
+			    && $node->publicId === $otherNode->publicId
+			    && $node->systemId === $otherNode->systemId;
+		}
+		if ($node instanceof DOMEntityReference && $otherNode instanceof DOMEntityReference)
+		{
+			return $node->nodeName === $otherNode->nodeName;
 		}
 
 		return $node->isSameNode($otherNode);
