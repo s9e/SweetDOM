@@ -381,12 +381,12 @@ class NodeComparatorTest extends TestCase
 			</html>
 		EOT);
 
-		$this->assertIsEqualNode(true, $dom1->doctype->entities['bar'], $dom2->doctype->entities['bar']);
-		$this->assertIsEqualNode(false, $dom1->doctype->entities['bar'], $dom2->doctype->entities['barbar']);
-		$this->assertIsEqualNode(false, $dom1->doctype->entities['bar'], $dom2->doctype->entities['foo']);
-		$this->assertIsEqualNode(false, $dom1->doctype->entities['foo'], $dom2->doctype->entities['bar']);
-		$this->assertIsEqualNode(false, $dom1->doctype->entities['foo'], $dom2->doctype->entities['barbar']);
-		$this->assertIsEqualNode(true, $dom1->doctype->entities['foo'], $dom2->doctype->entities['foo']);
+		$this->assertIsEqualNode(true, $dom1->doctype->entities->getNamedItem('bar'), $dom2->doctype->entities->getNamedItem('bar'));
+		$this->assertIsEqualNode(false, $dom1->doctype->entities->getNamedItem('bar'), $dom2->doctype->entities->getNamedItem('barbar'));
+		$this->assertIsEqualNode(false, $dom1->doctype->entities->getNamedItem('bar'), $dom2->doctype->entities->getNamedItem('foo'));
+		$this->assertIsEqualNode(false, $dom1->doctype->entities->getNamedItem('foo'), $dom2->doctype->entities->getNamedItem('bar'));
+		$this->assertIsEqualNode(false, $dom1->doctype->entities->getNamedItem('foo'), $dom2->doctype->entities->getNamedItem('barbar'));
+		$this->assertIsEqualNode(true, $dom1->doctype->entities->getNamedItem('foo'), $dom2->doctype->entities->getNamedItem('foo'));
 	}
 
 	public function testIsEqualEntityNotationNode()

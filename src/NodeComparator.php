@@ -27,7 +27,7 @@ class NodeComparator
 	// https://github.com/php/php-src/blob/master/ext/dom/node.c
 	public static function isEqualNode(?DOMNode $node, ?DOMNode $otherNode): bool
 	{
-		if (!isset($node, $otherNode) || $node->nodeType !== $otherNode->nodeType || $node->nodeName !== $otherNode->nodeName)
+		if (!isset($node, $otherNode) || $node->nodeType !== $otherNode->nodeType)
 		{
 			return false;
 		}
