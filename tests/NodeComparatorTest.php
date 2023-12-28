@@ -14,22 +14,22 @@ use s9e\SweetDOM\NodeComparator;
 #[CoversClass('s9e\SweetDOM\NodeComparator')]
 class NodeComparatorTest extends TestCase
 {
-	protected function assertIsEqualNode(bool $expected, DOMNode $node, DOMNode $otherNode, string $phpVersion = '8.3.0'): void
+	protected function assertIsEqualNode(bool $expected, DOMNode $node, DOMNode $otherNode, bool $compareNative = null): void
 	{
 		$this->assertSame($expected, NodeComparator::isEqualNode($node, $otherNode));
-		if (version_compare(PHP_VERSION, $phpVersion, '>='))
+		if ($compareNative ?? version_compare(PHP_VERSION, '8.3.0', '>='))
 		{
 			$this->assertSame($expected, $node->isEqualNode($otherNode), 'Does not match ext/dom');
 		}
 	}
 
 	#[DataProvider('getIsEqualNodeCases')]
-	public function testIsEqualNode(bool $expected, string $xml1, string $xpath1, string $xml2, string $xpath2, string $phpVersion = '8.3.0'): void
+	public function testIsEqualNode(bool $expected, string $xml1, string $xpath1, string $xml2, string $xpath2, bool $compareNative = null): void
 	{
 		$node      = $this->getNodeFromXML($xml1, $xpath1);
 		$otherNode = $this->getNodeFromXML($xml2, $xpath2);
 
-		$this->assertIsEqualNode($expected, $node, $otherNode, $phpVersion);
+		$this->assertIsEqualNode($expected, $node, $otherNode, $compareNative);
 	}
 
 	protected function getNodeFromXML(string $xml, string $query): DOMNode
@@ -119,7 +119,7 @@ class NodeComparatorTest extends TestCase
 				'//x',
 				'<x xmlns:b="urn:b" xmlns:a="urn:a"/>',
 				'//x',
-				'8.3.2'
+				version_compare(PHP_VERSION, '8.3.2', '>=') && PHP_VERSION !== '8.4.0-dev (f5f44bb22ddf2390892c2a61e872c5c8bd3f5cf6)'
 			],
 			[
 				false,
@@ -162,7 +162,7 @@ class NodeComparatorTest extends TestCase
 				'//x',
 				'<x b="" a=""/>',
 				'//x',
-				'8.3.2'
+				version_compare(PHP_VERSION, '8.3.2', '>=') && PHP_VERSION !== '8.4.0-dev (f5f44bb22ddf2390892c2a61e872c5c8bd3f5cf6)'
 			],
 			[
 				false,
