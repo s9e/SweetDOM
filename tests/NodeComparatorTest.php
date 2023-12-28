@@ -119,7 +119,7 @@ class NodeComparatorTest extends TestCase
 				'//x',
 				'<x xmlns:b="urn:b" xmlns:a="urn:a"/>',
 				'//x',
-				version_compare(PHP_VERSION, '8.3.2', '>=') && PHP_VERSION !== '8.4.0-dev (f5f44bb22ddf2390892c2a61e872c5c8bd3f5cf6)'
+				version_compare(PHP_VERSION, '8.3.2', '>=') && PHP_VERSION !== '8.4.0-dev'
 			],
 			[
 				false,
@@ -162,7 +162,7 @@ class NodeComparatorTest extends TestCase
 				'//x',
 				'<x b="" a=""/>',
 				'//x',
-				version_compare(PHP_VERSION, '8.3.2', '>=') && PHP_VERSION !== '8.4.0-dev (f5f44bb22ddf2390892c2a61e872c5c8bd3f5cf6)'
+				version_compare(PHP_VERSION, '8.3.2', '>=') && PHP_VERSION !== '8.4.0-dev'
 			],
 			[
 				false,
