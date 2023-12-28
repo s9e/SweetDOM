@@ -415,9 +415,9 @@ class NodeComparatorTest extends TestCase
 			<html><body><p>...</p></body></html>
 		EOT);
 
-		$this->assertIsEqualNode(true, $dom1->doctype->notations['myNotation'], $dom2->doctype->notations['myNotation']);
-		$this->assertIsEqualNode(false, $dom1->doctype->notations['myNotation'], $dom2->doctype->notations['myNotation2']);
-		$this->assertIsEqualNode(false, $dom1->doctype->notations['myNotation'], $dom2->doctype->notations['myNotation3']);
+		$this->assertIsEqualNode(true, $dom1->doctype->notations->getNamedItem('myNotation'), $dom2->doctype->notations->getNamedItem('myNotation'));
+		$this->assertIsEqualNode(false, $dom1->doctype->notations->getNamedItem('myNotation'), $dom2->doctype->notations->getNamedItem('myNotation2'));
+		$this->assertIsEqualNode(false, $dom1->doctype->notations->getNamedItem('myNotation'), $dom2->doctype->notations->getNamedItem('myNotation3'));
 	}
 
 	public function testIsEqualDocumentFragmentNode()
