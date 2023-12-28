@@ -110,7 +110,7 @@ class NodeComparator
 
 		foreach ($element->attributes as $attribute)
 		{
-			if ($attribute->value !== $otherElement->attributes[$attribute->name]?->value)
+			if ($attribute->value !== $otherElement->attributes->getNamedItem($attribute->name)?->value)
 			{
 				return false;
 			}
