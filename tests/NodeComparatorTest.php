@@ -58,6 +58,13 @@ class NodeComparatorTest extends TestCase
 				'//y'
 			],
 			[
+				false,
+				'<x/>',
+				'//x',
+				'<X/>',
+				'//X'
+			],
+			[
 				true,
 				'<x a="0"/>',
 				'//@a',
@@ -292,6 +299,24 @@ class NodeComparatorTest extends TestCase
 		$this->assertIsEqualNode(true, new DOMDocument, new DOMDocument);
 	}
 
+	public function testIsEqualDocumentNodeClone()
+	{
+		$dom1 = new DOMDocument;
+		$dom1->loadXML(<<<'EOT'
+			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd" [
+				<!ENTITY bar '<bar>bartext</bar>'>
+				<!ENTITY foo '<foo/>'>
+				<!NOTATION myNotation SYSTEM "test.dtd">
+			]>
+			<html>
+				<body>
+					<p>...</p>
+				</body>
+			</html>
+		EOT);
+		$this->assertIsEqualNode(true, $dom1, clone $dom1);
+	}
+
 	public function testIsEqualDocumentTypeNode()
 	{
 		$dom1 = new DOMDocument;
@@ -324,5 +349,91 @@ class NodeComparatorTest extends TestCase
 	{
 		$this->assertIsEqualNode(false, new DOMEntityReference('ref'), new DOMEntityReference('ref2'));
 		$this->assertIsEqualNode(true, new DOMEntityReference('ref'), new DOMEntityReference('ref'));
+	}
+
+	public function testIsEqualEntityDeclarationNode()
+	{
+		$dom1 = new DOMDocument;
+		$dom1->loadXML(<<<'EOT'
+			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd" [
+				<!ENTITY bar '<bar>bartext</bar>'>
+				<!ENTITY foo '<foo/>'>
+				<!NOTATION myNotation SYSTEM "test.dtd">
+			]>
+			<html>
+				<body>
+					<p>...</p>
+				</body>
+			</html>
+		EOT);
+
+		$dom2 = new DOMDocument;
+		$dom2->loadXML(<<<'EOT'
+			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd" [
+				<!ENTITY barbar '<bar>bartext</bar>'>
+				<!ENTITY foo '<foo2/>'>
+				<!ENTITY bar '<bar>bartext</bar>'>
+			]>
+			<html>
+				<body>
+					<p>...</p>
+				</body>
+			</html>
+		EOT);
+
+		$this->assertIsEqualNode(true, $dom1->doctype->entities['bar'], $dom2->doctype->entities['bar']);
+		$this->assertIsEqualNode(false, $dom1->doctype->entities['bar'], $dom2->doctype->entities['barbar']);
+		$this->assertIsEqualNode(false, $dom1->doctype->entities['bar'], $dom2->doctype->entities['foo']);
+		$this->assertIsEqualNode(false, $dom1->doctype->entities['foo'], $dom2->doctype->entities['bar']);
+		$this->assertIsEqualNode(false, $dom1->doctype->entities['foo'], $dom2->doctype->entities['barbar']);
+		$this->assertIsEqualNode(true, $dom1->doctype->entities['foo'], $dom2->doctype->entities['foo']);
+	}
+
+	public function testIsEqualEntityNotationNode()
+	{
+		$dom1 = new DOMDocument;
+		$dom1->loadXML(<<<'EOT'
+			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd" [
+				<!ENTITY bar '<bar>bartext</bar>'>
+				<!ENTITY foo '<foo/>'>
+				<!NOTATION myNotation SYSTEM "test.dtd">
+			]>
+			<html>
+				<body>
+					<p>...</p>
+				</body>
+			</html>
+		EOT);
+
+		$dom2 = new DOMDocument;
+		$dom2->loadXML(<<<'EOT'
+			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd" [
+				<!NOTATION myNotation SYSTEM "test.dtd">
+				<!NOTATION myNotation2 SYSTEM "test2.dtd">
+				<!NOTATION myNotation3 SYSTEM "test.dtd">
+			]>
+			<html><body><p>...</p></body></html>
+		EOT);
+
+		$this->assertIsEqualNode(true, $dom1->doctype->notations['myNotation'], $dom2->doctype->notations['myNotation']);
+		$this->assertIsEqualNode(false, $dom1->doctype->notations['myNotation'], $dom2->doctype->notations['myNotation2']);
+		$this->assertIsEqualNode(false, $dom1->doctype->notations['myNotation'], $dom2->doctype->notations['myNotation3']);
+	}
+
+	public function testIsEqualDocumentFragmentNode()
+	{
+		$xml = '<x><y/></x><z/>';
+
+		$dom   = new DOMDocument;
+		$frag1 = $dom->createDocumentFragment();
+		$frag2 = $dom->createDocumentFragment();
+		$frag3 = $dom->createDocumentFragment();
+
+		$frag1->appendXML($xml);
+		$frag2->appendXML($xml);
+		$frag3->appendXML('<x/><z/>');
+
+		$this->assertIsEqualNode(true, $frag1, $frag2);
+		$this->assertIsEqualNode(false, $frag1, $frag3);
 	}
 }

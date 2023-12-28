@@ -10,10 +10,14 @@ namespace s9e\SweetDOM;
 use DOMAttr;
 use DOMCharacterData;
 use DOMDocument;
+use DOMDocumentFragment;
 use DOMDocumentType;
 use DOMElement;
+use DOMEntity;
 use DOMEntityReference;
 use DOMNode;
+use DOMNodeList;
+use DOMNotation;
 use DOMProcessingInstruction;
 use DOMXPath;
 
@@ -23,7 +27,7 @@ class NodeComparator
 	// https://github.com/php/php-src/blob/master/ext/dom/node.c
 	public static function isEqualNode(?DOMNode $node, ?DOMNode $otherNode): bool
 	{
-		if (!isset($node, $otherNode) || $node->nodeType !== $otherNode->nodeType)
+		if (!isset($node, $otherNode) || $node->nodeType !== $otherNode->nodeType || $node->nodeName !== $otherNode->nodeName)
 		{
 			return false;
 		}
@@ -45,9 +49,10 @@ class NodeComparator
 			    && $node->localName    === $otherNode->localName
 			    && $node->value        === $otherNode->value;
 		}
-		if ($node instanceof DOMDocument && $otherNode instanceof DOMDocument)
+		if (($node instanceof DOMDocument         && $otherNode instanceof DOMDocument)
+		 || ($node instanceof DOMDocumentFragment && $otherNode instanceof DOMDocumentFragment))
 		{
-			return self::isEqualDocumentNode($node, $otherNode);
+			return self::isEqualNodeList($node->childNodes, $otherNode->childNodes);
 		}
 		if ($node instanceof DOMDocumentType && $otherNode instanceof DOMDocumentType)
 		{
@@ -58,6 +63,13 @@ class NodeComparator
 		if ($node instanceof DOMEntityReference && $otherNode instanceof DOMEntityReference)
 		{
 			return $node->nodeName === $otherNode->nodeName;
+		}
+		if (($node instanceof DOMEntity   && $otherNode instanceof DOMEntity)
+		 || ($node instanceof DOMNotation && $otherNode instanceof DOMNotation))
+		{
+			return $node->nodeName === $otherNode->nodeName
+			    && $node->publicId === $otherNode->publicId
+			    && $node->systemId === $otherNode->systemId;
 		}
 
 		return $node->isSameNode($otherNode);
@@ -86,23 +98,6 @@ class NodeComparator
 		return self::getNamespaceDeclarations($element) == self::getNamespaceDeclarations($otherElement);
 	}
 
-	protected static function isEqualDocumentNode(DOMDocument $document, DOMDocument $otherDocument): bool
-	{
-		if ($document->childNodes->length !== $otherDocument->childNodes->length)
-		{
-			return false;
-		}
-		foreach ($document->childNodes as $i => $childNode)
-		{
-			if (!self::isEqualNode($childNode, $otherDocument->childNodes[$i]))
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	protected static function isEqualElementNode(DOMElement $element, DOMElement $otherElement): bool
 	{
 		if ($element->namespaceURI       !== $otherElement->namespaceURI
@@ -121,14 +116,24 @@ class NodeComparator
 			}
 		}
 
-		foreach ($element->childNodes as $i => $childNode)
+		return self::isEqualNodeList($element->childNodes, $otherElement->childNodes)
+		    && self::hasEqualNamespaceDeclarations($element, $otherElement);
+	}
+
+	protected static function isEqualNodeList(DOMNodeList $list, DOMNodeList $otherList): bool
+	{
+		if ($list->length !== $otherList->length)
 		{
-			if (!self::isEqualNode($childNode, $otherElement->childNodes[$i]))
+			return false;
+		}
+		foreach ($list as $i => $node)
+		{
+			if (!self::isEqualNode($node, $otherList[$i]))
 			{
 				return false;
 			}
 		}
 
-		return self::hasEqualNamespaceDeclarations($element, $otherElement);
+		return true;
 	}
 }
