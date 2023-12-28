@@ -128,7 +128,7 @@ class NodeComparator
 		}
 		foreach ($list as $i => $node)
 		{
-			if (!self::isEqualNode($node, $otherList[$i]))
+			if (!self::isEqualNode($node, $otherList->item($i)))
 			{
 				return false;
 			}
