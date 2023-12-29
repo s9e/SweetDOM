@@ -8,9 +8,10 @@
 namespace s9e\SweetDOM\ForwardCompatibleNodes;
 
 use s9e\SweetDOM\CdataSection as ParentClass;
-use s9e\SweetDOM\NodeTraits\ChildNodeForwardCompatibility;
+use s9e\SweetDOM\NodeTraits\NodePolyfill;
 
 class CdataSection extends ParentClass
 {
 	use ChildNodeForwardCompatibility;
+	use NodePolyfill;
 }

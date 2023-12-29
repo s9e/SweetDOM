@@ -8,7 +8,9 @@
 namespace s9e\SweetDOM\PatchedNodes;
 
 use s9e\SweetDOM\Attr as ParentClass;
+use s9e\SweetDOM\NodeTraits\NodePolyfill;
 
 class Attr extends ParentClass
 {
+	use NodePolyfill;
 }

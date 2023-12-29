@@ -4,6 +4,7 @@ namespace s9e\SweetDOM\Tests;
 
 use DOMDocument;
 use DOMEntityReference;
+use DOMException;
 use DOMNode;
 use DOMXPath;
 use PHPUnit\Framework\Attributes\CoversClass;

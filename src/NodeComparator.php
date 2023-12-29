@@ -72,7 +72,9 @@ class NodeComparator
 			    && $node->systemId === $otherNode->systemId;
 		}
 
+		// @codeCoverageIgnoreStart
 		return $node->isSameNode($otherNode);
+		// @codeCoverageIgnoreEnd
 	}
 
 	/**

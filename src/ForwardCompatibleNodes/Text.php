@@ -8,9 +8,11 @@
 namespace s9e\SweetDOM\ForwardCompatibleNodes;
 
 use s9e\SweetDOM\NodeTraits\ChildNodeForwardCompatibility;
+use s9e\SweetDOM\NodeTraits\NodePolyfill;
 use s9e\SweetDOM\Text as ParentClass;
 
 class Text extends ParentClass
 {
 	use ChildNodeForwardCompatibility;
+	use NodePolyfill;
 }
