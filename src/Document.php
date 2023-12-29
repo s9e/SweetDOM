@@ -44,12 +44,9 @@ class Document extends DOMDocument
 		parent::__construct($version, $encoding);
 
 		$this->nodeCreator = new NodeCreator($this);
-
-		$classes   = ['Attr', 'CdataSection', 'Comment', 'DocumentFragment', 'Element', 'Text'];
-		$namespace = $this->getNodesNamespace();
-		foreach ($classes as $className)
+		foreach ($this->getExtendedClassMap() as $baseClass => $extendedClass)
 		{
-			$this->registerNodeClass('DOM' . $className, $namespace . '\\' . $className);
+			$this->registerNodeClass($baseClass, $extendedClass);
 		}
 	}
 
@@ -85,14 +82,27 @@ class Document extends DOMDocument
 		return $result;
 	}
 
-	protected function getNodesNamespace(): string
+	protected function getExtendedClassMap(): array
+	{
+		$baseNames = ['Attr', 'CdataSection', 'Comment', 'DocumentFragment', 'Element', 'Text'];
+		$classMap  = [];
+		$namespace = $this->getExtendedNamespace(PHP_VERSION);
+		foreach ($baseNames as $baseName)
+		{
+			$classMap['DOM' . $baseName] = $namespace . '\\' . $baseName;
+		}
+
+		return $classMap;
+	}
+
+	protected function getExtendedNamespace(string $phpVersion): string
 	{
 		$namespace = __NAMESPACE__;
-		if ($this->needsWorkarounds())
+		if ($this->needsWorkarounds($phpVersion))
 		{
 			$namespace .= '\\PatchedNodes';
 		}
-		elseif (version_compare(PHP_VERSION, '8.3.0', '<'))
+		elseif (version_compare($phpVersion, '8.3.0', '<'))
 		{
 			$namespace .= '\\ForwardCompatibleNodes';
 		}
@@ -100,21 +110,21 @@ class Document extends DOMDocument
 		return $namespace;
 	}
 
-	protected function needsWorkarounds(): bool
+	protected function needsWorkarounds(string $phpVersion): bool
 	{
-		if (version_compare(PHP_VERSION, '8.2.10', '>='))
+		if (version_compare($phpVersion, '8.2.10', '>='))
 		{
 			// PHP ^8.2.10 needs no workarounds
 			return false;
 		}
-		if (version_compare(PHP_VERSION, '8.1.23', '<'))
+		if (version_compare($phpVersion, '8.1.23', '<'))
 		{
 			// Anything older than 8.1.23 does
 			return true;
 		}
 
 		// ~8.1.23 is okay, anything between 8.2.0 and 8.2.9 needs workarounds
-		return version_compare(PHP_VERSION, '8.2.0-dev', '>=');
+		return version_compare($phpVersion, '8.2.0-dev', '>=');
 	}
 
 	/**
