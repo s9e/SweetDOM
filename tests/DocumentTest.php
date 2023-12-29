@@ -244,4 +244,15 @@ class DocumentTest extends TestCase
 			],
 		];
 	}
+
+	public function testIsEqualNode()
+	{
+		$dom1 = new Document;
+		$dom1->loadXML('<x foo="123"/>');
+		$dom2 = new Document;
+		$dom2->loadXML('<x foo="123"/>');
+		$this->assertTrue($dom1->isEqualNode($dom2));
+		$dom2->loadXML('<x/>');
+		$this->assertFalse($dom1->isEqualNode($dom2));
+	}
 }
