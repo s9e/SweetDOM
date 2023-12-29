@@ -6,7 +6,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestCase;
-use const DOM_SYNTAX_ERR;
+use const DOM_NAMESPACE_ERR, DOM_SYNTAX_ERR;
 use s9e\SweetDOM\Document;
 
 #[CoversClass('s9e\SweetDOM\NodeCreator')]
@@ -65,7 +65,7 @@ class NodeCreatorTest extends TestCase
 	public function testCreateElementUnknownPrefix()
 	{
 		$this->expectException('DOMException');
-		$this->expectExceptionCode(\DOM_NAMESPACE_ERR);
+		$this->expectExceptionCode(DOM_NAMESPACE_ERR);
 
 		$dom = new Document;
 		$dom->loadXML('<x/>');

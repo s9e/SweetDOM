@@ -13,11 +13,12 @@ use s9e\SweetDOM\Element;
 use s9e\SweetDOM\NodeCreator;
 
 #[CoversClass('s9e\SweetDOM\Element')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\ChildNodeForwardCompatibility')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\ChildNodeWorkarounds')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\DeprecatedMethods')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\MagicMethods')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\ParentNodePolyfill')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\ParentNodeWorkarounds')]
-#[CoversClass('s9e\SweetDOM\NodeTraits\PolyfillMethods')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\XPathMethods')]
 class ElementTest extends TestCase
 {
@@ -56,7 +57,13 @@ class ElementTest extends TestCase
 	{
 		$dom = new Document;
 		$dom->loadXML('<html/>');
-		$dom->nodeCreator = new MyNodeCreator($dom);
+		$dom->nodeCreator = new class($dom) extends NodeCreator
+		{
+			public function createBr(): Element
+			{
+				return $this->ownerDocument->createElement('br');
+			}
+		};
 		$dom->documentElement->appendBr();
 
 		$this->assertXmlStringEqualsXmlString(
@@ -871,13 +878,5 @@ class ElementTest extends TestCase
 				[]
 			],
 		];
-	}
-}
-
-class MyNodeCreator extends NodeCreator
-{
-	public function createBr(): Element
-	{
-		return $this->ownerDocument->createElement('br');
 	}
 }
