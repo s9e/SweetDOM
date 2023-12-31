@@ -13,6 +13,7 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 
 /**
 * @method Comment appendComment(string $data)
+* @method mixed appendDocumentFragment(?callable $callback = null)
 * @method Element appendElement(string $nodeName, string $textContent = '')
 * @method Element appendElementNS(?string $namespace, string $nodeName, string $textContent = '')
 * @method Element appendXslApplyTemplates(?string $select = null, ?string $mode = null)
@@ -28,6 +29,7 @@ use s9e\SweetDOM\NodeTraits\XPathMethods;
 * @method Element appendXslVariable(string $name, ?string $select = null)
 * @method Element appendXslWhen(string $test, string $textContent = '')
 * @method Comment prependComment(string $data)
+* @method mixed prependDocumentFragment(?callable $callback = null)
 * @method Element prependElement(string $nodeName, string $textContent = '')
 * @method Element prependElementNS(?string $namespace, string $nodeName, string $textContent = '')
 * @method Element prependXslApplyTemplates(?string $select = null, ?string $mode = null)
