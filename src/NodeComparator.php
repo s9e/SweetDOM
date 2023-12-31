@@ -31,46 +31,26 @@ class NodeComparator
 		{
 			return false;
 		}
-		if ($node instanceof DOMElement && $otherNode instanceof DOMElement)
+		$classes = [
+			'DOMElement',
+			'DOMCharacterData',
+			'DOMProcessingInstruction',
+			'DOMAttr',
+			'DOMDocument',
+			'DOMDocumentFragment',
+			'DOMDocumentType',
+			'DOMEntityReference',
+			'DOMEntity',
+			'DOMNotation'
+		];
+		foreach ($classes as $className)
 		{
-			return static::isEqualElementNode($node, $otherNode);
-		}
-		if ($node instanceof DOMCharacterData && $otherNode instanceof DOMCharacterData)
-		{
-			// Covers DOMCdataSection, DOMComment, and DOMText
-			return $node->data === $otherNode->data;
-		}
-		if ($node instanceof DOMProcessingInstruction && $otherNode instanceof DOMProcessingInstruction)
-		{
-			return $node->target === $otherNode->target && $node->data === $otherNode->data;
-		}
-		if ($node instanceof DOMAttr && $otherNode instanceof DOMAttr)
-		{
-			return $node->namespaceURI === $otherNode->namespaceURI
-			    && $node->localName    === $otherNode->localName
-			    && $node->value        === $otherNode->value;
-		}
-		if (($node instanceof DOMDocument         && $otherNode instanceof DOMDocument)
-		 || ($node instanceof DOMDocumentFragment && $otherNode instanceof DOMDocumentFragment))
-		{
-			return static::isEqualNodeList($node->childNodes, $otherNode->childNodes);
-		}
-		if ($node instanceof DOMDocumentType && $otherNode instanceof DOMDocumentType)
-		{
-			return $node->name     === $otherNode->name
-			    && $node->publicId === $otherNode->publicId
-			    && $node->systemId === $otherNode->systemId;
-		}
-		if ($node instanceof DOMEntityReference && $otherNode instanceof DOMEntityReference)
-		{
-			return $node->nodeName === $otherNode->nodeName;
-		}
-		if (($node instanceof DOMEntity   && $otherNode instanceof DOMEntity)
-		 || ($node instanceof DOMNotation && $otherNode instanceof DOMNotation))
-		{
-			return $node->nodeName === $otherNode->nodeName
-			    && $node->publicId === $otherNode->publicId
-			    && $node->systemId === $otherNode->systemId;
+			if ($node instanceof $className && $otherNode instanceof $className)
+			{
+				$methodName = 'isEqual' . substr($className, 3);
+
+				return static::$methodName($node, $otherNode);
+			}
 		}
 
 		// @codeCoverageIgnoreStart
@@ -101,7 +81,37 @@ class NodeComparator
 		return static::getNamespaceDeclarations($element) == static::getNamespaceDeclarations($otherElement);
 	}
 
-	protected static function isEqualElementNode(DOMElement $element, DOMElement $otherElement): bool
+	protected static function isEqualAttr(DOMAttr $node, DOMAttr $otherNode): bool
+	{
+		return $node->namespaceURI === $otherNode->namespaceURI
+		    && $node->localName    === $otherNode->localName
+		    && $node->value        === $otherNode->value;
+	}
+
+	protected static function isEqualCharacterData(DOMCharacterData $node, DOMCharacterData $otherNode): bool
+	{
+		// Covers DOMCdataSection, DOMComment, and DOMText
+		return $node->data === $otherNode->data;
+	}
+
+	protected static function isEqualDocument(DOMDocument $node, DOMDocument $otherNode): bool
+	{
+		return static::isEqualNodeList($node->childNodes, $otherNode->childNodes);
+	}
+
+	protected static function isEqualDocumentFragment(DOMDocumentFragment $node, DOMDocumentFragment $otherNode): bool
+	{
+		return static::isEqualNodeList($node->childNodes, $otherNode->childNodes);
+	}
+
+	protected static function isEqualDocumentType(DOMDocumentType $node, DOMDocumentType $otherNode): bool
+	{
+		return $node->name     === $otherNode->name
+		    && $node->publicId === $otherNode->publicId
+		    && $node->systemId === $otherNode->systemId;
+	}
+
+	protected static function isEqualElement(DOMElement $element, DOMElement $otherElement): bool
 	{
 		if ($element->namespaceURI       !== $otherElement->namespaceURI
 		 || $element->nodeName           !== $otherElement->nodeName
@@ -123,6 +133,18 @@ class NodeComparator
 		    && static::hasEqualNamespaceDeclarations($element, $otherElement);
 	}
 
+	protected static function isEqualEntity(DOMEntity $node, DOMEntity $otherNode): bool
+	{
+		return $node->nodeName === $otherNode->nodeName
+		    && $node->publicId === $otherNode->publicId
+		    && $node->systemId === $otherNode->systemId;
+	}
+
+	protected static function isEqualEntityReference(DOMEntityReference $node, DOMEntityReference $otherNode): bool
+	{
+		return $node->nodeName === $otherNode->nodeName;
+	}
+
 	protected static function isEqualNodeList(DOMNodeList $list, DOMNodeList $otherList): bool
 	{
 		if ($list->length !== $otherList->length)
@@ -138,5 +160,17 @@ class NodeComparator
 		}
 
 		return true;
+	}
+
+	protected static function isEqualNotation(DOMNotation $node, DOMNotation $otherNode): bool
+	{
+		return $node->nodeName === $otherNode->nodeName
+		    && $node->publicId === $otherNode->publicId
+		    && $node->systemId === $otherNode->systemId;
+	}
+
+	protected static function isEqualProcessingInstruction(DOMProcessingInstruction $node, DOMProcessingInstruction $otherNode): bool
+	{
+		return $node->target === $otherNode->target && $node->data === $otherNode->data;
 	}
 }
