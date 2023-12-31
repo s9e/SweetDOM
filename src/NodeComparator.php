@@ -33,7 +33,7 @@ class NodeComparator
 		}
 		if ($node instanceof DOMElement && $otherNode instanceof DOMElement)
 		{
-			return self::isEqualElementNode($node, $otherNode);
+			return static::isEqualElementNode($node, $otherNode);
 		}
 		if ($node instanceof DOMCharacterData && $otherNode instanceof DOMCharacterData)
 		{
@@ -53,7 +53,7 @@ class NodeComparator
 		if (($node instanceof DOMDocument         && $otherNode instanceof DOMDocument)
 		 || ($node instanceof DOMDocumentFragment && $otherNode instanceof DOMDocumentFragment))
 		{
-			return self::isEqualNodeList($node->childNodes, $otherNode->childNodes);
+			return static::isEqualNodeList($node->childNodes, $otherNode->childNodes);
 		}
 		if ($node instanceof DOMDocumentType && $otherNode instanceof DOMDocumentType)
 		{
@@ -98,7 +98,7 @@ class NodeComparator
 
 	protected static function hasEqualNamespaceDeclarations(DOMElement $element, DOMElement $otherElement): bool
 	{
-		return self::getNamespaceDeclarations($element) == self::getNamespaceDeclarations($otherElement);
+		return static::getNamespaceDeclarations($element) == static::getNamespaceDeclarations($otherElement);
 	}
 
 	protected static function isEqualElementNode(DOMElement $element, DOMElement $otherElement): bool
@@ -119,8 +119,8 @@ class NodeComparator
 			}
 		}
 
-		return self::isEqualNodeList($element->childNodes, $otherElement->childNodes)
-		    && self::hasEqualNamespaceDeclarations($element, $otherElement);
+		return static::isEqualNodeList($element->childNodes, $otherElement->childNodes)
+		    && static::hasEqualNamespaceDeclarations($element, $otherElement);
 	}
 
 	protected static function isEqualNodeList(DOMNodeList $list, DOMNodeList $otherList): bool
@@ -131,7 +131,7 @@ class NodeComparator
 		}
 		foreach ($list as $i => $node)
 		{
-			if (!self::isEqualNode($node, $otherList->item($i)))
+			if (!static::isEqualNode($node, $otherList->item($i)))
 			{
 				return false;
 			}
