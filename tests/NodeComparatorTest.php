@@ -429,12 +429,15 @@ class NodeComparatorTest extends TestCase
 		$frag1 = $dom->createDocumentFragment();
 		$frag2 = $dom->createDocumentFragment();
 		$frag3 = $dom->createDocumentFragment();
+		$frag4 = $dom->createDocumentFragment();
 
 		$frag1->appendXML($xml);
 		$frag2->appendXML($xml);
 		$frag3->appendXML('<x/><z/>');
+		$frag4->appendXML('<x/>');
 
 		$this->assertIsEqualNode(true, $frag1, $frag2);
 		$this->assertIsEqualNode(false, $frag1, $frag3);
+		$this->assertIsEqualNode(false, $frag1, $frag4);
 	}
 }
