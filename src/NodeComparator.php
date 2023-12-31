@@ -20,6 +20,7 @@ use DOMNodeList;
 use DOMNotation;
 use DOMProcessingInstruction;
 use DOMXPath;
+use function substr;
 
 class NodeComparator
 {
