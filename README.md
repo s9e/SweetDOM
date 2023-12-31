@@ -1,6 +1,6 @@
 ## Overview
 
-s9e\\SweetDOM is a library that extends [PHP's DOM extension](https://www.php.net/manual/en/book.dom.php) to make DOM manipulation easier, with a particular emphasis on XSLT 1.0 templates.
+s9e\\SweetDOM is a library that extends [PHP's DOM extension](https://www.php.net/manual/en/book.dom.php) to make DOM manipulation easier, with a particular emphasis on XSLT 1.0 templates. It adds syntactic sugar for the most common DOM operations, [improves compatibility](#backward-and-forward-compatibility-with-older-and-future-versions-of-php) across PHP versions, and implements polyfills for some of the newer methods.
 
 [![Code Coverage](https://scrutinizer-ci.com/g/s9e/SweetDOM/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/s9e/SweetDOM/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/s9e/SweetDOM/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/s9e/SweetDOM/?branch=master)
