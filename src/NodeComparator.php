@@ -37,6 +37,7 @@ class NodeComparator
 		}
 		if ($node instanceof DOMCharacterData && $otherNode instanceof DOMCharacterData)
 		{
+			// Covers DOMCdataSection, DOMComment, and DOMText
 			return $node->data === $otherNode->data;
 		}
 		if ($node instanceof DOMProcessingInstruction && $otherNode instanceof DOMProcessingInstruction)
