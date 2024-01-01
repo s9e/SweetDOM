@@ -81,4 +81,13 @@ class CdataSectionTest extends TestCase
 
 		$this->assertEquals('z', $dom->firstOf('//text()')->query('.//following-sibling::x')->item(0)->getAttribute('id'));
 	}
+
+	public function testIsEqualNode()
+	{
+		$dom = new Document;
+		$dom->loadXML('<x><![CDATA[..]]><y/><![CDATA[..]]></x>');
+
+		$this->assertTrue($dom->firstOf('//x')->firstChild->isEqualNode($dom->firstOf('//x')->lastChild));
+		$this->assertFalse($dom->firstOf('//x')->firstChild->isEqualNode($dom->firstOf('//y')));
+	}
 }

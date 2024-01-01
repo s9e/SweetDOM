@@ -83,4 +83,17 @@ class DocumentFragmentTest extends TestCase
 
 		$this->assertEquals('xx', $fragment->query('x')->item(0)->getAttribute('value'));
 	}
+
+	public function testIsEqualNode()
+	{
+		$dom = new Document;
+
+		$frag1 = $dom->createDocumentFragment();
+		$frag2 = $dom->createDocumentFragment();
+		$frag1->appendElement('x')->setAttribute('value', 'xx');
+		$frag2->appendElement('x')->setAttribute('value', 'xx');
+		$this->assertTrue($frag1->isEqualNode($frag2));
+		$frag2->appendElement('x');
+		$this->assertFalse($frag1->isEqualNode($frag2));
+	}
 }

@@ -9,8 +9,10 @@ namespace s9e\SweetDOM\ForwardCompatibleNodes;
 
 use s9e\SweetDOM\Comment as ParentClass;
 use s9e\SweetDOM\NodeTraits\ChildNodeForwardCompatibility;
+use s9e\SweetDOM\NodeTraits\NodePolyfill;
 
 class Comment extends ParentClass
 {
 	use ChildNodeForwardCompatibility;
+	use NodePolyfill;
 }

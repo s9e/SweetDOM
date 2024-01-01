@@ -17,6 +17,7 @@ use s9e\SweetDOM\NodeCreator;
 #[CoversClass('s9e\SweetDOM\NodeTraits\ChildNodeWorkarounds')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\DeprecatedMethods')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\MagicMethods')]
+#[CoversClass('s9e\SweetDOM\NodeTraits\NodePolyfill')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\ParentNodePolyfill')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\ParentNodeWorkarounds')]
 #[CoversClass('s9e\SweetDOM\NodeTraits\XPathMethods')]

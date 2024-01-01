@@ -13,7 +13,7 @@ use DOMNodeList;
 use DOMXPath;
 use RuntimeException;
 use const PHP_VERSION;
-use function func_get_args, libxml_get_last_error, trim, version_compare;
+use function func_get_args, method_exists, libxml_get_last_error, trim, version_compare;
 
 /**
 * @method Attr|false createAttribute(string $localName)
@@ -64,6 +64,13 @@ class Document extends DOMDocument
 	public function firstOf(string $expression, ?DOMNode $contextNode = null, bool $registerNodeNS = true): ?DOMNode
 	{
 		return $this->query(...func_get_args())->item(0);
+	}
+
+	public function isEqualNode(?DOMNode $otherNode): bool
+	{
+		return method_exists('DOMDocument', 'isEqualNode')
+		     ? parent::isEqualNode($otherNode)
+		     : NodeComparator::isEqualNode($this, $otherNode);
 	}
 
 	/**

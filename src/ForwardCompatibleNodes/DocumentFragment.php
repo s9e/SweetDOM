@@ -8,9 +8,11 @@
 namespace s9e\SweetDOM\ForwardCompatibleNodes;
 
 use s9e\SweetDOM\DocumentFragment as ParentClass;
+use s9e\SweetDOM\NodeTraits\NodePolyfill;
 use s9e\SweetDOM\NodeTraits\ParentNodePolyfill;
 
 class DocumentFragment extends ParentClass
 {
+	use NodePolyfill;
 	use ParentNodePolyfill;
 }

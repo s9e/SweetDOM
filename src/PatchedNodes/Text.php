@@ -8,9 +8,11 @@
 namespace s9e\SweetDOM\PatchedNodes;
 
 use s9e\SweetDOM\NodeTraits\ChildNodeWorkarounds;
+use s9e\SweetDOM\NodeTraits\NodePolyfill;
 use s9e\SweetDOM\Text as ParentClass;
 
 class Text extends ParentClass
 {
 	use ChildNodeWorkarounds;
+	use NodePolyfill;
 }
