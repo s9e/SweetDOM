@@ -24,6 +24,19 @@ use function substr;
 
 class NodeComparator
 {
+	protected static $classMap = [
+		'DOMElement'               => 'isEqualElement',
+		'DOMCharacterData'         => 'isEqualCharacterData',
+		'DOMProcessingInstruction' => 'isEqualProcessingInstruction',
+		'DOMAttr'                  => 'isEqualAttr',
+		'DOMDocument'              => 'isEqualDocument',
+		'DOMDocumentFragment'      => 'isEqualDocumentFragment',
+		'DOMDocumentType'          => 'isEqualDocumentType',
+		'DOMEntityReference'       => 'isEqualEntityReference',
+		'DOMEntity'                => 'isEqualEntity',
+		'DOMNotation'              => 'isEqualNotation'
+	];
+
 	// https://dom.spec.whatwg.org/#concept-node-equals
 	// https://github.com/php/php-src/blob/master/ext/dom/node.c
 	public static function isEqualNode(?DOMNode $node, ?DOMNode $otherNode): bool
@@ -32,24 +45,10 @@ class NodeComparator
 		{
 			return false;
 		}
-		$classes = [
-			'DOMElement',
-			'DOMCharacterData',
-			'DOMProcessingInstruction',
-			'DOMAttr',
-			'DOMDocument',
-			'DOMDocumentFragment',
-			'DOMDocumentType',
-			'DOMEntityReference',
-			'DOMEntity',
-			'DOMNotation'
-		];
-		foreach ($classes as $className)
+		foreach (static::$classMap as $className => $methodName)
 		{
 			if ($node instanceof $className && $otherNode instanceof $className)
 			{
-				$methodName = 'isEqual' . substr($className, 3);
-
 				return static::$methodName($node, $otherNode);
 			}
 		}
