@@ -15,7 +15,7 @@ use s9e\SweetDOM\NodeComparator;
 #[CoversClass('s9e\SweetDOM\NodeComparator')]
 class NodeComparatorTest extends TestCase
 {
-	protected function assertIsEqualNode(bool $expected, DOMNode $node, DOMNode $otherNode, bool $compareNative = null): void
+	protected function assertIsEqualNode(bool $expected, DOMNode $node, DOMNode $otherNode, ?bool $compareNative = null): void
 	{
 		$this->assertSame($expected, NodeComparator::isEqualNode($node, $otherNode));
 		if ($compareNative ?? version_compare(PHP_VERSION, '8.3.0', '>='))
@@ -25,7 +25,7 @@ class NodeComparatorTest extends TestCase
 	}
 
 	#[DataProvider('getIsEqualNodeCases')]
-	public function testIsEqualNode(bool $expected, string $xml1, string $xpath1, string $xml2, string $xpath2, bool $compareNative = null): void
+	public function testIsEqualNode(bool $expected, string $xml1, string $xpath1, string $xml2, string $xpath2, ?bool $compareNative = null): void
 	{
 		$node      = $this->getNodeFromXML($xml1, $xpath1);
 		$otherNode = $this->getNodeFromXML($xml2, $xpath2);

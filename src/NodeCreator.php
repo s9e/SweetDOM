@@ -30,7 +30,7 @@ class NodeCreator
 	/**
 	* Create a DocumentFragment and execute given callback on it before returning it
 	*/
-	public function createDocumentFragment(callable $callback = null): DocumentFragment
+	public function createDocumentFragment(?callable $callback = null): DocumentFragment
 	{
 		$fragment = $this->ownerDocument->createDocumentFragment();
 		if (isset($callback))
@@ -83,7 +83,7 @@ class NodeCreator
 	/**
 	* Create and return an xsl:apply-templates element
 	*/
-	public function createXslApplyTemplates(string $select = null, string $mode = null): Element
+	public function createXslApplyTemplates(?string $select = null, ?string $mode = null): Element
 	{
 		return $this->createXslElementByName('apply-templates', '', ['mode' => $mode, 'select' => $select]);
 	}
@@ -91,7 +91,7 @@ class NodeCreator
 	/**
 	* Create and return an xsl:attribute element
 	*/
-	public function createXslAttribute(string $name, string $textContent = '', string $namespace = null): Element
+	public function createXslAttribute(string $name, string $textContent = '', ?string $namespace = null): Element
 	{
 		return $this->createXslElementByName('attribute', $textContent, ['name' => $name, 'namespace' => $namespace]);
 	}
@@ -123,7 +123,7 @@ class NodeCreator
 	/**
 	* Create and return an xsl:element element
 	*/
-	public function createXslElement(string $name, string $namespace = null, string $useAttributeSets = null): Element
+	public function createXslElement(string $name, ?string $namespace = null, ?string $useAttributeSets = null): Element
 	{
 		return $this->createXslElementByName('element', '', ['name' => $name, 'namespace' => $namespace, 'use-attribute-sets' => $useAttributeSets]);
 	}
@@ -169,7 +169,7 @@ class NodeCreator
 	/**
 	* Create and return an xsl:text element
 	*/
-	public function createXslText(string $textContent = '', string $disableOutputEscaping = null): Element
+	public function createXslText(string $textContent = '', ?string $disableOutputEscaping = null): Element
 	{
 		return $this->createXslElementByName('text', $textContent, ['disable-output-escaping' => $disableOutputEscaping]);
 	}
@@ -177,7 +177,7 @@ class NodeCreator
 	/**
 	* Create and return an xsl:value-of element
 	*/
-	public function createXslValueOf(string $select, string $disableOutputEscaping = null): Element
+	public function createXslValueOf(string $select, ?string $disableOutputEscaping = null): Element
 	{
 		return $this->createXslElementByName('value-of', '', ['disable-output-escaping' => $disableOutputEscaping, 'select' => $select]);
 	}
@@ -185,7 +185,7 @@ class NodeCreator
 	/**
 	* Create and return an xsl:variable element
 	*/
-	public function createXslVariable(string $name, string $select = null): Element
+	public function createXslVariable(string $name, ?string $select = null): Element
 	{
 		return $this->createXslElementByName('variable', '', ['name' => $name, 'select' => $select]);
 	}

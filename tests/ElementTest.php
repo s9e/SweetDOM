@@ -470,7 +470,7 @@ class ElementTest extends TestCase
 	#[DataProvider('getDeprecatedMethodsTests')]
 	#[Group('deprecated')]
 	#[WithoutErrorHandler()]
-	public function testDeprecatedMethods(string $expected, string $methodName, array $args = [], string $newMethodName = null): void
+	public function testDeprecatedMethods(string $expected, string $methodName, array $args = [], ?string $newMethodName = null): void
 	{
 		$actualError = '';
 		$expectedError = 'Deprecated: ' . $methodName . '() calls should be replaced with ' . $newMethodName . '(). See https://github.com/s9e/SweetDOM/blob/master/UPGRADING.md#from-2x-to-30';
